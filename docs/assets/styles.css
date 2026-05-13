@@ -390,6 +390,38 @@ code, .assertion-id {
   border-radius: 3px;
 }
 
+/* Evidence-type emoji chips painted over the cytoscape canvas by
+   docs/assets/viewer.js → installSourceChipsOverlay. Icons only, no
+   text. pointer-events: none so clicks pass through to the graph. */
+.source-chips-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+  overflow: hidden;
+}
+.source-chips {
+  position: absolute;
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.source-chips.node-chip {
+  /* Anchored just outside the top-right corner of an activity node. */
+}
+.source-chips.edge-chip {
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  padding: 0 4px;
+  letter-spacing: 0;
+}
+
 /* Source-figure thumbnail (injected by docs/assets/figure-thumb.js when
    a figure.<ext> file exists in the run dir). Click to open the lightbox. */
 .viewer-pane .figure-thumb {

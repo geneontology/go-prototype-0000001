@@ -141,7 +141,10 @@ async function main() {
   // Edge-click is NOT upstream-supported. Try multiple paths to the
   // cytoscape instance; fall back to wiring on first node click.
   const cy = await wireEdgeClicks(viewerEl, prov, labelIndex);
-  if (cy) emphasizeCausalEdges(cy);
+  if (cy) {
+    emphasizeCausalEdges(cy);
+    installSourceChipsOverlay(cy, prov, viewerEl);
+  }
 
   installModelActionsHeader();
   installToastHost();
@@ -336,6 +339,112 @@ function emphasizeCausalEdges(cy) {
     }
   });
   cy.style().update();
+}
+
+/* --------------------------------------------- evidence-chip overlay ---- */
+
+// Canonical render order matches the landing-page legend.
+const CHIP_SOURCE_ORDER = [
+  "literature", "go_annotation", "alliance", "amigo",
+  "orthology", "pathway_resource", "expert_review", "instinct", "go_term_request",
+];
+// The four slots a GoCamBuilder activity may carry provenance for.
+const CHIP_SLOTS = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
+
+function nodeChipEmojis(prov, nodeId) {
+  const seen = new Set();
+  for (const slot of CHIP_SLOTS) {
+    const a = prov.assertions?.[`${nodeId}/${slot}`];
+    if (a?.source_type) seen.add(a.source_type);
+  }
+  const direct = prov.assertions?.[nodeId];
+  if (direct?.source_type) seen.add(direct.source_type);
+  return CHIP_SOURCE_ORDER
+    .filter((t) => seen.has(t))
+    .map((t) => SOURCE_META[t]?.emoji)
+    .filter(Boolean);
+}
+
+function edgeChipEmoji(prov, edge) {
+  const data = edge.data() || {};
+  const src = data.source || data.subject;
+  const tgt = data.target || data.object;
+  if (!src || !tgt) return null;
+  const a = prov.assertions?.[`${src}/causal/${tgt}`];
+  if (!a?.source_type) return null;
+  return SOURCE_META[a.source_type]?.emoji || null;
+}
+
+// Paint per-node and per-edge evidence-type emoji onto an HTML overlay
+// stacked over the cytoscape canvas. pointer-events: none so clicks
+// pass through. Re-renders on pan / zoom / resize.
+function installSourceChipsOverlay(cy, prov, viewerEl) {
+  const host = viewerEl.parentElement; // .viewer-pane
+  if (!host) return;
+  if (getComputedStyle(host).position === "static") host.style.position = "relative";
+
+  const overlay = document.createElement("div");
+  overlay.className = "source-chips-overlay";
+  host.appendChild(overlay);
+
+  // Position the overlay so its (0,0) matches cytoscape's container origin.
+  function syncOverlayRect() {
+    const cyContainer = cy.container();
+    if (!cyContainer) return;
+    const hr = host.getBoundingClientRect();
+    const cr = cyContainer.getBoundingClientRect();
+    overlay.style.left = `${cr.left - hr.left}px`;
+    overlay.style.top  = `${cr.top  - hr.top }px`;
+    overlay.style.width  = `${cr.width}px`;
+    overlay.style.height = `${cr.height}px`;
+  }
+
+  function chipEl(emojis, className) {
+    const el = document.createElement("span");
+    el.className = `source-chips ${className}`;
+    el.textContent = emojis.join("");
+    return el;
+  }
+
+  function render() {
+    syncOverlayRect();
+    overlay.innerHTML = "";
+
+    cy.nodes().forEach((node) => {
+      const id = node.id();
+      // Render chips only on activity individuals: gomodel:<run>/<activity>
+      // (Not on slot sub-individuals, which carry a third path segment.)
+      if (!/^gomodel:[^/]+\/[^/]+$/.test(id)) return;
+      const emojis = nodeChipEmojis(prov, id);
+      if (!emojis.length) return;
+      const bbox = node.renderedBoundingBox({ includeLabels: false });
+      const el = chipEl(emojis, "node-chip");
+      // Anchor outside the top-right corner of the node — clear of the
+      // edge midpoints where the per-edge chips sit.
+      el.style.left = `${bbox.x2 + 4}px`;
+      el.style.top  = `${bbox.y1 - 6}px`;
+      overlay.appendChild(el);
+    });
+
+    cy.edges().forEach((edge) => {
+      const e = edgeChipEmoji(prov, edge);
+      if (!e) return;
+      const mid = edge.renderedMidpoint();
+      if (!mid || !Number.isFinite(mid.x)) return;
+      const el = chipEl([e], "edge-chip");
+      el.style.left = `${mid.x}px`;
+      el.style.top  = `${mid.y}px`;
+      overlay.appendChild(el);
+    });
+  }
+
+  render();
+  cy.on("pan zoom viewport position", render);
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver(render).observe(host);
+  } else {
+    window.addEventListener("resize", render);
+  }
 }
 
 /* --------------------------------------------- shadow-DOM customisations */
