@@ -60,8 +60,8 @@
       "type": [
         {
           "type": "class",
-          "id": "GO:0043005",
-          "label": "neuron projection"
+          "id": "WBbt:0006865",
+          "label": "ADF neuron"
         }
       ],
       "root-type": [
@@ -72,6 +72,29 @@
         }
       ],
       "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1/tph1/causal/gomodel:run-figure1/mod1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
     },
     {
       "id": "gomodel:run-figure1/mod1",
@@ -146,6 +169,29 @@
       "annotations": []
     },
     {
+      "id": "gomodel:run-figure1/mod1/causal/gomodel:run-figure1/nhr76/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
       "id": "gomodel:run-figure1/ser6",
       "type": [
         {
@@ -216,6 +262,29 @@
         }
       ],
       "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1/ser6/causal/gomodel:run-figure1/mod1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
     },
     {
       "id": "gomodel:run-figure1/tbh1",
@@ -290,6 +359,29 @@
       "annotations": []
     },
     {
+      "id": "gomodel:run-figure1/tbh1/causal/gomodel:run-figure1/ser6/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
       "id": "gomodel:run-figure1/nhr76",
       "type": [
         {
@@ -330,8 +422,8 @@
       "type": [
         {
           "type": "class",
-          "id": "GO:0045944",
-          "label": "positive regulation of transcription by RNA polymerase II"
+          "id": "GO:1904123",
+          "label": "positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway"
         }
       ],
       "root-type": [
@@ -360,6 +452,29 @@
         }
       ],
       "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1/nhr76/causal/gomodel:run-figure1/atgl1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:28128367"
+        }
+      ]
     },
     {
       "id": "gomodel:run-figure1/atgl1",
@@ -402,8 +517,8 @@
       "type": [
         {
           "type": "class",
-          "id": "GO:0019433",
-          "label": "triglyceride catabolic process"
+          "id": "GO:0016042",
+          "label": "lipid catabolic process"
         }
       ],
       "root-type": [
@@ -461,7 +576,13 @@
       "property": "RO:0002304",
       "property-label": "causally upstream of, positive effect",
       "object": "gomodel:run-figure1/mod1",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1/tph1/causal/gomodel:run-figure1/mod1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1/mod1",
@@ -489,7 +610,13 @@
       "property": "RO:0002304",
       "property-label": "causally upstream of, positive effect",
       "object": "gomodel:run-figure1/nhr76",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1/mod1/causal/gomodel:run-figure1/nhr76/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1/ser6",
@@ -516,8 +643,14 @@
       "subject": "gomodel:run-figure1/ser6",
       "property": "RO:0002304",
       "property-label": "causally upstream of, positive effect",
-      "object": "gomodel:run-figure1/nhr76",
-      "annotations": []
+      "object": "gomodel:run-figure1/mod1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1/ser6/causal/gomodel:run-figure1/mod1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1/tbh1",
@@ -545,7 +678,13 @@
       "property": "RO:0002304",
       "property-label": "causally upstream of, positive effect",
       "object": "gomodel:run-figure1/ser6",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1/tbh1/causal/gomodel:run-figure1/ser6/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1/nhr76",
@@ -573,7 +712,13 @@
       "property": "RO:0002629",
       "property-label": "directly positively regulates",
       "object": "gomodel:run-figure1/atgl1",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1/nhr76/causal/gomodel:run-figure1/atgl1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1/atgl1",
@@ -594,6 +739,13 @@
       "property": "BFO:0000066",
       "property-label": "BFO:0000066",
       "object": "gomodel:run-figure1/atgl1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1/atgl1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure1/nhr76",
       "annotations": []
     }
   ],

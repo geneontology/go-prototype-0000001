@@ -8,45 +8,45 @@
     "fat metabolism",
     "beta-oxidation",
     "fat loss",
-    "lipid droplet regulation",
-    "transcriptional regulation of lipase"
+    "lipid catabolism",
+    "neuroendocrine regulation of metabolism"
   ],
   "compartments": [
     {
       "label": "NEURONS",
       "kind": "cell_type",
       "confidence": 1.0,
-      "snippet": "Central compartment in panel E labeled NEURONS, containing ADF, AWB, URX, RIC neuron subtypes"
+      "snippet": "Large central compartment labeled 'NEURONS' in panel E, containing ADF, AWB, URX, and RIC neuron sub-compartments."
     },
     {
       "label": "ADF",
       "kind": "cell_type",
-      "confidence": 0.95,
-      "snippet": "ADF neuron shown as blue pentagon within NEURONS compartment in panel E, associated with tph-1"
+      "confidence": 1.0,
+      "snippet": "Blue pentagon labeled 'ADF' inside the NEURONS compartment in panel E; tph-1 is associated with this neuron."
     },
     {
       "label": "AWB",
       "kind": "cell_type",
-      "confidence": 0.95,
-      "snippet": "AWB neuron shown as green triangle within NEURONS compartment in panel E, associated with ser-6"
+      "confidence": 1.0,
+      "snippet": "Green triangle labeled 'AWB' inside the NEURONS compartment in panel E; ser-6 is associated with this neuron."
     },
     {
       "label": "URX",
       "kind": "cell_type",
-      "confidence": 0.95,
-      "snippet": "URX neuron shown as yellow hexagon within NEURONS compartment in panel E, associated with mod-1"
+      "confidence": 1.0,
+      "snippet": "Yellow hexagon labeled 'URX' inside the NEURONS compartment in panel E; mod-1 is associated with this neuron. Also labeled in panel C fluorescence images."
     },
     {
       "label": "RIC",
       "kind": "cell_type",
-      "confidence": 0.95,
-      "snippet": "RIC neuron shown as red hexagon within NEURONS compartment in panel E, associated with tbh-1"
+      "confidence": 1.0,
+      "snippet": "Red hexagon labeled 'RIC' inside the NEURONS compartment in panel E; tbh-1 is associated with this neuron."
     },
     {
       "label": "INTESTINE",
       "kind": "tissue",
       "confidence": 1.0,
-      "snippet": "Right compartment in panel E labeled INTESTINE, containing nhr-76 and ATGL pathway"
+      "snippet": "Green rounded rectangle labeled 'INTESTINE' in panel E; contains nhr-76, ATGL, beta-oxidation, and fat loss."
     }
   ],
   "genes": [
@@ -54,97 +54,95 @@
       "symbol": "tph-1",
       "in_compartment": "ADF",
       "confidence": 1.0,
-      "snippet": "Labeled near ADF neuron in panel E; also appears in panels A and B as Patgl-1::GFP reporter in tph-1 mutant background"
+      "snippet": "Labeled next to the ADF neuron in panel E; also referenced in panels A and B as 'tph-1;Patgl-1::GFP' mutant. Serotonin biosynthesis enzyme in ADF neurons."
     },
     {
       "symbol": "mod-1",
       "in_compartment": "URX",
       "confidence": 1.0,
-      "snippet": "Labeled on URX neuron (yellow hexagon) in panel E; also referenced in transgene Pflp-8::mod-1SAS in panels C and D"
+      "snippet": "Labeled on the URX neuron in panel E; also referenced in panels C and D as 'Pflp-8::mod-1SAS'. Serotonin-gated chloride channel receptor in URX neurons."
     },
     {
       "symbol": "ser-6",
       "in_compartment": "AWB",
       "confidence": 1.0,
-      "snippet": "Labeled near AWB neuron (green triangle) in panel E"
+      "snippet": "Labeled next to the AWB neuron in panel E. Serotonin receptor associated with AWB neurons."
     },
     {
       "symbol": "tbh-1",
       "in_compartment": "RIC",
       "confidence": 1.0,
-      "snippet": "Labeled near RIC neuron (red hexagon) in panel E, associated with octopamine (Oct) signaling"
+      "snippet": "Labeled next to the RIC neuron in panel E. Tyramine beta-hydroxylase; involved in octopamine synthesis in RIC neurons."
     },
     {
       "symbol": "nhr-76",
       "in_compartment": "INTESTINE",
       "confidence": 1.0,
-      "snippet": "Labeled in INTESTINE compartment in panel E; shown activating ATGL"
+      "snippet": "Labeled inside the INTESTINE compartment in panel E, upstream of ATGL with an arrow indicating positive regulation."
     },
     {
       "symbol": "ATGL",
       "in_compartment": "INTESTINE",
       "confidence": 1.0,
-      "snippet": "Labeled downstream of nhr-76 in INTESTINE compartment in panel E; reporter Patgl-1::GFP used throughout figure"
+      "snippet": "Labeled inside the INTESTINE compartment in panel E, downstream of nhr-76, with an arrow pointing to beta-oxidation and fat loss. Referred to as 'Patgl-1::GFP' reporter in experimental panels."
     }
   ],
   "tentative_edges": [
     {
       "from_symbol": "tph-1",
       "to_symbol": "mod-1",
-      "relation": "produces serotonin that activates",
+      "from_compartment": "ADF",
+      "to_compartment": "URX",
+      "relation": "produces serotonin (5-HT) that signals to",
       "via": "5-HT",
-      "confidence": 0.95,
-      "snippet": "Panel E shows tph-1 in ADF producing 5-HT arrow pointing to mod-1 on URX neuron"
+      "confidence": 1.0,
+      "snippet": "Panel E shows '5-HT' label on arrow from ADF (tph-1) to URX (mod-1), indicating serotonin neurotransmission from ADF to URX."
     },
     {
-      "from_symbol": "tbh-1",
-      "to_compartment": "RIC",
-      "relation": "produces octopamine signal",
-      "via": "Oct",
-      "confidence": 0.85,
-      "snippet": "Panel E shows tbh-1 associated with RIC neuron with Oct label and arrow indicating octopamine signaling"
-    },
-    {
-      "from_symbol": "ser-6",
-      "to_compartment": "NEURONS",
-      "relation": "serotonin receptor expressed in AWB, participates in neuronal signaling circuit",
-      "confidence": 0.8,
-      "snippet": "ser-6 labeled on AWB triangle in panel E within NEURONS compartment"
+      "from_symbol": "mod-1",
+      "from_compartment": "URX",
+      "to_compartment": "INTESTINE",
+      "relation": "serotonin receptor activation in URX relays endocrine signal",
+      "confidence": 1.0,
+      "snippet": "Panel E shows dashed arrow from URX (mod-1) through 'endocrine signal' label to INTESTINE compartment."
     },
     {
       "from_compartment": "NEURONS",
       "to_compartment": "INTESTINE",
-      "relation": "endocrine signal",
+      "relation": "endocrine signal from NEURONS to INTESTINE",
       "confidence": 1.0,
-      "snippet": "Panel E shows dashed arrow labeled 'endocrine signal' from URX/NEURONS to INTESTINE"
+      "snippet": "Panel E shows large dashed arrow labeled 'endocrine signal' connecting the NEURONS compartment to the INTESTINE compartment."
     },
     {
       "from_symbol": "nhr-76",
       "to_symbol": "ATGL",
       "relation": "positively regulates transcription of",
-      "confidence": 0.95,
-      "snippet": "Panel E shows nhr-76 → ATGL arrow in INTESTINE compartment"
+      "confidence": 1.0,
+      "snippet": "Panel E shows arrow from nhr-76 to ATGL inside the INTESTINE compartment, indicating nhr-76 drives ATGL expression."
     },
     {
       "from_symbol": "ATGL",
       "to_compartment": "INTESTINE",
-      "relation": "drives beta-oxidation and fat loss",
-      "confidence": 0.95,
-      "snippet": "Panel E shows ATGL → β-oxidation / Fat loss in INTESTINE compartment"
+      "relation": "promotes beta-oxidation and fat loss",
+      "confidence": 1.0,
+      "snippet": "Panel E shows arrow from ATGL to 'β-oxidation / Fat loss' inside INTESTINE, indicating ATGL activity leads to fat catabolism."
     },
     {
-      "from_symbol": "mod-1",
-      "to_compartment": "INTESTINE",
-      "relation": "initiates endocrine signal leading to fat loss",
+      "from_symbol": "tbh-1",
+      "to_symbol": "ser-6",
+      "from_compartment": "RIC",
+      "to_compartment": "AWB",
+      "relation": "produces octopamine (Oct) signaling to AWB",
+      "via": "Oct",
       "confidence": 0.9,
-      "snippet": "Panel E shows dots emanating from URX (mod-1) neuron with dashed arrow to INTESTINE; panels C-D show Pflp-8::mod-1SAS blocks 5-HT-induced Patgl-1::GFP increase"
+      "snippet": "Panel E shows 'Oct' label on arrow from RIC (tbh-1) to AWB (ser-6), indicating octopamine neurotransmission."
     },
     {
-      "from_symbol": "tph-1",
-      "to_compartment": "INTESTINE",
-      "relation": "required for serotonin-dependent fat loss via endocrine signal",
-      "confidence": 0.9,
-      "snippet": "Panel B shows tph-1 mutant has reduced Patgl-1::GFP fluorescence compared to wild-type"
+      "from_compartment": "AWB",
+      "to_compartment": "NEURONS",
+      "relation": "AWB neuron contributes to NEURONS endocrine signaling pathway",
+      "confidence": 0.8,
+      "snippet": "AWB is depicted as part of the NEURONS network in panel E, with ser-6 labeled, contributing to the circuit that drives endocrine signaling."
     }
   ]
 }

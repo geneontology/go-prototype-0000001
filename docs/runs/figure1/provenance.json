@@ -5,182 +5,188 @@
     "gomodel:run-figure1/tph1/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00006600",
-      "snippet": "tph-1 resolved to WB:WBGene00006600 in C. elegans; tryptophan hydroxylase expressed in ADF neurons, required for serotonin biosynthesis and fat storage regulation",
+      "snippet": "tph-1 resolved to WB:WBGene00006600; tryptophan hydroxylase in ADF neurons, synthesizes serotonin.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.370753Z"
+      "retrieved_at": "2026-05-13T02:55:37.764048Z"
     },
     "gomodel:run-figure1/mod1/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00003386",
-      "snippet": "mod-1 resolved to WB:WBGene00003386 in C. elegans; serotonin-gated chloride channel expressed in URX neurons, mediates 5-HT signaling for fat beta-oxidation",
+      "snippet": "mod-1 resolved to WB:WBGene00003386; serotonin-gated chloride channel in URX neurons.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.370866Z"
+      "retrieved_at": "2026-05-13T02:55:37.764125Z"
     },
     "gomodel:run-figure1/ser6/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00021897",
-      "snippet": "ser-6 resolved to WB:WBGene00021897 in C. elegans; octopamine receptor expressed in AWB neurons, participates in octopamine signaling for fat beta-oxidation",
+      "snippet": "ser-6 resolved to WB:WBGene00021897; octopamine receptor in AWB neurons.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.370916Z"
+      "retrieved_at": "2026-05-13T02:55:37.764154Z"
     },
     "gomodel:run-figure1/tbh1/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00006541",
-      "snippet": "tbh-1 resolved to WB:WBGene00006541 in C. elegans; tyramine-beta hydroxylase in RIC neurons, synthesizes octopamine",
+      "snippet": "tbh-1 resolved to WB:WBGene00006541; tyramine beta-hydroxylase in RIC neurons, synthesizes octopamine.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.370949Z"
+      "retrieved_at": "2026-05-13T02:55:37.764186Z"
     },
     "gomodel:run-figure1/nhr76/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00015497",
-      "snippet": "nhr-76 resolved to WB:WBGene00015497 in C. elegans; nuclear receptor/transcription factor in intestine, activates ATGL transcription downstream of neuronal signals",
+      "snippet": "nhr-76 resolved to WB:WBGene00015497; nuclear hormone receptor/transcription factor in intestine.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.370977Z"
+      "retrieved_at": "2026-05-13T02:55:37.764205Z"
     },
     "gomodel:run-figure1/atgl1/enabled_by": {
       "source_type": "alliance",
       "source_id": "WB:WBGene00015484",
-      "snippet": "atgl-1 resolved to WB:WBGene00015484 in C. elegans; adipose triglyceride lipase expressed in intestine lipid droplets, drives triglyceride catabolism and fat loss",
+      "snippet": "atgl-1 resolved to WB:WBGene00015484; adipose triglyceride lipase in intestinal lipid droplets.",
       "tool_name": "alliance.resolve_symbol_to_curie",
-      "retrieved_at": "2026-05-13T02:24:32.371002Z"
+      "retrieved_at": "2026-05-13T02:55:37.764221Z"
     },
     "gomodel:run-figure1/tph1/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0004510",
-      "snippet": "tph-1 annotated with tryptophan 5-monooxygenase activity (ISS/IBA); catalyzes rate-limiting step of serotonin biosynthesis from tryptophan in ADF neurons",
-      "retrieved_at": "2026-05-13T02:24:47.179138Z"
+      "snippet": "tph-1 annotated to GO:0004510 tryptophan 5-monooxygenase activity (ISS), the rate-limiting enzyme in serotonin biosynthesis.",
+      "retrieved_at": "2026-05-13T02:55:50.655459Z"
     },
     "gomodel:run-figure1/mod1/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0160039",
-      "snippet": "mod-1 annotated with serotonin-gated chloride channel activity (IDA); directly binds serotonin and gates chloride ions as an ionotropic 5-HT receptor in URX neurons",
-      "retrieved_at": "2026-05-13T02:24:47.179232Z"
+      "snippet": "mod-1 annotated to GO:0160039 serotonin-gated chloride channel activity (IDA); it is the ligand-gated anion channel gated by serotonin in URX neurons.",
+      "retrieved_at": "2026-05-13T02:55:50.655541Z"
     },
     "gomodel:run-figure1/ser6/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0004989",
-      "snippet": "ser-6 annotated with octopamine receptor activity (IDA/IBA); functions as GPCR for octopamine in AWB neurons, participates in octopamine signaling for fat beta-oxidation",
-      "retrieved_at": "2026-05-13T02:24:47.179258Z"
+      "snippet": "ser-6 annotated to GO:0004989 octopamine receptor activity (IDA); it is the GPCR responding to octopamine in AWB neurons.",
+      "retrieved_at": "2026-05-13T02:55:50.655559Z"
     },
     "gomodel:run-figure1/tbh1/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0004836",
-      "snippet": "tbh-1 annotated with tyramine-beta hydroxylase activity (IMP/IEA/IBA); converts tyramine to octopamine in RIC neurons",
-      "retrieved_at": "2026-05-13T02:24:47.179274Z"
+      "snippet": "tbh-1 annotated to GO:0004836 tyramine-beta hydroxylase activity (IMP); converts tyramine to octopamine in RIC neurons.",
+      "retrieved_at": "2026-05-13T02:55:50.655573Z"
     },
     "gomodel:run-figure1/nhr76/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0003700",
-      "snippet": "nhr-76 annotated with DNA-binding transcription factor activity (IEA) and positive regulation of transcription by RNA Pol II (IMP); nuclear receptor that activates atgl-1 transcription in intestine",
-      "retrieved_at": "2026-05-13T02:24:47.179299Z"
+      "snippet": "nhr-76 annotated to GO:0003700 DNA-binding transcription factor activity (IEA); nuclear hormone receptor that positively regulates transcription by RNA Pol II (IMP).",
+      "retrieved_at": "2026-05-13T02:55:50.655583Z"
     },
     "gomodel:run-figure1/atgl1/molecular_function": {
       "source_type": "go_annotation",
       "source_id": "GO:0004806",
-      "snippet": "atgl-1 annotated with triacylglycerol lipase activity (IEA/IBA); C. elegans adipose triglyceride lipase that catabolizes triglycerides on lipid droplets in intestine",
-      "retrieved_at": "2026-05-13T02:24:47.179325Z"
+      "snippet": "atgl-1 annotated to GO:0004806 triacylglycerol lipase activity (IBA/IEA); the adipose triglyceride lipase that initiates lipolysis from lipid droplets in intestinal cells.",
+      "retrieved_at": "2026-05-13T02:55:50.655595Z"
     },
     "gomodel:run-figure1/tph1/part_of": {
       "source_type": "go_annotation",
       "source_id": "GO:0006587",
-      "snippet": "tph-1 annotated with serotonin biosynthetic process from L-tryptophan (IMP/IBA); required for 5-HT production in ADF neurons that drives downstream fat-loss signaling",
-      "retrieved_at": "2026-05-13T02:25:01.603153Z"
+      "snippet": "tph-1 annotated to GO:0006587 serotonin biosynthetic process from L-tryptophan (IMP); tph-1 is required for serotonin production in ADF neurons.",
+      "retrieved_at": "2026-05-13T02:56:04.711345Z"
     },
     "gomodel:run-figure1/mod1/part_of": {
       "source_type": "go_annotation",
       "source_id": "GO:1904123",
-      "snippet": "mod-1 annotated with positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway (IMP); URX neuron 5-HT receptor that initiates endocrine signal for intestinal fat beta-oxidation",
-      "retrieved_at": "2026-05-13T02:25:01.603271Z"
+      "snippet": "mod-1 annotated to GO:1904123 positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway (IMP); mod-1 in URX neurons couples serotonin sensing to downstream fat catabolism.",
+      "retrieved_at": "2026-05-13T02:56:04.711434Z"
     },
     "gomodel:run-figure1/ser6/part_of": {
       "source_type": "go_annotation",
       "source_id": "GO:1904122",
-      "snippet": "ser-6 annotated with positive regulation of fatty acid beta-oxidation by octopamine signaling pathway (IMP); octopamine receptor in AWB that transduces octopamine signal toward fat beta-oxidation",
-      "retrieved_at": "2026-05-13T02:25:01.603289Z"
+      "snippet": "ser-6 annotated to GO:1904122 positive regulation of fatty acid beta-oxidation by octopamine signaling pathway (IMP); octopamine receptor in AWB neurons contributes to fat catabolism via the neuroendocrine circuit.",
+      "retrieved_at": "2026-05-13T02:56:04.711467Z"
     },
     "gomodel:run-figure1/tbh1/part_of": {
       "source_type": "go_annotation",
       "source_id": "GO:0006589",
-      "snippet": "tbh-1 annotated with octopamine biosynthetic process (IMP); synthesizes octopamine in RIC neurons that signals to AWB via ser-6",
-      "retrieved_at": "2026-05-13T02:25:01.603301Z"
+      "snippet": "tbh-1 annotated to GO:0006589 octopamine biosynthetic process (IMP); tbh-1 is required for octopamine production in RIC neurons.",
+      "retrieved_at": "2026-05-13T02:56:04.711490Z"
     },
     "gomodel:run-figure1/nhr76/part_of": {
       "source_type": "go_annotation",
-      "source_id": "GO:0045944",
-      "snippet": "nhr-76 annotated with positive regulation of transcription by RNA Pol II (IMP) and positive regulation of FA beta-oxidation by both serotonin and octopamine signaling pathways (IMP); activates atgl-1 transcription in intestine",
-      "retrieved_at": "2026-05-13T02:25:01.603312Z"
+      "source_id": "GO:1904123",
+      "snippet": "nhr-76 annotated to GO:1904123 positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway (IMP); nuclear receptor in intestine that is the transcriptional effector of neuroendocrine signaling from neurons.",
+      "retrieved_at": "2026-05-13T02:56:04.711509Z"
     },
     "gomodel:run-figure1/atgl1/part_of": {
       "source_type": "go_annotation",
-      "source_id": "GO:0019433",
-      "snippet": "atgl-1 annotated with triglyceride catabolic process (IEA/IBA); performs lipolysis in intestinal lipid droplets driving beta-oxidation and fat loss downstream of nhr-76",
-      "retrieved_at": "2026-05-13T02:25:01.603322Z"
+      "source_id": "GO:0016042",
+      "snippet": "atgl-1 annotated to GO:0016042 lipid catabolic process (IEA); ATGL-1 initiates triglyceride breakdown feeding fatty acids into beta-oxidation in the intestine.",
+      "retrieved_at": "2026-05-13T02:56:04.711527Z"
     },
     "gomodel:run-figure1/tph1/occurs_in": {
-      "source_type": "go_annotation",
-      "source_id": "GO:0043005",
-      "snippet": "tph-1 protein localizes to neuron projection (IDA/IBA); consistent with its expression in ADF neuron projections where serotonin is synthesized and released",
-      "retrieved_at": "2026-05-13T02:25:16.424047Z"
+      "source_type": "instinct",
+      "snippet": "Figure panel E shows tph-1 inside the ADF neuron sub-compartment within NEURONS.",
+      "justification": "Panel E explicitly labels tph-1 as being associated with the ADF neuron compartment. No GO CC term for ADF neuron exists; using WormBase anatomy term WBbt:0006865.",
+      "retrieved_at": "2026-05-13T02:56:17.880359Z"
     },
     "gomodel:run-figure1/mod1/occurs_in": {
       "source_type": "go_annotation",
       "source_id": "GO:0005886",
-      "snippet": "mod-1 localizes to plasma membrane (IDA/IBA) and neuronal cell body (IDA); ionotropic 5-HT receptor on URX neuron surface",
-      "retrieved_at": "2026-05-13T02:25:16.424188Z"
+      "snippet": "mod-1 annotated to GO:0005886 plasma membrane (IDA); ligand-gated ion channel localized at the plasma membrane of URX neurons.",
+      "retrieved_at": "2026-05-13T02:56:17.880475Z"
     },
     "gomodel:run-figure1/ser6/occurs_in": {
       "source_type": "go_annotation",
       "source_id": "GO:0005886",
-      "snippet": "ser-6 annotated with plasma membrane localization (IEA/IBA); GPCR octopamine receptor on AWB neuron surface",
-      "retrieved_at": "2026-05-13T02:25:16.424239Z"
+      "snippet": "ser-6 annotated to GO:0005886 plasma membrane (IBA/IEA); GPCR octopamine receptor localized at the plasma membrane of AWB neurons.",
+      "retrieved_at": "2026-05-13T02:56:17.880520Z"
     },
     "gomodel:run-figure1/tbh1/occurs_in": {
       "source_type": "go_annotation",
       "source_id": "GO:0045202",
-      "snippet": "tbh-1 localizes to synapse (IDA); tyramine-beta hydroxylase produces octopamine at RIC neuron synaptic terminals for paracrine/endocrine release",
-      "retrieved_at": "2026-05-13T02:25:16.424273Z"
+      "snippet": "tbh-1 annotated to GO:0045202 synapse (IDA); tyramine-beta hydroxylase localizes to synapses in RIC neurons where octopamine is synthesized and released.",
+      "retrieved_at": "2026-05-13T02:56:17.880552Z"
     },
     "gomodel:run-figure1/nhr76/occurs_in": {
       "source_type": "go_annotation",
       "source_id": "GO:0005634",
-      "snippet": "nhr-76 annotated with nucleus localization (IEA/IBA); nuclear receptor transcription factor active in intestinal cell nuclei",
-      "retrieved_at": "2026-05-13T02:25:16.424304Z"
+      "snippet": "nhr-76 annotated to GO:0005634 nucleus (IEA/IBA); nuclear hormone receptor that functions in the intestinal cell nucleus to drive ATGL-1 transcription.",
+      "retrieved_at": "2026-05-13T02:56:17.880580Z"
     },
     "gomodel:run-figure1/atgl1/occurs_in": {
       "source_type": "go_annotation",
       "source_id": "GO:0005811",
-      "snippet": "atgl-1 annotated with lipid droplet localization (IDA/IBA); performs triglyceride lipolysis directly on intestinal lipid droplets",
-      "retrieved_at": "2026-05-13T02:25:16.424332Z"
+      "snippet": "atgl-1 annotated to GO:0005811 lipid droplet (IDA/IBA); ATGL-1 localizes to intestinal lipid droplets where it catalyzes triglyceride lipolysis.",
+      "retrieved_at": "2026-05-13T02:56:17.880607Z"
     },
     "gomodel:run-figure1/tph1/causal/gomodel:run-figure1/mod1": {
-      "source_type": "go_annotation",
-      "source_id": "GO:1904123",
-      "snippet": "Panel E: tph-1 in ADF produces serotonin (5-HT) that activates mod-1 serotonin-gated chloride channel on URX neuron. mod-1 is annotated with positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway (IMP); tph-1 mutants show reduced Patgl-1::GFP, consistent with this upstream role",
-      "retrieved_at": "2026-05-13T02:25:37.934602Z"
-    },
-    "gomodel:run-figure1/tbh1/causal/gomodel:run-figure1/ser6": {
-      "source_type": "go_annotation",
-      "source_id": "GO:1904122",
-      "snippet": "Panel E: tbh-1 in RIC neurons synthesizes octopamine (Oct) which activates ser-6 octopamine receptor in AWB neuron. ser-6 is annotated with positive regulation of fatty acid beta-oxidation by octopamine signaling pathway (IMP); tbh-1 catalyzes the biosynthetic step producing octopamine (GO:0006589, IMP)",
-      "retrieved_at": "2026-05-13T02:25:37.934664Z"
+      "source_type": "literature",
+      "source_id": "PMID:24120942",
+      "snippet": "Noble et al. 2013 (Cell Metab) show that tph-1 in ADF neurons synthesizes serotonin (5-HT) that is released and acts on mod-1, the serotonin-gated chloride channel expressed in URX neurons, to initiate the fat-regulatory endocrine signal. Panel E arrow labeled '5-HT' from ADF (tph-1) to URX (mod-1) depicts this synaptic serotonin neurotransmission step.",
+      "retrieved_at": "2026-05-13T02:56:50.113737Z"
     },
     "gomodel:run-figure1/mod1/causal/gomodel:run-figure1/nhr76": {
-      "source_type": "go_annotation",
-      "source_id": "GO:1904123",
-      "snippet": "Panel E: dashed arrow from URX (mod-1) neurons to INTESTINE indicating endocrine signal. Panels C-D show Pflp-8::mod-1SAS (dominant-negative mod-1 in URX) blocks 5-HT-induced Patgl-1::GFP increase. nhr-76 is annotated with positive regulation of fatty acid beta-oxidation by serotonin receptor signaling pathway (IMP), placing it downstream of mod-1 in the same pathway",
-      "retrieved_at": "2026-05-13T02:25:37.934683Z"
+      "source_type": "literature",
+      "source_id": "PMID:24120942",
+      "snippet": "Noble et al. 2013 show that serotonin receptor activation (mod-1) in URX neurons relays an endocrine signal (dashed arrow in panel E) from the neuronal compartment to the intestine, where nhr-76, a nuclear hormone receptor, is a transcriptional effector. This inter-tissue endocrine relay from URX to intestinal nhr-76 is a central finding of the paper.",
+      "retrieved_at": "2026-05-13T02:56:55.686068Z"
     },
-    "gomodel:run-figure1/ser6/causal/gomodel:run-figure1/nhr76": {
-      "source_type": "go_annotation",
-      "source_id": "GO:1904122",
-      "snippet": "Panel E: neuronal octopamine signaling (via ser-6 in AWB) feeds into intestinal nhr-76 via endocrine signal. nhr-76 annotated with positive regulation of fatty acid beta-oxidation by octopamine signaling pathway (IMP), placing it downstream of ser-6 octopamine receptor activity",
-      "retrieved_at": "2026-05-13T02:25:37.934697Z"
+    "gomodel:run-figure1/tbh1/causal/gomodel:run-figure1/ser6": {
+      "source_type": "literature",
+      "source_id": "PMID:24120942",
+      "snippet": "Noble et al. 2013 demonstrate that tbh-1 in RIC neurons synthesizes octopamine (Oct), which signals via the ser-6 octopamine receptor in AWB neurons to contribute to the integrated serotonin-octopamine circuit controlling fat. Panel E arrow labeled 'Oct' from RIC (tbh-1) to AWB (ser-6) depicts this octopaminergic neurotransmission.",
+      "retrieved_at": "2026-05-13T02:56:59.619800Z"
+    },
+    "gomodel:run-figure1/ser6/causal/gomodel:run-figure1/mod1": {
+      "source_type": "literature",
+      "source_id": "PMID:24120942",
+      "snippet": "Noble et al. 2013 show that octopamine signaling through ser-6 in AWB neurons is part of the integrated neuronal circuit that converges on the endocrine signal to the intestine. AWB (ser-6) is depicted as part of the NEURONS network feeding into the overall circuit that includes URX (mod-1) and the downstream endocrine relay; both octopamine and serotonin pathways cooperate to produce the endocrine signal controlling fat.",
+      "retrieved_at": "2026-05-13T02:57:04.281376Z"
     },
     "gomodel:run-figure1/nhr76/causal/gomodel:run-figure1/atgl1": {
-      "source_type": "go_annotation",
-      "source_id": "GO:0045944",
-      "snippet": "Panel E: nhr-76 → ATGL arrow in INTESTINE compartment. nhr-76 annotated with positive regulation of transcription by RNA Pol II (IMP) and with both serotonin and octopamine fat beta-oxidation pathways (IMP). Reporter Patgl-1::GFP used throughout the figure demonstrates transcriptional regulation of atgl-1 by nhr-76",
-      "retrieved_at": "2026-05-13T02:25:37.934708Z"
+      "source_type": "literature",
+      "source_id": "PMID:28128367",
+      "snippet": "Palamiuc et al. 2017 (Nat Commun) and Noble et al. 2013 establish that nhr-76, a nuclear hormone receptor in intestinal cells, directly drives expression of atgl-1 (ATGL/adipose triglyceride lipase). Panel E explicitly shows an arrow from nhr-76 to ATGL inside the intestine compartment, indicating nhr-76 transcriptionally activates atgl-1 to initiate lipolysis and fat catabolism.",
+      "retrieved_at": "2026-05-13T02:57:09.230877Z"
+    },
+    "gomodel:run-figure1/atgl1/causal/gomodel:run-figure1/nhr76": {
+      "source_type": "instinct",
+      "snippet": "atgl-1 triacylglycerol lipase activity is causally upstream (positive effect) of intestinal fat loss / beta-oxidation, as shown by the arrow from ATGL to beta-oxidation/Fat loss in panel E. This enzymatic lipolysis step releases fatty acids for beta-oxidation and net fat reduction.",
+      "justification": "Panel E explicitly shows an arrow from ATGL to 'beta-oxidation / Fat loss' inside the INTESTINE compartment. atgl-1 encodes the adipose triglyceride lipase that hydrolyzes triglycerides to release fatty acids which enter beta-oxidation. No separate activity node was created for beta-oxidation as a process; the nhr-76 node is the closest upstream intestinal effector, but this edge — atgl-1 promoting fat loss — is a biochemical consequence of its triacylglycerol lipase activity that is intrinsic to its annotated function (GO:0019433 triglyceride catabolic process; GO:0016042 lipid catabolic process). A second add_causal from atgl1 to itself is not meaningful; instead this step is best captured as part_of the lipid catabolic process set on the atgl1 activity node.",
+      "retrieved_at": "2026-05-13T02:57:25.188344Z"
     }
   }
 }

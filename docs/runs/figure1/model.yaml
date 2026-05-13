@@ -17,14 +17,18 @@ activities:
   occurs_in:
     type: CellularAnatomicalEntityAssociation
     evidence: []
-    term: GO:0043005
+    term: WBbt:0006865
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
     term: GO:0006587
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-05-13'
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1/mod1
 - id: gomodel:run-figure1/mod1
@@ -46,7 +50,11 @@ activities:
     term: GO:1904123
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-05-13'
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1/nhr76
 - id: gomodel:run-figure1/ser6
@@ -68,9 +76,13 @@ activities:
     term: GO:1904122
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-05-13'
     predicate: RO:0002304
-    downstream_activity: gomodel:run-figure1/nhr76
+    downstream_activity: gomodel:run-figure1/mod1
 - id: gomodel:run-figure1/tbh1
   enabled_by:
     type: EnabledByGeneProductAssociation
@@ -90,7 +102,11 @@ activities:
     term: GO:0006589
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-05-13'
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1/ser6
 - id: gomodel:run-figure1/nhr76
@@ -109,10 +125,14 @@ activities:
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
-    term: GO:0045944
+    term: GO:1904123
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:28128367
+      provenances:
+      - date: '2026-05-13'
     predicate: RO:0002629
     downstream_activity: gomodel:run-figure1/atgl1
 - id: gomodel:run-figure1/atgl1
@@ -131,7 +151,12 @@ activities:
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
-    term: GO:0019433
+    term: GO:0016042
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/nhr76
 objects:
 - id: WB:WBGene00006600
   label: tph-1
@@ -183,14 +208,11 @@ objects:
 - id: GO:0006589
   label: octopamine biosynthetic process
   type: gocam:BiologicalProcessTermObject
-- id: GO:0045944
-  label: positive regulation of transcription by RNA polymerase II
+- id: GO:0016042
+  label: lipid catabolic process
   type: gocam:BiologicalProcessTermObject
-- id: GO:0019433
-  label: triglyceride catabolic process
-  type: gocam:BiologicalProcessTermObject
-- id: GO:0043005
-  label: neuron projection
+- id: WBbt:0006865
+  label: ADF neuron
   type: gocam:CellularAnatomicalEntityTermObject
 - id: GO:0005886
   label: plasma membrane
@@ -204,9 +226,24 @@ objects:
 - id: GO:0005811
   label: lipid droplet
   type: gocam:CellularAnatomicalEntityTermObject
+- id: PMID:24120942
+  label: Noble et al. 2013 show that octopamine signaling through ser-6 in AWB neurons
+    is part of the integrated neuronal circuit that converges on the endocrine signal
+    to the intestine. AWB (ser-6) is depicted as part of the NEURONS network feeding
+    into the overall circuit that includes URX (mod-1) and the downstream endocrine
+    relay; both octopamine and serotonin pathways cooperate to produce the endocrine
+    signal controlling fat.
+  type: gocam:PublicationObject
 - id: RO:0002304
   label: causally upstream of, positive effect
   type: gocam:PredicateTermObject
+- id: PMID:28128367
+  label: Palamiuc et al. 2017 (Nat Commun) and Noble et al. 2013 establish that nhr-76,
+    a nuclear hormone receptor in intestinal cells, directly drives expression of
+    atgl-1 (ATGL/adipose triglyceride lipase). Panel E explicitly shows an arrow from
+    nhr-76 to ATGL inside the intestine compartment, indicating nhr-76 transcriptionally
+    activates atgl-1 to initiate lipolysis and fat catabolism.
+  type: gocam:PublicationObject
 - id: RO:0002629
   label: directly positively regulates
   type: gocam:PredicateTermObject
