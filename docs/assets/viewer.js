@@ -100,53 +100,105 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 /* ----------------------------------------------------- click handlers */
 
-function handleNodeClick(node, prov) {
-  const id = (typeof node?.id === "function") ? node.id() : node?.id;
+// gocam-viewer.tsx (line 698) emits the Cytoscape event object via nodeClick.emit(evt),
+// NOT the node directly. We need to dig the node out of evt.target before asking for
+// its id. Doing this defensively also covers the case where a future viewer version
+// emits the node directly.
+function unwrapNode(detail) {
+  if (detail && typeof detail.target?.id === "function") return detail.target;
+  return detail;
+}
+
+function nodeId(node) {
+  if (!node) return null;
+  if (typeof node.id === "function") {
+    try { return node.id(); } catch { return null; }
+  }
+  return typeof node.id === "string" ? node.id : null;
+}
+
+function handleNodeClick(detail, prov) {
+  const node = unwrapNode(detail);
+  const id = nodeId(node);
   if (!id) {
     renderEmpty("Unrecognized node payload.");
     return;
   }
+
+  // Case 1: the clicked id is itself an assertion key. This happens when the
+  // user clicks a gene-product / BP / CC sub-individual (whose IRI is
+  // `<activity>/enabled_by` / `.../part_of` / `.../occurs_in`).
+  if (prov.assertions[id]) {
+    const slot = lastSegment(id);
+    renderPanel(prettySlotHeader(slot), id, [{ slot, src: prov.assertions[id] }]);
+    return;
+  }
+
+  // Case 2: the clicked id is an activity IRI (the molecular_function instance).
+  // Aggregate every slot's source object so the panel shows the full per-activity
+  // breakdown.
   const slots = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
   const entries = slots
     .map((slot) => ({ slot, src: prov.assertions[`${id}/${slot}`] }))
     .filter((x) => x.src);
-
-  if (entries.length === 0) {
-    // Probably an evidence sub-individual or unmodelled node.
-    renderPanel(
-      "Node",
-      id,
-      [],
-      "No direct provenance for this node — it may be an evidence-ECO individual. Click an activity (gene-product) node to see its source breakdown."
-    );
+  if (entries.length > 0) {
+    renderPanel("Activity", id, entries);
     return;
   }
-  renderPanel(activityHeader(id), id, entries);
+
+  // Case 3: an evidence-ECO individual or other auxiliary node.
+  renderPanel("Node", id, [],
+    "No direct provenance for this node — it may be an evidence individual. " +
+    "Click the activity rectangle or one of its slot neighbours (gene product, BP, CC) " +
+    "to see a source breakdown."
+  );
 }
 
 function handleEdgeClick(edge, prov) {
   const subj = edge.source().id();
   const obj  = edge.target().id();
-  const stripActivity = (s) => s; // keep full IRI for now
-  const key  = `${stripActivity(subj)}/causal/${stripActivity(obj)}`;
-  const src  = prov.assertions[key];
-  const header = `Causal edge: ${shortIdLabel(subj, prov)} → ${shortIdLabel(obj, prov)}`;
-  if (src) {
-    renderPanel(header, key, [{ slot: "causal", src }]);
-  } else {
-    renderPanel(header, key, [],
-      "No provenance recorded for this edge in the ledger.");
+  // Causal edges (RO predicates) emit assertion keys like `<source>/causal/<target>`.
+  // Other slot edges (RO:0002333 enabled_by, BFO:0000050 part_of, BFO:0000066 occurs_in)
+  // point at the slot sub-individual whose IRI already IS an assertion key.
+  const causalKey = `${subj}/causal/${obj}`;
+  if (prov.assertions[causalKey]) {
+    renderPanel(
+      `Causal edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
+      causalKey,
+      [{ slot: "causal", src: prov.assertions[causalKey] }],
+    );
+    return;
   }
+  if (prov.assertions[obj]) {
+    const slot = lastSegment(obj);
+    renderPanel(
+      `${prettySlotHeader(slot)} edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
+      obj,
+      [{ slot, src: prov.assertions[obj] }],
+    );
+    return;
+  }
+  renderPanel(
+    `Edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
+    causalKey,
+    [],
+    "No provenance recorded for this edge in the ledger.",
+  );
 }
 
-function activityHeader(activityIri) {
-  return "Activity";
+function lastSegment(iri) {
+  const i = iri.lastIndexOf("/");
+  return i >= 0 ? iri.slice(i + 1) : iri;
 }
 
-function shortIdLabel(iri, prov) {
-  // The viewer JSON's individuals carry labels; fall back to last segment of the IRI.
-  const parts = iri.split("/");
-  return parts[parts.length - 1] || iri;
+function prettySlotHeader(slot) {
+  return {
+    enabled_by: "Enabled by (gene product)",
+    molecular_function: "Molecular function",
+    part_of: "Biological process",
+    occurs_in: "Cellular component",
+    causal: "Causal edge",
+  }[slot] || "Node";
 }
 
 /* ------------------------------------------------------ panel rendering */
