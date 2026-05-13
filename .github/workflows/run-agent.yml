@@ -73,12 +73,19 @@ jobs:
           printf '%s' "$GCP_KEY" > "$RUNNER_TEMP/sa.json"
           chmod 600 "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+          # The SA JSON already carries the GCP project ID — read it from
+          # there rather than hardcoding it in this public workflow file.
+          project_id=$(jq -r '.project_id' "$RUNNER_TEMP/sa.json")
+          if [ -z "$project_id" ] || [ "$project_id" = "null" ]; then
+            echo "::error::Could not read .project_id from the SA JSON."
+            exit 1
+          fi
+          echo "ANTHROPIC_VERTEX_PROJECT_ID=$project_id" >> "$GITHUB_ENV"
 
       - name: Configure Vertex env
         run: |
           {
             echo "CLAUDE_CODE_USE_VERTEX=1"
-            echo "ANTHROPIC_VERTEX_PROJECT_ID=gene-ontology-465618"
             echo "CLOUD_ML_REGION=us-east5"
             echo "ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6@default"
             echo "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6@default"

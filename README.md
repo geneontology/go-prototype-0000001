@@ -60,7 +60,7 @@ vars from `.env`:
 
 ```
 CLAUDE_CODE_USE_VERTEX=1
-ANTHROPIC_VERTEX_PROJECT_ID=gene-ontology-465618
+ANTHROPIC_VERTEX_PROJECT_ID=your-gcp-project-id
 CLOUD_ML_REGION=us-east5
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
 ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6@default
