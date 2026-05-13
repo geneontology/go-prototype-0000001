@@ -125,6 +125,7 @@ code, .assertion-id {
 .tag-cloud .tag.pathway_resource { background: var(--c-pathway); }
 .tag-cloud .tag.expert_review    { background: var(--c-expert); }
 .tag-cloud .tag.instinct         { background: var(--c-inst); }
+.tag-cloud .tag.go_term_request  { background: var(--c-req, #7e57c2); }
 
 /* Submit-a-figure card */
 .submit-card {
@@ -344,6 +345,7 @@ code, .assertion-id {
 .source-card.pathway_resource { border-left-color: var(--c-pathway); }
 .source-card.expert_review    { border-left-color: var(--c-expert); }
 .source-card.instinct         { border-left-color: var(--c-inst); }
+.source-card.go_term_request  { border-left-color: var(--c-req, #7e57c2); }
 
 .source-card .slot {
   display: inline-block;
@@ -370,6 +372,7 @@ code, .assertion-id {
 .badge.pathway_resource { background: var(--c-pathway); }
 .badge.expert_review    { background: var(--c-expert); }
 .badge.instinct         { background: var(--c-inst); }
+.badge.go_term_request  { background: var(--c-req, #7e57c2); }
 
 .source-id {
   font-family: "SF Mono", monospace;

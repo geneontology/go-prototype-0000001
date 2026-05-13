@@ -231,6 +231,76 @@ def test_orchestrator_rejects_self_loop_causal_edge() -> None:
     assert not (act.causal_associations or [])
 
 
+def test_pathway_search_handler_returns_reactome_hits(monkeypatch) -> None:
+    """_t_pathway_search hits Reactome ContentService and slimmifies the response."""
+    import httpx
+
+    captured: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["url"] = str(request.url)
+        return httpx.Response(200, json={
+            "results": [{
+                "entries": [
+                    {"stId": "R-CEL-209931",
+                     "name": "<span>Serotonin</span> biosynthesis",
+                     "species": ["Caenorhabditis elegans"],
+                     "type": "Pathway"},
+                ],
+            }],
+        })
+
+    class _MockClient(httpx.Client):
+        def __init__(self, *a, **kw):
+            kw.setdefault("transport", httpx.MockTransport(handler))
+            super().__init__(*a, **kw)
+
+    monkeypatch.setattr("httpx.Client", _MockClient)
+
+    builder = GoCamBuilder(model_id="gomodel:test-pw", title="pathway search test")
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient([]),
+        model_name="claude-sonnet-4-6@default", max_turns=1,
+    )
+    result = orch._t_pathway_search(  # noqa: SLF001
+        {"query": "serotonin", "species": "Caenorhabditis elegans", "max_results": 3}
+    )
+    assert "reactome.org/ContentService/search/query" in captured["url"]
+    [hit] = result["results"]
+    assert hit == {
+        "pathway_id": "R-CEL-209931",
+        "name": "Serotonin biosynthesis",  # HTML stripped
+        "species": ["Caenorhabditis elegans"],
+        "resource": "Reactome",
+        "pathway_url": "https://reactome.org/content/detail/R-CEL-209931",
+    }
+
+
+def test_request_go_term_appends_ledger_entry() -> None:
+    """_t_request_go_term records a go_term_request in the sidecar without touching the model."""
+    builder = GoCamBuilder(model_id="gomodel:test-needs", title="needs test")
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient([]),
+        model_name="claude-sonnet-4-6@default", max_turns=1,
+    )
+    result = orch._t_request_go_term({  # noqa: SLF001
+        "suggested_label": "positive regulation of intestinal lipid droplet lipolysis by neuroendocrine signal",
+        "aspect": "biological_process",
+        "rationale": "Need a process term that captures the inter-tissue endocrine relay step.",
+        "related_terms": ["GO:1904123", "GO:0016042"],
+    })
+    assert result["ok"] is True
+    [(key, src)] = builder._ledger.assertions.items()  # noqa: SLF001
+    assert key == result["request_id"]
+    assert "/needs/" in key
+    assert src.source_type == "go_term_request"
+    assert "neuroendocrine signal" in src.snippet
+    assert src.extra and src.extra["aspect"] == "biological_process"
+    assert src.extra["related_terms"] == "GO:1904123,GO:0016042"
+    # The model itself stays empty — no activities created.
+    assert not (builder._ledger.assertions and builder.build()[0].activities)  # noqa: SLF001
+
+
 def test_orchestrator_raises_on_runaway() -> None:
     builder = GoCamBuilder(model_id="gomodel:test-003", title="runaway test")
     # The mock keeps emitting tool_use indefinitely (well, we only stock 3 responses).

@@ -48,6 +48,7 @@ SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
                 "pathway_resource",
                 "expert_review",
                 "instinct",
+                "go_term_request",
             ],
         },
         "source_id": {
@@ -121,6 +122,11 @@ SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 * `expert_review`     — curator-asserted or expert-vetted. Use sparingly; not common in v0.
 * `instinct`          — LLM-only. REQUIRES a non-empty justification. The weakest tier — use ONLY \
                         when no real evidence is available, and write down WHY in justification.
+* `go_term_request`   — NOT a source for an assertion. A separate record that no existing GO term \
+                        fits a slot. Created via `request_go_term`, not by passing this as a slot's \
+                        source. Use when go_term_lookup turns up nothing usable AND the closest \
+                        existing term is materially wrong. Prefer recording the request + picking a \
+                        broader existing term to silently picking a wrong specific term.
 
 EDGES ARE THE CENTERPIECE — RESEARCH THEM SEPARATELY
 
@@ -134,9 +140,12 @@ BEFORE every add_causal call you SHOULD attempt:
      PMIDs you can cite directly as source_type='literature'.
   2. `europepmc_search` with a query like "<gene_a> <gene_b> <species> <process_term>" —
      returns titles + PMIDs of relevant papers.
+  3. `pathway_search` with the relevant process / gene names — returns Reactome pathway hits.
+     If a pathway contains this exact regulatory step, cite it as source_type='pathway_resource'
+     with source_id=<stId> and extra={resource: 'Reactome', pathway_url: <detail URL>}.
 
-If either of those returns a relevant PMID, use it. Only fall back to instinct (with a
-figure-referencing justification) when neither yields useful evidence.
+If any of these returns relevant evidence, use it. Only fall back to instinct (with a
+figure-referencing justification) when none yield useful evidence.
 
 Concrete rules for `add_causal` source objects:
 
@@ -309,6 +318,29 @@ class Orchestrator:
             self._t_gene_interactions,
         )
         self._register(
+            "pathway_search",
+            "Search Reactome for pathways relevant to a gene / process / edge. "
+            "Use BEFORE add_causal as a pathway_resource source candidate: if a "
+            "Reactome pathway contains this exact regulatory step, cite the "
+            "pathway stId (e.g. 'R-HSA-380615') with source_type='pathway_resource', "
+            "extra.resource='Reactome', extra.pathway_url=<detail URL>.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "query": {"type": "string"},
+                    "species": {
+                        "type": "string",
+                        "description": "Reactome species name, e.g. 'Caenorhabditis elegans', "
+                                       "'Homo sapiens'. Optional — omit to search across all species.",
+                    },
+                    "max_results": {"type": "integer", "minimum": 1, "maximum": 20, "default": 5},
+                },
+                "required": ["query"],
+            },
+            self._t_pathway_search,
+        )
+        self._register(
             "europepmc_search",
             "Free-text Europe PMC search. Use to find a PMID for the SPECIFIC regulatory "
             "relationship between two genes (e.g., 'tph-1 mod-1 Caenorhabditis elegans "
@@ -380,6 +412,41 @@ class Orchestrator:
                 ],
             },
             self._t_add_causal,
+        )
+        self._register(
+            "request_go_term",
+            "Record that a needed GO term does not exist in the ontology. Use this when "
+            "go_term_lookup returns nothing usable for an MF/BP/CC slot AND you cannot find "
+            "a close-enough existing term. Does NOT modify the model; appends a "
+            "go_term_request entry to the provenance sidecar so the curator can review and "
+            "(optionally) escalate to a real go-ontology issue. Prefer using an existing "
+            "broader GO term + this request over picking a wrong term silently.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "suggested_label": {
+                        "type": "string",
+                        "description": "What the missing term should be called, e.g. "
+                                       "'positive regulation of intestinal lipid droplet lipolysis by neuroendocrine signal'.",
+                    },
+                    "aspect": {
+                        "type": "string",
+                        "enum": ["molecular_function", "biological_process", "cellular_component"],
+                    },
+                    "rationale": {
+                        "type": "string",
+                        "description": "Why no existing GO term fits. Reference the activity/slot the gap blocks.",
+                    },
+                    "related_terms": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "GO CURIEs of the closest existing terms you considered.",
+                    },
+                },
+                "required": ["suggested_label", "aspect", "rationale"],
+            },
+            self._t_request_go_term,
         )
         self._register(
             "finalize_model",
@@ -499,6 +566,65 @@ class Orchestrator:
             })
         return {"interactions": slim}
 
+    def _t_pathway_search(self, inp: dict) -> dict:
+        """Reactome ContentService /search/query.
+
+        WikiPathways' classic REST went read-only on 2026-05-01; their
+        SPARQL endpoint is the current alternative but adds dependency
+        weight. Reactome alone covers the v0.2 use case (Reactome has
+        pathways across most model organisms via PANTHER inference) and
+        is sufficient to actually exercise the pathway_resource source
+        taxonomy end to end. Add WikiPathways via SPARQL in a follow-up
+        if the prototype demonstrates value.
+        """
+        import re
+        import httpx as _httpx
+        query = inp["query"]
+        max_results = max(1, min(int(inp.get("max_results", 5)), 20))
+        params = {
+            "query": query,
+            "types": "Pathway",
+            "rows": max_results,
+        }
+        if inp.get("species"):
+            params["species"] = inp["species"]
+        try:
+            with _httpx.Client(
+                base_url="https://reactome.org/ContentService",
+                timeout=20.0,
+                follow_redirects=True,
+            ) as c:
+                r = c.get("/search/query", params=params)
+                if r.status_code == 404:
+                    return {"results": []}  # 404 = no hits, not an error
+                r.raise_for_status()
+                payload = r.json()
+        except _httpx.HTTPError as e:
+            return {"error": f"HTTP error: {e}"}
+
+        def _clean(name: str | None) -> str:
+            return re.sub(r"<[^>]+>", "", name or "").strip()
+
+        hits: list[dict] = []
+        # Reactome wraps hits in groups by type; entries[] is what we want.
+        for group in (payload.get("results") or []):
+            for entry in (group.get("entries") or []):
+                st_id = entry.get("stId") or entry.get("id")
+                if not st_id:
+                    continue
+                hits.append({
+                    "pathway_id": st_id,
+                    "name": _clean(entry.get("name")),
+                    "species": entry.get("species") or [],
+                    "resource": "Reactome",
+                    "pathway_url": f"https://reactome.org/content/detail/{st_id}",
+                })
+                if len(hits) >= max_results:
+                    break
+            if len(hits) >= max_results:
+                break
+        return {"results": hits}
+
     def _t_europepmc_search(self, inp: dict) -> dict:
         import httpx as _httpx
         query = inp["query"]
@@ -617,6 +743,30 @@ class Orchestrator:
         except Exception as e:
             return {"error": str(e)}
         return {"ok": True}
+
+    def _t_request_go_term(self, inp: dict) -> dict:
+        import re
+        label = inp["suggested_label"]
+        slug = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")[:60] or "term"
+        key = f"{self.builder.model_id}/needs/{slug}"
+        extra: dict[str, str] = {
+            "kind": "go_term_request",
+            "aspect": inp["aspect"],
+        }
+        related = inp.get("related_terms") or []
+        if related:
+            extra["related_terms"] = ",".join(related)
+        try:
+            src = SourceObject(
+                source_type="go_term_request",
+                justification=inp["rationale"],
+                snippet=label,
+                extra=extra,
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        self.builder._ledger.attach(key, src)  # noqa: SLF001
+        return {"ok": True, "request_id": key}
 
     def _t_finalize(self, inp: dict) -> dict:
         self._finalized = True

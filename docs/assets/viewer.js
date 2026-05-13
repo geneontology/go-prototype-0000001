@@ -15,6 +15,7 @@ const SOURCE_META = {
   pathway_resource:  { emoji: "\u{1F6E4}\u{FE0F}",  label: "Pathway" },
   expert_review:     { emoji: "\u{2714}\u{FE0F}",   label: "Expert review" },
   instinct:          { emoji: "\u{26A0}\u{FE0F}",   label: "Instinct" },
+  go_term_request:   { emoji: "\u{2753}",           label: "GO term request" },
 };
 
 const SLOT_PRETTY = {

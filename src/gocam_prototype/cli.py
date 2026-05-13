@@ -182,6 +182,7 @@ _LANDING_HEAD = """<!DOCTYPE html>
           <span class="badge pathway_resource">🛤️ pathway</span>
           <span class="badge expert_review">✔️ expert review</span>
           <span class="badge instinct">⚠️ instinct</span>
+          <span class="badge go_term_request">❓ GO term request</span>
         </p>
       </header>
       <ul>
@@ -210,6 +211,7 @@ _BADGE_META: dict[str, tuple[str, str]] = {
     "pathway_resource": ("🛤️", "pathway"),
     "expert_review":    ("✔️", "expert review"),
     "instinct":         ("⚠️", "instinct"),
+    "go_term_request":  ("❓", "GO term request"),
 }
 
 

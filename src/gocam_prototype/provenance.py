@@ -46,6 +46,12 @@ SourceType = Literal[
     "pathway_resource",
     "expert_review",
     "instinct",
+    # Not actually a source for an assertion — a curator-visible record
+    # that the agent wanted a GO term that does not exist yet. Lives in
+    # the sidecar so the dream-workflow step "file an upstream GO ticket"
+    # has a per-run, per-gap durable artifact. Per repo policy we do NOT
+    # auto-file upstream; the curator escalates manually.
+    "go_term_request",
 ]
 
 
@@ -67,6 +73,12 @@ class SourceObject(BaseModel):
         if self.source_type == "instinct":
             if not (self.justification and self.justification.strip()):
                 raise ValueError("source_type='instinct' requires a non-empty justification")
+        elif self.source_type == "go_term_request":
+            # The "source" is a request, not a citation. Justification carries the
+            # rationale; snippet carries the suggested label/definition; extra may
+            # carry aspect, related_terms, etc.
+            if not (self.justification and self.justification.strip()):
+                raise ValueError("source_type='go_term_request' requires a non-empty justification")
         else:
             if not (self.source_id and self.source_id.strip()):
                 raise ValueError(
