@@ -406,10 +406,13 @@ code, .assertion-id {
 }
 .edge-fact-value.predicate {
   font-family: inherit;
-  font-weight: 600;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  word-break: normal;
+}
+.edge-fact-value.predicate .predicate-name {
+  font-weight: 600;
 }
 .edge-fact-value.predicate .curie {
   font-family: "SF Mono", monospace;

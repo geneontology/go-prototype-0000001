@@ -486,22 +486,18 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
   if (edgeFacts) {
     const facts = document.createElement("div");
     facts.className = "edge-facts";
+    // Direct grid children — label / value / label / value / label / value —
+    // so the two-column template (`max-content 1fr`) actually flows.
     facts.innerHTML = `
-      <div class="edge-fact-row">
-        <span class="edge-fact-label">Subject</span>
-        <code class="edge-fact-value">${escapeHtml(edgeFacts.subjLabel)}</code>
-      </div>
-      <div class="edge-fact-row">
-        <span class="edge-fact-label">Predicate</span>
-        <span class="edge-fact-value predicate">
-          ${escapeHtml(edgeFacts.propertyLabel || edgeFacts.property)}
-          <a class="curie" href="${sourceUrl(edgeFacts.property)}" target="_blank" rel="noopener noreferrer">${escapeHtml(edgeFacts.property)}</a>
-        </span>
-      </div>
-      <div class="edge-fact-row">
-        <span class="edge-fact-label">Object</span>
-        <code class="edge-fact-value">${escapeHtml(edgeFacts.objLabel)}</code>
-      </div>
+      <span class="edge-fact-label">Subject</span>
+      <code class="edge-fact-value">${escapeHtml(edgeFacts.subjLabel)}</code>
+      <span class="edge-fact-label">Predicate</span>
+      <span class="edge-fact-value predicate">
+        <span class="predicate-name">${escapeHtml(edgeFacts.propertyLabel || edgeFacts.property)}</span>
+        <a class="curie" href="${sourceUrl(edgeFacts.property)}" target="_blank" rel="noopener noreferrer">${escapeHtml(edgeFacts.property)}</a>
+      </span>
+      <span class="edge-fact-label">Object</span>
+      <code class="edge-fact-value">${escapeHtml(edgeFacts.objLabel)}</code>
     `;
     panel.appendChild(facts);
   }
