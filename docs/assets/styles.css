@@ -207,6 +207,52 @@ code, .assertion-id {
   word-break: break-all;
 }
 
+/* Edge facts — make the relationship itself the headline before the source card. */
+.edge-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 0.75rem;
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-ortho);
+  border-radius: 3px;
+}
+.edge-fact-label {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-muted);
+  align-self: center;
+}
+.edge-fact-value {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.9em;
+  word-break: break-all;
+}
+.edge-fact-value.predicate {
+  font-family: inherit;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.edge-fact-value.predicate .curie {
+  font-family: "SF Mono", monospace;
+  font-size: 0.75em;
+  font-weight: 400;
+  color: var(--c-muted);
+}
+.prov-note {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  background: #fff8e1;
+  border-left: 3px solid var(--c-amigo);
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
 #error {
   position: fixed;
   top: 1rem;

@@ -110,6 +110,7 @@ SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 
 * `literature`        — a PMID you actually found via a tool. source_id is the PMID. NEVER fabricate.
 * `go_annotation`     — an existing GO annotation pulled via the GO API. source_id is the GO term CURIE.
+                        APPLIES TO PER-GENE SLOTS ONLY (MF / BP / CC). NEVER for causal edges — see below.
 * `alliance`          — Alliance gene info / phenotypes / interactions / expression / orthologs.
                         source_id is whatever CURIE / identifier the Alliance API returned.
 * `amigo`             — a direct Golr / AmiGO Solr query result.
@@ -120,6 +121,44 @@ SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 * `expert_review`     — curator-asserted or expert-vetted. Use sparingly; not common in v0.
 * `instinct`          — LLM-only. REQUIRES a non-empty justification. The weakest tier — use ONLY \
                         when no real evidence is available, and write down WHY in justification.
+
+EDGES ARE THE CENTERPIECE — RESEARCH THEM SEPARATELY
+
+The whole point of a GO-CAM is its causal edges. The activity nodes only exist to be the
+endpoints of edges. Treat every causal edge as its own research target — never as a tail step
+that inherits a source from one of its endpoints.
+
+Concrete rules for `add_causal` source objects:
+
+* DO NOT use source_type='go_annotation' on a causal edge. GO annotations are per-gene-to-term
+  assertions; they do not encode causal edges between two genes' activities. Tagging an edge as
+  go_annotation just because both endpoint genes happen to be GO-annotated is WRONG.
+* Acceptable types for causal edges, in roughly descending preference:
+    - `literature`: a PMID that describes the specific regulatory relationship (gene A's product
+       directly affects gene B's activity). The `snippet` must quote or paraphrase the relevant
+       passage from the paper. Use whatever literature-search tools are available.
+    - `pathway_resource`: a Reactome / WikiPathways pathway that contains this exact step.
+       Put the pathway id in `source_id` and `{resource, pathway_url}` in `extra`.
+    - `orthology`: an ortholog pair (in another species) where the relationship IS curated.
+       `source_id` is the ortholog CURIE in the source organism; `extra.ortholog_species` +
+       `extra.from_annotation` carry the rest.
+    - `expert_review`: a curator has personally vetted this edge.
+    - `instinct`: ONLY when the figure clearly shows the arrow but no external source can be
+       located. The `justification` must point at the figure ("Panel E shows a dashed arrow
+       labelled 'endocrine signal' from NEURONS to INTESTINE…") and explain why no real source
+       applies. Always prefer a more authoritative type over instinct if one is reachable.
+* Always include the predicate's natural-language form in the `snippet` (e.g. "tph-1 product
+  is causally upstream, positive effect, of mod-1 in serotonin signalling"), so the panel reader
+  doesn't have to translate the RO CURIE in their head.
+* If the curator-intent edge names an intermediate molecule (e.g. via 5-HT), record that
+  intermediate in the `snippet` — that's a key biological detail.
+
+PER-COMPARTMENT EDGES — DO NOT DROP THEM
+
+Compartment-level edges in the curator intent (e.g. NEURONS → INTESTINE 'endocrine signal')
+must NOT be discarded. Model them as a single causal edge between the most plausible upstream
+activity in the source compartment and the most plausible downstream activity in the target
+compartment, and explain that interpretation in the `snippet`.
 
 NON-NEGOTIABLE RULES
 

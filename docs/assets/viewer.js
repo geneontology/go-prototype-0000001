@@ -44,14 +44,65 @@ async function main() {
   hideBuiltinSidebar(viewerEl);
   await viewerEl.setModelData(viewerData);
 
+  // Build a label index for the panel (so subject/object labels in edges
+  // resolve to human-readable text instead of the bare IRI).
+  const labelIndex = buildLabelIndex(viewerData);
+
   // Node-click is upstream-supported — wire it directly.
   viewerEl.addEventListener("nodeClick", (e) => {
-    handleNodeClick(e.detail, prov);
+    handleNodeClick(e.detail, prov, labelIndex);
   });
 
   // Edge-click is NOT upstream-supported. Try multiple paths to the
   // cytoscape instance; fall back to wiring on first node click.
-  await wireEdgeClicks(viewerEl, prov);
+  const cy = await wireEdgeClicks(viewerEl, prov, labelIndex);
+  if (cy) emphasizeCausalEdges(cy);
+}
+
+// Build {iri -> human-readable label} from viewer.json's individuals and objects.
+function buildLabelIndex(viewerData) {
+  const index = {};
+  for (const ind of viewerData.individuals || []) {
+    const t = (ind.type || [])[0];
+    if (t?.label) index[ind.id] = t.label;
+  }
+  return index;
+}
+
+// Walk Cytoscape edges and visually distinguish causal predicates (RO CURIEs) from
+// the structural slot edges (RO:0002333 enabled_by, BFO:0000050 part_of,
+// BFO:0000066 occurs_in). Doing it here, outside the upstream component, keeps
+// our taxonomy intent local — no fork required.
+function emphasizeCausalEdges(cy) {
+  cy.edges().forEach((edge) => {
+    const data = edge.data() || {};
+    const property = data.property || data.predicate || data.label || "";
+    const isCausal = /^RO:00/.test(property) &&
+      property !== "RO:0002333" /* enabled_by */;
+    if (isCausal) {
+      edge.style({
+        "width": 3.5,
+        "line-color": "#6a1b9a",
+        "target-arrow-color": "#6a1b9a",
+        "z-index": 5,
+      });
+    } else if (property === "RO:0002333") {
+      edge.style({
+        "line-color": "#90a4ae",
+        "target-arrow-color": "#90a4ae",
+        "line-style": "solid",
+        "width": 1.5,
+      });
+    } else if (property === "BFO:0000050" || property === "BFO:0000066") {
+      edge.style({
+        "line-color": "#cfd8dc",
+        "target-arrow-color": "#cfd8dc",
+        "line-style": "dashed",
+        "width": 1.5,
+      });
+    }
+  });
+  cy.style().update();
 }
 
 /* --------------------------------------------- shadow-DOM customisations */
@@ -103,25 +154,29 @@ async function fetchJson(path) {
 
 /* -------------------------------------------------------- cytoscape access */
 
-async function wireEdgeClicks(viewerEl, prov) {
+async function wireEdgeClicks(viewerEl, prov, labelIndex) {
   let cy = null;
   for (let attempt = 0; attempt < 60 && !cy; attempt++) {
     cy = findCy(viewerEl);
     if (!cy) await sleep(100);
   }
   if (cy) {
-    attachEdgeHandlers(cy, prov);
-    return;
+    attachEdgeHandlers(cy, prov, labelIndex);
+    return cy;
   }
   console.warn("Could not reach cytoscape instance after 6s; falling back to first-node-click wiring.");
+  let bootstrappedCy = null;
   viewerEl.addEventListener("nodeClick", function bootstrap(e) {
-    const fromNode = e.detail?.cy && typeof e.detail.cy === "function"
-      ? e.detail.cy() : null;
-    if (fromNode) {
-      attachEdgeHandlers(fromNode, prov);
+    const detail = e.detail;
+    const node = (detail && typeof detail.target?.id === "function") ? detail.target : detail;
+    bootstrappedCy = node?.cy && typeof node.cy === "function" ? node.cy() : null;
+    if (bootstrappedCy) {
+      attachEdgeHandlers(bootstrappedCy, prov, labelIndex);
+      emphasizeCausalEdges(bootstrappedCy);
       viewerEl.removeEventListener("nodeClick", bootstrap);
     }
   });
+  return null;
 }
 
 function findCy(viewerEl) {
@@ -137,10 +192,10 @@ function findCy(viewerEl) {
   return null;
 }
 
-function attachEdgeHandlers(cy, prov) {
+function attachEdgeHandlers(cy, prov, labelIndex) {
   if (cy._gocamProtoWired) return;
   cy._gocamProtoWired = true;
-  cy.edges().on("tap", (evt) => handleEdgeClick(evt.target, prov));
+  cy.edges().on("tap", (evt) => handleEdgeClick(evt.target, prov, labelIndex));
 }
 
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
@@ -164,7 +219,7 @@ function nodeId(node) {
   return typeof node.id === "string" ? node.id : null;
 }
 
-function handleNodeClick(detail, prov) {
+function handleNodeClick(detail, prov, labelIndex) {
   const node = unwrapNode(detail);
   const id = nodeId(node);
   if (!id) {
@@ -172,65 +227,94 @@ function handleNodeClick(detail, prov) {
     return;
   }
 
-  // Case 1: the clicked id is itself an assertion key. This happens when the
-  // user clicks a gene-product / BP / CC sub-individual (whose IRI is
-  // `<activity>/enabled_by` / `.../part_of` / `.../occurs_in`).
+  // Case 1: clicked id is itself an assertion key (a slot sub-individual).
   if (prov.assertions[id]) {
     const slot = lastSegment(id);
-    renderPanel(prettySlotHeader(slot), id, [{ slot, src: prov.assertions[id] }]);
+    renderPanel({
+      kind: "slot",
+      header: prettySlotHeader(slot),
+      assertionId: id,
+      entries: [{ slot, src: prov.assertions[id] }],
+    });
     return;
   }
 
-  // Case 2: the clicked id is an activity IRI (the molecular_function instance).
-  // Aggregate every slot's source object so the panel shows the full per-activity
-  // breakdown.
+  // Case 2: clicked id is an activity IRI. Aggregate per-slot assertions.
   const slots = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
   const entries = slots
     .map((slot) => ({ slot, src: prov.assertions[`${id}/${slot}`] }))
     .filter((x) => x.src);
   if (entries.length > 0) {
-    renderPanel("Activity", id, entries);
+    renderPanel({
+      kind: "activity",
+      header: "Activity",
+      assertionId: id,
+      entries,
+    });
     return;
   }
 
-  // Case 3: an evidence-ECO individual or other auxiliary node.
-  renderPanel("Node", id, [],
-    "No direct provenance for this node — it may be an evidence individual. " +
-    "Click the activity rectangle or one of its slot neighbours (gene product, BP, CC) " +
-    "to see a source breakdown."
-  );
+  // Case 3: evidence-ECO individual or auxiliary node.
+  renderPanel({
+    kind: "other",
+    header: "Node",
+    assertionId: id,
+    entries: [],
+    note: "No direct provenance for this node — it may be an evidence individual. " +
+          "Click the activity rectangle or one of its slot neighbours (gene product, BP, CC) " +
+          "to see a source breakdown.",
+  });
 }
 
-function handleEdgeClick(edge, prov) {
+function handleEdgeClick(edge, prov, labelIndex) {
   const subj = edge.source().id();
   const obj  = edge.target().id();
-  // Causal edges (RO predicates) emit assertion keys like `<source>/causal/<target>`.
-  // Other slot edges (RO:0002333 enabled_by, BFO:0000050 part_of, BFO:0000066 occurs_in)
-  // point at the slot sub-individual whose IRI already IS an assertion key.
+  const property = edge.data("property") || edge.data("predicate") || edge.data("label") || "";
+
   const causalKey = `${subj}/causal/${obj}`;
+  const subjLabel = labelOf(subj, labelIndex);
+  const objLabel  = labelOf(obj,  labelIndex);
+
   if (prov.assertions[causalKey]) {
-    renderPanel(
-      `Causal edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
-      causalKey,
-      [{ slot: "causal", src: prov.assertions[causalKey] }],
-    );
+    renderPanel({
+      kind: "causal",
+      header: "Causal edge",
+      assertionId: causalKey,
+      edgeFacts: {
+        property,
+        propertyLabel: edge.data("property-label") || property,
+        subj, subjLabel,
+        obj,  objLabel,
+      },
+      entries: [{ slot: "causal", src: prov.assertions[causalKey] }],
+    });
     return;
   }
   if (prov.assertions[obj]) {
     const slot = lastSegment(obj);
-    renderPanel(
-      `${prettySlotHeader(slot)} edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
-      obj,
-      [{ slot, src: prov.assertions[obj] }],
-    );
+    renderPanel({
+      kind: "slot-edge",
+      header: prettySlotHeader(slot),
+      assertionId: obj,
+      edgeFacts: { property, propertyLabel: edge.data("property-label") || property,
+                   subj, subjLabel, obj, objLabel },
+      entries: [{ slot, src: prov.assertions[obj] }],
+    });
     return;
   }
-  renderPanel(
-    `Edge: ${lastSegment(subj)} → ${lastSegment(obj)}`,
-    causalKey,
-    [],
-    "No provenance recorded for this edge in the ledger.",
-  );
+  renderPanel({
+    kind: "causal",
+    header: "Edge",
+    assertionId: causalKey,
+    edgeFacts: { property, propertyLabel: edge.data("property-label") || property,
+                 subj, subjLabel, obj, objLabel },
+    entries: [],
+    note: "No provenance recorded for this edge in the ledger.",
+  });
+}
+
+function labelOf(iri, labelIndex) {
+  return labelIndex[iri] || lastSegment(iri) || iri;
 }
 
 function lastSegment(iri) {
@@ -259,13 +343,40 @@ function renderEmpty(text) {
   panel.appendChild(p);
 }
 
-function renderPanel(headerText, assertionId, entries, note) {
+function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
   const panel = document.querySelector("#provenance-panel");
   panel.innerHTML = "";
+  panel.dataset.kind = kind || "";
 
   const h = document.createElement("h2");
-  h.textContent = headerText;
+  h.textContent = header;
   panel.appendChild(h);
+
+  // For causal-edge panels, render the relationship as a structured fact-block
+  // before the source card. The edge IS the assertion; the node labels and the
+  // predicate are the headline.
+  if (edgeFacts) {
+    const facts = document.createElement("div");
+    facts.className = "edge-facts";
+    facts.innerHTML = `
+      <div class="edge-fact-row">
+        <span class="edge-fact-label">Subject</span>
+        <code class="edge-fact-value">${escapeHtml(edgeFacts.subjLabel)}</code>
+      </div>
+      <div class="edge-fact-row">
+        <span class="edge-fact-label">Predicate</span>
+        <span class="edge-fact-value predicate">
+          ${escapeHtml(edgeFacts.propertyLabel || edgeFacts.property)}
+          <a class="curie" href="${sourceUrl(edgeFacts.property)}" target="_blank" rel="noopener noreferrer">${escapeHtml(edgeFacts.property)}</a>
+        </span>
+      </div>
+      <div class="edge-fact-row">
+        <span class="edge-fact-label">Object</span>
+        <code class="edge-fact-value">${escapeHtml(edgeFacts.objLabel)}</code>
+      </div>
+    `;
+    panel.appendChild(facts);
+  }
 
   const idEl = document.createElement("code");
   idEl.className = "assertion-id";
@@ -274,20 +385,17 @@ function renderPanel(headerText, assertionId, entries, note) {
 
   if (note) {
     const p = document.createElement("p");
+    p.className = "prov-note";
     p.textContent = note;
     panel.appendChild(p);
   }
 
-  if (entries.length === 0) {
-    return;
-  }
-
-  for (const entry of entries) {
-    panel.appendChild(renderSource(entry.slot, entry.src));
+  for (const entry of (entries || [])) {
+    panel.appendChild(renderSource(entry.slot, entry.src, assertionId));
   }
 }
 
-function renderSource(slot, src) {
+function renderSource(slot, src, assertionId) {
   const card = document.createElement("div");
   card.className = `source-card ${src.source_type}`;
 
