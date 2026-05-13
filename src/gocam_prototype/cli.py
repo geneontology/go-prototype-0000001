@@ -129,74 +129,78 @@ _LANDING_HEAD = """<!DOCTYPE html>
 
   <main class="landing-main">
 
-    <section class="submit-card">
-      <h2>Submit a figure</h2>
-      <p class="card-intro">Drop the URL of a pathway figure here — or skip the URL and you'll get to
-         drag-and-drop a local file on the next screen. Submit opens a pre-populated
-         <a href="https://github.com/geneontology/go-prototype-0000001/issues/new?template=run-agent.yml" target="_blank" rel="noopener noreferrer">GitHub Issue Form</a>;
-         clicking Submit there fires the GitHub Actions workflow and the result is commented back
-         on the issue when the agent finishes.</p>
-      <form id="submit-form" class="submit-form">
-        <label>
-          <span class="field-label">Image URL
-            <small class="hint">— or leave blank and drag-and-drop a local file in the GitHub form</small>
-          </span>
-          <input type="url" name="image_url" placeholder="https://…/figure.png">
-        </label>
-        <label>
-          <span class="field-label">Species</span>
-          <input type="text" name="species" value="Caenorhabditis elegans">
-        </label>
-        <div class="form-row">
-          <label class="grow">
-            <span class="field-label">Species taxon</span>
-            <input type="text" name="species_taxon" placeholder="NCBITaxon:6239">
-          </label>
-          <label class="grow">
-            <span class="field-label">Run id</span>
-            <input type="text" name="run_id" placeholder="(auto: UTC timestamp)">
-          </label>
-        </div>
-        <label>
-          <span class="field-label">Process hint</span>
-          <textarea name="process_hint" rows="2"
-                    placeholder="Free-text hint describing the biological process the figure depicts"></textarea>
-        </label>
-        <div class="form-actions">
-          <button type="submit" class="primary">Queue draft model</button>
-        </div>
-        <div id="submit-result" class="submit-result" hidden></div>
-      </form>
-    </section>
+    <div class="landing-top">
 
-    <section class="runs-list">
-      <header class="runs-list-header">
-        <h2>Draft models</h2>
-        <p class="legend" aria-label="Source-type key">
-          <span class="legend-label">Source types:</span>
-          <span class="badge literature">📚 literature</span>
-          <span class="badge go_annotation">🗂️ GO annotation</span>
-          <span class="badge alliance">🧬 Alliance</span>
-          <span class="badge amigo">🔍 AmiGO</span>
-          <span class="badge orthology">↗️ orthology</span>
-          <span class="badge pathway_resource">🛤️ pathway</span>
-          <span class="badge expert_review">✔️ expert review</span>
-          <span class="badge instinct">⚠️ instinct</span>
-          <span class="badge go_term_request">❓ GO term request</span>
-        </p>
-      </header>
-      <ul>
+      <section class="submit-card">
+        <h2>Submit a figure</h2>
+        <p class="card-intro">The fields below preview what the GitHub Issue Form asks for but
+           aren't wired up yet — click <strong>Open GitHub form</strong> and fill them in there.
+           Submitting on GitHub fires the workflow, and the agent comments the draft model URL
+           back on the issue when it finishes.</p>
+        <form id="submit-form" class="submit-form" aria-disabled="true">
+          <label>
+            <span class="field-label">Image URL</span>
+            <input type="url" name="image_url" placeholder="https://…/figure.png" disabled>
+          </label>
+          <label>
+            <span class="field-label">Species</span>
+            <input type="text" name="species" value="Caenorhabditis elegans" disabled>
+          </label>
+          <div class="form-row">
+            <label class="grow">
+              <span class="field-label">Species taxon</span>
+              <input type="text" name="species_taxon" placeholder="NCBITaxon:6239" disabled>
+            </label>
+            <label class="grow">
+              <span class="field-label">Run id</span>
+              <input type="text" name="run_id" placeholder="(auto: UTC timestamp)" disabled>
+            </label>
+          </div>
+          <label>
+            <span class="field-label">Process hint</span>
+            <textarea name="process_hint" rows="2"
+                      placeholder="Free-text hint describing the biological process the figure depicts"
+                      disabled></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="button" class="primary" disabled aria-disabled="true"
+                    title="Not wired up — use Open GitHub form">Queue draft model</button>
+            <a class="primary-link"
+               href="https://github.com/geneontology/go-prototype-0000001/issues/new?template=run-agent.yml"
+               target="_blank" rel="noopener noreferrer">Open GitHub form ↗</a>
+          </div>
+        </form>
+      </section>
+
+      <section class="runs-list">
+        <header class="runs-list-header">
+          <h2>Draft models</h2>
+          <p class="legend" aria-label="Source-type key">
+            <span class="legend-label">Source types:</span>
+            <span class="badge literature">📚 literature</span>
+            <span class="badge go_annotation">🗂️ GO annotation</span>
+            <span class="badge alliance">🧬 Alliance</span>
+            <span class="badge amigo">🔍 AmiGO</span>
+            <span class="badge orthology">↗️ orthology</span>
+            <span class="badge pathway_resource">🛤️ pathway</span>
+            <span class="badge expert_review">✔️ expert review</span>
+            <span class="badge instinct">⚠️ instinct</span>
+            <span class="badge go_term_request">❓ GO term request</span>
+          </p>
+        </header>
+        <ul>
 """
 
-_LANDING_TAIL = """      </ul>
-    </section>
+_LANDING_TAIL = """        </ul>
+      </section>
+
+    </div>
 
     <p class="footer-note">Hand-built reference drafts and live agent runs both land in the same
       <code>docs/runs/&lt;run-id&gt;/</code> layout. Each draft is ready for a curator to review,
       confirm, dispute, or refine.</p>
 
   </main>
-  <script src="assets/landing.js"></script>
 </body>
 </html>
 """

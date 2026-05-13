@@ -50,6 +50,15 @@ code, .assertion-id {
   display: grid;
   gap: 1.5rem;
 }
+.landing-top {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  align-items: start;
+}
+@media (max-width: 840px) {
+  .landing-top { grid-template-columns: 1fr; }
+}
 
 .runs-list h2 { margin: 0 0 0.4rem; font-size: 1.15rem; }
 .runs-list ul { list-style: none; padding: 0; margin: 0; }
@@ -180,7 +189,9 @@ code, .assertion-id {
 }
 .submit-form .form-actions {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
   justify-content: flex-end;
 }
 .submit-form button.primary {
@@ -193,6 +204,23 @@ code, .assertion-id {
   font-size: 0.95em;
 }
 .submit-form button.primary:hover { filter: brightness(1.05); }
+
+/* Visibly inoperable state — inputs and the Queue button are placeholders
+   until the form gets wired to the GH workflow. */
+.submit-form input:disabled,
+.submit-form textarea:disabled {
+  background: var(--c-bg);
+  color: var(--c-muted);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+.submit-form button.primary:disabled {
+  background: var(--c-border);
+  color: var(--c-muted);
+  cursor: not-allowed;
+  filter: none;
+}
+.submit-form button.primary:disabled:hover { filter: none; }
 .submit-form .submit-result {
   margin-top: 0.75rem;
   padding: 0.75rem 1rem;
