@@ -1,5 +1,5 @@
 name: "Run agent (draft a GO-CAM)"
-description: "Submit a research-paper figure URL and we'll queue an agent run that drafts a GO-CAM."
+description: "Submit a pathway figure (URL or local file) and we'll queue an agent run that drafts a GO-CAM."
 title: "[draft-model] "
 labels: ["run-agent-request"]
 body:
@@ -10,16 +10,37 @@ body:
         your figure. The result will be commented back on this issue when the agent finishes,
         and the draft will appear on the [Pages site](https://geneontology.github.io/go-prototype-0000001/).
 
+        Provide the figure as **either** a publicly-accessible URL **or** a local file
+        dragged into the upload field below.
+
         **Tip:** the landing page's *Submit a figure* form pre-populates this template for you.
 
   - type: input
     id: image_url
     attributes:
       label: Image URL
-      description: Publicly-accessible URL of the pathway figure (PNG / JPG / WebP).
+      description: |
+        Publicly-accessible URL of the pathway figure (PNG / JPG / WebP).
+        Leave blank if you'd rather upload a local file in the next field.
       placeholder: https://example.com/figure.png
     validations:
-      required: true
+      required: false
+
+  - type: textarea
+    id: image_upload
+    attributes:
+      label: Image upload (drag & drop a local file)
+      description: |
+        Drag a local image file directly into this box — GitHub will upload it
+        automatically and replace the file with a `![name](https://user-attachments…)`
+        markdown link. Use this if you don't have a public URL for the figure.
+
+        Fill in EITHER this field OR Image URL above. If both are filled, the
+        uploaded image wins.
+      placeholder: |
+        (Drop an image here, or paste a markdown image link.)
+    validations:
+      required: false
 
   - type: input
     id: species

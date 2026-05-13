@@ -19,14 +19,17 @@
 
     <section class="submit-card">
       <h2>Submit a figure</h2>
-      <p class="card-intro">Paste the URL of a publicly-accessible pathway figure and we'll queue a
-         draft-model run. Submit opens a pre-populated <a href="https://github.com/geneontology/go-prototype-0000001/issues/new?template=run-agent.yml" target="_blank" rel="noopener noreferrer">GitHub Issue Form</a>;
+      <p class="card-intro">Drop the URL of a pathway figure here — or skip the URL and you'll get to
+         drag-and-drop a local file on the next screen. Submit opens a pre-populated
+         <a href="https://github.com/geneontology/go-prototype-0000001/issues/new?template=run-agent.yml" target="_blank" rel="noopener noreferrer">GitHub Issue Form</a>;
          clicking Submit there fires the GitHub Actions workflow and the result is commented back
          on the issue when the agent finishes.</p>
       <form id="submit-form" class="submit-form">
         <label>
-          <span class="field-label">Image URL <small class="required">required</small></span>
-          <input type="url" name="image_url" placeholder="https://…/figure.png" required>
+          <span class="field-label">Image URL
+            <small class="hint">— or leave blank and drag-and-drop a local file in the GitHub form</small>
+          </span>
+          <input type="url" name="image_url" placeholder="https://…/figure.png">
         </label>
         <label>
           <span class="field-label">Species</span>

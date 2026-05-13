@@ -88,7 +88,13 @@ jobs:
       # When the trigger is an issue (the user submitted the GH Issue Form),
       # extract each field's value from the issue body. GH renders form
       # answers as "### Field Label\n\nvalue\n\n" sections; the parser keys
-      # off that. Skips silently for non-issue triggers.
+      # off the field LABEL (lowercased, underscores) — but the labels are
+      # human-readable ("Image URL", "Image upload (drag & drop a local file)")
+      # so we normalize parens-suffixes off and map a few label-variants back
+      # to the canonical field ids the workflow uses below.
+      # The `image_upload` field is a textarea where GH renders any drag-uploaded
+      # image as `![name](https://user-attachments...)` markdown; we extract the
+      # first URL from that markdown and prefer it over the typed Image URL.
       - name: Parse issue form
         if: github.event_name == 'issues'
         id: parse-issue
@@ -98,14 +104,50 @@ jobs:
           python3 - <<'PY' > "$RUNNER_TEMP/parsed.json"
           import json, os, re
           body = os.environ.get("ISSUE_BODY") or ""
+          # Label → canonical id. Anything not listed here is normalized as
+          # lowercase + spaces->underscores (preserving back-compat with older
+          # template revisions).
+          LABEL_TO_ID = {
+              "image url": "image_url",
+              "image upload (drag & drop a local file)": "image_upload",
+              "image upload": "image_upload",
+              "species": "species",
+              "species taxon": "species_taxon",
+              "process hint": "process_hint",
+              "run id": "run_id",
+          }
           fields = {}
           for m in re.finditer(r'^### ([^\n]+)\n+(.*?)(?=\n### |\Z)', body, re.MULTILINE | re.DOTALL):
-              label = m.group(1).strip()
+              label = m.group(1).strip().lower()
               value = m.group(2).strip()
               if value == "_No response_":
                   value = ""
-              key = label.lower().replace(' ', '_')
+              key = LABEL_TO_ID.get(label, label.replace(' ', '_'))
               fields[key] = value
+
+          # If the user dragged an image into image_upload, GH rendered it as
+          # `![filename](https://user-attachments.githubusercontent.com/...)` or
+          # `<img ... src="https://user-attachments...">`. Either way, pull the
+          # first URL out and route it to image_url. Prefer user-attachments
+          # links over arbitrary pasted URLs, since those are the explicit
+          # uploads.
+          upload_raw = fields.get("image_upload", "") or ""
+          uploaded_url = ""
+          # Markdown image syntax first.
+          for m in re.finditer(r'!\[[^\]]*\]\((https?://[^)\s]+)\)', upload_raw):
+              uploaded_url = m.group(1); break
+          # Bare HTML <img src=...>.
+          if not uploaded_url:
+              m = re.search(r'<img[^>]+src=["\'](https?://[^"\']+)', upload_raw)
+              if m: uploaded_url = m.group(1)
+          # Last resort: bare URL on its own line.
+          if not uploaded_url:
+              m = re.search(r'(https?://\S+)', upload_raw)
+              if m: uploaded_url = m.group(1)
+
+          if uploaded_url:
+              fields["image_url"] = uploaded_url  # uploaded wins per template
+
           print(json.dumps(fields, indent=2))
           PY
           cat "$RUNNER_TEMP/parsed.json"

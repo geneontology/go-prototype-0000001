@@ -65,6 +65,7 @@ async function copyToClipboard(text) {
 function renderResult(container, form) {
   const issueUrl = buildIssueFormUrl(form);
   const cmd = buildCommand(form);
+  const hasUrl = !!(new FormData(form).get("image_url") || "").toString().trim();
 
   container.hidden = false;
   container.innerHTML = "";
@@ -75,8 +76,9 @@ function renderResult(container, form) {
 
   const primaryIntro = document.createElement("p");
   primaryIntro.className = "submit-intro";
-  primaryIntro.textContent =
-    "Open the prefilled GitHub form in a new tab; the workflow fires the moment you click Submit there.";
+  primaryIntro.textContent = hasUrl
+    ? "Open the prefilled GitHub form in a new tab; the workflow fires the moment you click Submit there."
+    : "Open the prefilled GitHub form, drag your local image file into the “Image upload” field, then click Submit. The workflow fires immediately.";
   primaryCard.appendChild(primaryIntro);
 
   const primaryLink = document.createElement("a");
@@ -84,38 +86,44 @@ function renderResult(container, form) {
   primaryLink.target = "_blank";
   primaryLink.rel = "noopener noreferrer";
   primaryLink.className = "primary-link";
-  primaryLink.textContent = "Open prefilled GitHub form ↗";
+  primaryLink.textContent = hasUrl
+    ? "Open prefilled GitHub form ↗"
+    : "Open GitHub form (drag & drop your file there) ↗";
   primaryCard.appendChild(primaryLink);
 
   container.appendChild(primaryCard);
 
-  // Secondary path: gh CLI for users without a GH browser session.
-  const secondary = document.createElement("details");
-  secondary.className = "submit-secondary";
-  const summary = document.createElement("summary");
-  summary.textContent = "Or run from a terminal (gh CLI)";
-  secondary.appendChild(summary);
+  // Secondary path: gh CLI for users without a GH browser session. Only
+  // useful when there's a public URL to feed it (the CLI can't attach a
+  // local file the way GitHub's web UI can).
+  if (hasUrl) {
+    const secondary = document.createElement("details");
+    secondary.className = "submit-secondary";
+    const summary = document.createElement("summary");
+    summary.textContent = "Or run from a terminal (gh CLI)";
+    secondary.appendChild(summary);
 
-  const pre = document.createElement("pre");
-  pre.className = "submit-cmd";
-  pre.textContent = cmd;
-  secondary.appendChild(pre);
+    const pre = document.createElement("pre");
+    pre.className = "submit-cmd";
+    pre.textContent = cmd;
+    secondary.appendChild(pre);
 
-  const actions = document.createElement("div");
-  actions.className = "submit-cmd-actions";
-  const copyBtn = document.createElement("button");
-  copyBtn.type = "button";
-  copyBtn.className = "secondary";
-  copyBtn.textContent = "Copy command";
-  copyBtn.addEventListener("click", async () => {
-    const ok = await copyToClipboard(cmd);
-    copyBtn.textContent = ok ? "Copied ✓" : "Copy failed — select and ⌘C";
-    setTimeout(() => (copyBtn.textContent = "Copy command"), 2500);
-  });
-  actions.appendChild(copyBtn);
-  secondary.appendChild(actions);
+    const actions = document.createElement("div");
+    actions.className = "submit-cmd-actions";
+    const copyBtn = document.createElement("button");
+    copyBtn.type = "button";
+    copyBtn.className = "secondary";
+    copyBtn.textContent = "Copy command";
+    copyBtn.addEventListener("click", async () => {
+      const ok = await copyToClipboard(cmd);
+      copyBtn.textContent = ok ? "Copied ✓" : "Copy failed — select and ⌘C";
+      setTimeout(() => (copyBtn.textContent = "Copy command"), 2500);
+    });
+    actions.appendChild(copyBtn);
+    secondary.appendChild(actions);
 
-  container.appendChild(secondary);
+    container.appendChild(secondary);
+  }
 
   const note = document.createElement("p");
   note.className = "submit-note";
