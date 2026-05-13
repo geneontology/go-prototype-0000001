@@ -25,6 +25,37 @@ const SLOT_PRETTY = {
   causal:              "causal edge",
 };
 
+// Local-only "curator actions" store. Keyed per model so a curator's
+// confirm / dispute / comment actions persist across page reloads in the
+// same browser. v1 will swap this for a real curator-review backend.
+const ACTIONS_STORE_KEY = (modelId) => `gocam-proto-actions/${modelId}`;
+
+function loadActions(modelId) {
+  try {
+    return JSON.parse(localStorage.getItem(ACTIONS_STORE_KEY(modelId)) || "[]");
+  } catch { return []; }
+}
+function saveActions(modelId, actions) {
+  try { localStorage.setItem(ACTIONS_STORE_KEY(modelId), JSON.stringify(actions)); }
+  catch { /* private browsing / quota — silently drop */ }
+}
+function recordAction(modelId, assertionId, kind, payload) {
+  const actions = loadActions(modelId);
+  actions.push({ assertionId, kind, payload: payload || null, ts: new Date().toISOString() });
+  saveActions(modelId, actions);
+  notifyActionsChanged();
+  return actions;
+}
+function actionsFor(modelId, assertionId) {
+  return loadActions(modelId).filter((a) => a.assertionId === assertionId);
+}
+
+function notifyActionsChanged() {
+  document.dispatchEvent(new CustomEvent("gocam-proto-actions-changed"));
+}
+
+let CURRENT_MODEL_ID = null;  // populated in main()
+
 async function main() {
   installOffsiteLinkDefault();
 
@@ -32,6 +63,8 @@ async function main() {
     fetchJson("viewer.json"),
     fetchJson("provenance.json"),
   ]);
+
+  CURRENT_MODEL_ID = viewerData.id || "unknown-model";
 
   // Pretty the page title from the model annotations.
   const titleAnn = (viewerData.annotations || []).find(a => a.key === "title");
@@ -57,6 +90,101 @@ async function main() {
   // cytoscape instance; fall back to wiring on first node click.
   const cy = await wireEdgeClicks(viewerEl, prov, labelIndex);
   if (cy) emphasizeCausalEdges(cy);
+
+  installModelActionsHeader();
+  installToastHost();
+}
+
+// Model-level "Propose changes" affordance, shown above the (per-assertion)
+// provenance panel. Surfaces the count of recorded actions for the current
+// model so a curator can see at a glance whether they've started reviewing.
+function installModelActionsHeader() {
+  // Attach into the page header rather than the prov-panel; the panel gets
+  // wiped on every renderPanel() call and the run-layout is a fixed grid.
+  const runHeader = document.querySelector(".run-header");
+  if (!runHeader) return;
+  const header = document.createElement("div");
+  header.id = "model-actions-header";
+  header.className = "model-actions-header";
+  const refresh = () => {
+    const count = loadActions(CURRENT_MODEL_ID).length;
+    header.innerHTML = `
+      <button type="button" class="curator-btn primary" data-action="propose">
+        \u{1F4DD} Propose changes
+      </button>
+      <span class="pending-count" ${count ? "" : "hidden"}>${count} pending action${count === 1 ? "" : "s"}</span>
+    `;
+  };
+  refresh();
+  document.addEventListener("gocam-proto-actions-changed", refresh);
+  runHeader.appendChild(header);
+  header.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("[data-action='propose']");
+    if (!btn) return;
+    const actions = loadActions(CURRENT_MODEL_ID);
+    showModal({
+      title: "Propose changes (prototype)",
+      body: actions.length
+        ? `You've recorded ${actions.length} pending action${actions.length === 1 ? "" : "s"} on this model. In v1 these would batch into a curator-review submission; today they're stored locally in your browser.`
+        : "No pending actions yet. Use the per-assertion buttons (confirm / dispute / comment) on the source cards to mark things up; this button would package them into a curator-review submission in v1.",
+      details: actions,
+    });
+  });
+}
+
+function installToastHost() {
+  if (document.querySelector("#toast-host")) return;
+  const host = document.createElement("div");
+  host.id = "toast-host";
+  host.className = "toast-host";
+  document.body.appendChild(host);
+}
+
+function toast(message) {
+  installToastHost();
+  const host = document.querySelector("#toast-host");
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = message;
+  host.appendChild(el);
+  setTimeout(() => el.classList.add("fade-out"), 2200);
+  setTimeout(() => el.remove(), 2800);
+}
+
+function showModal({ title, body, details }) {
+  // Replace any existing modal.
+  document.querySelector("#dummy-modal")?.remove();
+  const m = document.createElement("div");
+  m.id = "dummy-modal";
+  m.className = "modal-backdrop";
+  m.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(body)}</p>
+      <div class="modal-actions">
+        <button type="button" class="curator-btn">Close</button>
+      </div>
+    </div>
+  `;
+  if (Array.isArray(details) && details.length) {
+    const list = document.createElement("ul");
+    list.className = "modal-details";
+    for (const a of details.slice(-10).reverse()) {
+      const li = document.createElement("li");
+      li.innerHTML = `<code>${escapeHtml(a.kind)}</code> on <code>${escapeHtml(a.assertionId)}</code> at <time>${escapeHtml(a.ts)}</time>`;
+      if (a.payload) {
+        const note = document.createElement("blockquote");
+        note.textContent = a.payload;
+        li.appendChild(note);
+      }
+      list.appendChild(li);
+    }
+    m.querySelector(".modal").insertBefore(list, m.querySelector(".modal-actions"));
+  }
+  m.addEventListener("click", (ev) => {
+    if (ev.target === m || ev.target.closest("button.curator-btn")) m.remove();
+  });
+  document.body.appendChild(m);
 }
 
 // Build {iri -> human-readable label} from viewer.json's individuals and objects.
@@ -464,7 +592,74 @@ function renderSource(slot, src, assertionId) {
     d.textContent = `retrieved ${src.retrieved_at}`;
     card.appendChild(d);
   }
+
+  // Curator-action affordances. These don't yet round-trip to a backend;
+  // they stash to localStorage so the buttons feel alive and the model
+  // can show 'X pending actions' at the page level.
+  card.appendChild(renderCuratorActions(assertionId, slot));
+
   return card;
+}
+
+function renderCuratorActions(assertionId, slot) {
+  const wrap = document.createElement("div");
+  wrap.className = "curator-actions";
+
+  const isCausal = slot === "causal";
+  const buttons = isCausal
+    ? [
+        { kind: "edit-relation",   label: "✏️ Edit relation" },
+        { kind: "add-evidence",    label: "\u{1F4DD} Add evidence" },
+        { kind: "dispute",         label: "\u{1F44E} Dispute" },
+        { kind: "comment",         label: "\u{1F4AC} Comment" },
+      ]
+    : [
+        { kind: "confirm",         label: "\u{1F44D} Confirm" },
+        { kind: "dispute",         label: "\u{1F44E} Dispute" },
+        { kind: "comment",         label: "\u{1F4AC} Comment" },
+      ];
+
+  for (const b of buttons) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `curator-btn micro action-${b.kind}`;
+    btn.textContent = b.label;
+    btn.addEventListener("click", () => handleCuratorAction(assertionId, b.kind));
+    wrap.appendChild(btn);
+  }
+
+  // Existing-action chips: show what the user has already done with this assertion.
+  const previous = actionsFor(CURRENT_MODEL_ID, assertionId);
+  if (previous.length) {
+    const chips = document.createElement("div");
+    chips.className = "prior-actions";
+    for (const a of previous) {
+      const chip = document.createElement("span");
+      chip.className = `prior-action ${a.kind}`;
+      chip.title = `${a.kind} at ${a.ts}` + (a.payload ? `\n${a.payload}` : "");
+      chip.textContent = a.kind;
+      chips.appendChild(chip);
+    }
+    wrap.appendChild(chips);
+  }
+  return wrap;
+}
+
+function handleCuratorAction(assertionId, kind) {
+  if (kind === "comment" || kind === "add-evidence" || kind === "edit-relation") {
+    const label = kind === "comment" ? "Comment" :
+                  kind === "add-evidence" ? "New evidence (PMID / snippet)" :
+                  "New relation (free-text suggestion)";
+    const text = prompt(`${label}:`);
+    if (!text) return;
+    recordAction(CURRENT_MODEL_ID, assertionId, kind, text);
+    toast(`\u{1F4DD} ${kind} recorded (prototype — saved locally)`);
+  } else {
+    recordAction(CURRENT_MODEL_ID, assertionId, kind, null);
+    toast(`✓ ${kind} recorded (prototype — saved locally)`);
+  }
+  // Re-render the current panel so the new chip shows up without a full page click.
+  document.querySelector("#provenance-panel")?.dispatchEvent(new CustomEvent("rerender"));
 }
 
 function sourceUrl(id) {
