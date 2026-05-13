@@ -1,0 +1,147 @@
+id: gomodel:demo-celegans-fat-loss
+title: 'Demo: C. elegans serotonin/octopamine → intestinal fat loss (figure 1, hand-built)'
+taxon: NCBITaxon:6239
+status: development
+activities:
+- id: gomodel:demo-celegans-fat-loss/tph1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00006600
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004510
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: CL:0000540
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0042427
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11099056
+      provenances:
+      - date: '2026-05-13'
+    predicate: RO:0002304
+    downstream_activity: gomodel:demo-celegans-fat-loss/mod1
+- id: gomodel:demo-celegans-fat-loss/mod1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00003533
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11099056
+      provenances:
+      - date: '2026-05-13'
+        provided_by:
+        - europepmc.search
+    term: GO:0022824
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: CL:0000540
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:demo-celegans-fat-loss/nhr76
+- id: gomodel:demo-celegans-fat-loss/nhr76
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00003640
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004879
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: CL:0000584
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0006357
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002629
+    downstream_activity: gomodel:demo-celegans-fat-loss/atgl1
+- id: gomodel:demo-celegans-fat-loss/atgl1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00010532
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004806
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: CL:0000584
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0019433
+objects:
+- id: WB:WBGene00006600
+  label: tph-1
+  type: gocam:GeneProductTermObject
+- id: GO:0004510
+  label: tryptophan 5-monooxygenase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0042427
+  label: serotonin biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: CL:0000540
+  label: neuron
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: WB:WBGene00003533
+  label: mod-1
+  type: gocam:GeneProductTermObject
+- id: PMID:11099056
+  label: tph-1 supplies the serotonin signal that mod-1 responds to (Ranganathan et
+    al. 2000).
+  type: gocam:PublicationObject
+- id: GO:0022824
+  label: transmitter-gated monoatomic ion channel activity
+  type: gocam:MolecularFunctionTermObject
+- id: WB:WBGene00003640
+  label: nhr-76
+  type: gocam:GeneProductTermObject
+- id: GO:0004879
+  label: nuclear receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0006357
+  label: regulation of transcription by RNA polymerase II
+  type: gocam:BiologicalProcessTermObject
+- id: CL:0000584
+  label: enterocyte
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: WB:WBGene00010532
+  label: atgl-1
+  type: gocam:GeneProductTermObject
+- id: GO:0004806
+  label: triacylglycerol lipase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0019433
+  label: triglyceride catabolic process
+  type: gocam:BiologicalProcessTermObject
+- id: RO:0002304
+  label: causally upstream of, positive effect
+  type: gocam:PredicateTermObject
+- id: RO:0002629
+  label: directly positively regulates
+  type: gocam:PredicateTermObject
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject

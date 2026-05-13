@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GO-CAM prototype — runs</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>GO-CAM curation prototype</h1>
+    <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
+      element shows where it came from: <span class="badge literature">📚 literature</span>,
+      <span class="badge database">🗄️ database</span>,
+      <span class="badge amigo">🔍 AmiGO</span>, or
+      <span class="badge instinct">⚠️ instinct</span>.</p>
+    <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
+  </header>
+
+  <main class="runs-list">
+    <h2>Available runs</h2>
+    <ul>
+      <li>
+        <a href="runs/demo/">Demo — <em>C. elegans</em> serotonin/octopamine → intestinal fat loss</a>
+        <span class="run-meta">hand-built reference model · 4 activities · 3 causal edges</span>
+      </li>
+    </ul>
+    <p class="footer-note">Real agent runs (one per GitHub Actions <code>repository_dispatch</code>)
+      will appear here once the workflow lands in <a href="https://github.com/geneontology/go-prototype-0000001/issues/11">issue&nbsp;#11</a>.</p>
+  </main>
+</body>
+</html>

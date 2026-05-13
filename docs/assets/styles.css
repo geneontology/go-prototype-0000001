@@ -1,0 +1,195 @@
+:root {
+  --c-lit:  #1976d2;
+  --c-db:   #2e7d32;
+  --c-amigo:#ed6c02;
+  --c-inst: #d32f2f;
+  --c-fg:   #1a1a1a;
+  --c-bg:   #fafafa;
+  --c-card: #ffffff;
+  --c-muted:#666;
+  --c-border:#e0e0e0;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--c-fg);
+  background: var(--c-bg);
+  line-height: 1.5;
+}
+
+a { color: var(--c-lit); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, .assertion-id {
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.85em;
+}
+
+/* ------------------------------------------------------------- landing */
+
+.site-header {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid var(--c-border);
+  background: white;
+}
+.site-header h1 { margin: 0 0 0.5rem; font-size: 1.6rem; }
+.tagline { color: var(--c-muted); max-width: 50em; }
+
+.runs-list {
+  padding: 1.5rem 2rem;
+}
+.runs-list ul { list-style: none; padding: 0; }
+.runs-list li {
+  padding: 0.75rem 1rem;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+.run-meta {
+  display: block;
+  color: var(--c-muted);
+  font-size: 0.9em;
+  margin-top: 0.25rem;
+}
+.footer-note { color: var(--c-muted); font-size: 0.9em; margin-top: 2rem; }
+
+/* ------------------------------------------------------------- viewer page */
+
+.viewer-body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+.run-header {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--c-border);
+  background: white;
+}
+.run-header h1 { margin: 0; font-size: 1.2rem; }
+.run-header .meta { margin: 0.25rem 0 0; color: var(--c-muted); font-size: 0.9em; }
+.run-header .sep { margin: 0 0.5rem; color: var(--c-border); }
+
+.run-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  min-height: 0;
+}
+.viewer-pane {
+  position: relative;
+  overflow: hidden;
+  background: white;
+  border-right: 1px solid var(--c-border);
+}
+.viewer-pane go-gocam-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.viewer-pane .hint {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  margin: 0;
+  font-size: 0.8em;
+  color: var(--c-muted);
+  background: rgba(255,255,255,0.85);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+}
+
+.prov-panel {
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--c-bg);
+}
+.prov-placeholder { color: var(--c-muted); }
+.prov-panel h2 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+.prov-panel .assertion-id {
+  color: var(--c-muted);
+  word-break: break-all;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+/* source cards */
+.source-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-left-width: 4px;
+  border-radius: 3px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.source-card.literature { border-left-color: var(--c-lit); }
+.source-card.database   { border-left-color: var(--c-db); }
+.source-card.amigo      { border-left-color: var(--c-amigo); }
+.source-card.instinct   { border-left-color: var(--c-inst); }
+
+.source-card .slot {
+  display: inline-block;
+  font-family: "SF Mono", monospace;
+  font-size: 0.8em;
+  color: var(--c-muted);
+  margin-right: 0.5rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1em 0.55em;
+  border-radius: 1em;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: white;
+  margin-right: 0.5rem;
+}
+.badge.literature { background: var(--c-lit); }
+.badge.database   { background: var(--c-db); }
+.badge.amigo      { background: var(--c-amigo); }
+.badge.instinct   { background: var(--c-inst); }
+
+.source-id {
+  font-family: "SF Mono", monospace;
+  font-size: 0.85em;
+}
+
+.source-card .snippet {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--c-border);
+  background: var(--c-bg);
+  font-size: 0.9em;
+  color: #333;
+}
+.source-card .justification {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: #fff3e0;
+  font-size: 0.9em;
+  border-radius: 3px;
+}
+.source-card .tool,
+.source-card .retrieved {
+  font-size: 0.75em;
+  color: var(--c-muted);
+  margin: 0.4rem 0 0;
+}
+
+#error {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  max-width: 420px;
+  padding: 0.75rem 1rem;
+  background: #ffebee;
+  color: var(--c-inst);
+  border: 1px solid var(--c-inst);
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+#error:empty { display: none; }

@@ -1,0 +1,423 @@
+{
+  "id": "gomodel:demo-celegans-fat-loss",
+  "individuals": [
+    {
+      "id": "gomodel:demo-celegans-fat-loss/tph1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004510",
+          "label": "tryptophan 5-monooxygenase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/tph1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00006600",
+          "label": "tph-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/tph1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0042427",
+          "label": "serotonin biosynthetic process"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/tph1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "CL:0000540",
+          "label": "neuron"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/tph1/causal/gomodel:demo-celegans-fat-loss/mod1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:11099056"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/mod1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0022824",
+          "label": "transmitter-gated monoatomic ion channel activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/mod1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00003533",
+          "label": "mod-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/mod1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "CL:0000540",
+          "label": "neuron"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/nhr76",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004879",
+          "label": "nuclear receptor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/nhr76/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00003640",
+          "label": "nhr-76"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/nhr76/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0006357",
+          "label": "regulation of transcription by RNA polymerase II"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/nhr76/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "CL:0000584",
+          "label": "enterocyte"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/atgl1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004806",
+          "label": "triacylglycerol lipase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/atgl1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00010532",
+          "label": "atgl-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/atgl1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0019433",
+          "label": "triglyceride catabolic process"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:demo-celegans-fat-loss/atgl1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "CL:0000584",
+          "label": "enterocyte"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "facts": [
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/tph1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:demo-celegans-fat-loss/tph1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/tph1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:demo-celegans-fat-loss/tph1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/tph1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:demo-celegans-fat-loss/tph1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/tph1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:demo-celegans-fat-loss/mod1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:demo-celegans-fat-loss/tph1/causal/gomodel:demo-celegans-fat-loss/mod1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/mod1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:demo-celegans-fat-loss/mod1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/mod1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:demo-celegans-fat-loss/mod1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/mod1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:demo-celegans-fat-loss/nhr76",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/nhr76",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:demo-celegans-fat-loss/nhr76/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/nhr76",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:demo-celegans-fat-loss/nhr76/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/nhr76",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:demo-celegans-fat-loss/nhr76/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/nhr76",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
+      "object": "gomodel:demo-celegans-fat-loss/atgl1",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/atgl1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:demo-celegans-fat-loss/atgl1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/atgl1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:demo-celegans-fat-loss/atgl1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:demo-celegans-fat-loss/atgl1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:demo-celegans-fat-loss/atgl1/occurs_in",
+      "annotations": []
+    }
+  ],
+  "annotations": [
+    {
+      "key": "title",
+      "value": "Demo: C. elegans serotonin/octopamine \u2192 intestinal fat loss (figure 1, hand-built)"
+    },
+    {
+      "key": "http://www.geneontology.org/formats/oboInOwl#id",
+      "value": "gomodel:demo-celegans-fat-loss"
+    },
+    {
+      "key": "https://w3id.org/biolink/vocab/in_taxon",
+      "value": "NCBITaxon:6239",
+      "value-type": "IRI"
+    },
+    {
+      "key": "state",
+      "value": "development"
+    }
+  ]
+}
