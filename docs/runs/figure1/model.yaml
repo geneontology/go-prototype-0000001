@@ -152,11 +152,6 @@ activities:
     type: BiologicalProcessAssociation
     evidence: []
     term: GO:0016042
-  causal_associations:
-  - type: CausalAssociation
-    evidence: []
-    predicate: RO:0002304
-    downstream_activity: gomodel:run-figure1/nhr76
 objects:
 - id: WB:WBGene00006600
   label: tph-1

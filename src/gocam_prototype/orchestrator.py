@@ -171,6 +171,22 @@ must NOT be discarded. Model them as a single causal edge between the most plaus
 activity in the source compartment and the most plausible downstream activity in the target
 compartment, and explain that interpretation in the `snippet`.
 
+LEAF ACTIVITIES ARE FINE — DO NOT INVENT A DOWNSTREAM GENE
+
+Causal edges connect ONE gene's activity to ANOTHER gene's activity. They are NOT for capturing
+\"this gene contributes to <process>\" — that goes in `set_part_of`, the BP slot. Concretely:
+
+* If the figure shows `<gene> → <process>` (e.g. atgl-1 → β-oxidation, ser-6 → fat loss), do
+  NOT pick the nearest gene activity and wire `add_causal` to it just to give the upstream
+  activity a downstream. The arrow is captured by `set_part_of` on the upstream gene, with a
+  GO BP term for the process (lipid catabolic process, fatty acid beta-oxidation, etc.).
+* If a gene's downstream in the figure is a process with no downstream gene activity in your
+  model, that gene's activity is a LEAF. Leaves are valid GO-CAM nodes — finalize without an
+  outgoing causal edge.
+* `add_causal` will hard-reject self-loops (source_activity_id == target_activity_id). The
+  guard is there because the agent has historically synthesized cycles back into an upstream
+  gene when the figure's real downstream was a process; don't do that.
+
 NON-NEGOTIABLE RULES
 
 * Every assertion attached to the model carries a source object whose source_type is the most \
@@ -556,6 +572,22 @@ class Orchestrator:
             src = self._make_source(inp["source"])
         except Exception as e:
             return {"error": str(e)}
+        # Refuse self-loops: the agent has historically synthesized cycles back into
+        # an upstream activity when the figure's real downstream was a process
+        # (e.g. atgl-1 → β-oxidation → fat loss), inventing atgl-1 → nhr-76 because
+        # nhr-76 was the nearest upstream gene. Leaf activities are valid — the
+        # figure's process arrow belongs in set_part_of, not add_causal (see #24).
+        if inp.get("source_activity_id") == inp.get("target_activity_id"):
+            return {
+                "error": (
+                    "self-loop edges are not allowed. If the figure shows this gene "
+                    "feeding into a downstream PROCESS (not another gene's activity), "
+                    "capture that with set_part_of on the upstream activity using the "
+                    "appropriate GO BP term — do not invent a back-edge into an "
+                    "already-upstream gene. Leaf activities (with no outgoing causal "
+                    "edge) are valid GO-CAM nodes."
+                )
+            }
         # GO annotations are per-gene-to-term assertions; they cannot encode a causal
         # edge between two activities. Refuse the assignment rather than letting the
         # agent quietly mis-cite a BP term as 'edge evidence' (see issue #20).

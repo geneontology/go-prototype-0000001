@@ -740,13 +740,6 @@
       "property-label": "BFO:0000066",
       "object": "gomodel:run-figure1/atgl1/occurs_in",
       "annotations": []
-    },
-    {
-      "subject": "gomodel:run-figure1/atgl1",
-      "property": "RO:0002304",
-      "property-label": "causally upstream of, positive effect",
-      "object": "gomodel:run-figure1/nhr76",
-      "annotations": []
     }
   ],
   "annotations": [

@@ -189,6 +189,48 @@ def test_orchestrator_returns_error_results_on_bad_source() -> None:
     assert ledger.count_by_source_type() == {"instinct": 1}
 
 
+def test_orchestrator_rejects_self_loop_causal_edge() -> None:
+    """A self-loop causal edge must come back as is_error; agent recovers without it (see #24)."""
+    builder = GoCamBuilder(model_id="gomodel:test-selfloop", title="self-loop test")
+    script = [
+        _response(
+            _tool_use("tu1", "add_activity",
+                      local_part="atgl1",
+                      enabled_by_gene="WB:WBGene00015484",
+                      source={"source_type": "alliance",
+                              "source_id": "WB:WBGene00015484",
+                              "tool_name": "alliance.resolve_symbol_to_curie"}),
+        ),
+        # Agent tries to add atgl1 -> atgl1 (leaf-activity invented self-loop).
+        _response(
+            _tool_use("tu2", "add_causal",
+                      source_activity_id="gomodel:test-selfloop/atgl1",
+                      target_activity_id="gomodel:test-selfloop/atgl1",
+                      predicate="RO:0002304",
+                      source={"source_type": "instinct",
+                              "justification": "Panel E shows atgl-1 driving fat loss."}),
+        ),
+        # Agent sees is_error and finalizes without the edge.
+        _response(_tool_use("tu3", "finalize_model")),
+    ]
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient(script),
+        model_name="claude-sonnet-4-6@default", max_turns=10,
+    )
+    model, ledger = orch.run(_make_intent())
+
+    # The self-loop attempt should have come back as an is_error tool_result.
+    second_call_msgs = orch.client.calls[2]["messages"]
+    self_loop_result = second_call_msgs[-1]["content"][0]
+    assert self_loop_result["tool_use_id"] == "tu2"
+    assert self_loop_result.get("is_error") is True
+    assert "self-loop" in self_loop_result["content"]
+
+    # No causal edges should have been recorded on the activity.
+    [act] = model.activities or []
+    assert not (act.causal_associations or [])
+
+
 def test_orchestrator_raises_on_runaway() -> None:
     builder = GoCamBuilder(model_id="gomodel:test-003", title="runaway test")
     # The mock keeps emitting tool_use indefinitely (well, we only stock 3 responses).

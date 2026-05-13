@@ -181,12 +181,6 @@
       "source_id": "PMID:28128367",
       "snippet": "Palamiuc et al. 2017 (Nat Commun) and Noble et al. 2013 establish that nhr-76, a nuclear hormone receptor in intestinal cells, directly drives expression of atgl-1 (ATGL/adipose triglyceride lipase). Panel E explicitly shows an arrow from nhr-76 to ATGL inside the intestine compartment, indicating nhr-76 transcriptionally activates atgl-1 to initiate lipolysis and fat catabolism.",
       "retrieved_at": "2026-05-13T02:57:09.230877Z"
-    },
-    "gomodel:run-figure1/atgl1/causal/gomodel:run-figure1/nhr76": {
-      "source_type": "instinct",
-      "snippet": "atgl-1 triacylglycerol lipase activity is causally upstream (positive effect) of intestinal fat loss / beta-oxidation, as shown by the arrow from ATGL to beta-oxidation/Fat loss in panel E. This enzymatic lipolysis step releases fatty acids for beta-oxidation and net fat reduction.",
-      "justification": "Panel E explicitly shows an arrow from ATGL to 'beta-oxidation / Fat loss' inside the INTESTINE compartment. atgl-1 encodes the adipose triglyceride lipase that hydrolyzes triglycerides to release fatty acids which enter beta-oxidation. No separate activity node was created for beta-oxidation as a process; the nhr-76 node is the closest upstream intestinal effector, but this edge — atgl-1 promoting fat loss — is a biochemical consequence of its triacylglycerol lipase activity that is intrinsic to its annotated function (GO:0019433 triglyceride catabolic process; GO:0016042 lipid catabolic process). A second add_causal from atgl1 to itself is not meaningful; instead this step is best captured as part_of the lipid catabolic process set on the atgl1 activity node.",
-      "retrieved_at": "2026-05-13T02:57:25.188344Z"
     }
   }
 }
