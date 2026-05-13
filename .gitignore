@@ -1,0 +1,33 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Curator-supplied images (copyright on research-paper figures)
+# The agent reads these locally; production runs pass them via repository_dispatch payload.
+inputs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+
+# OS / editors
+.DS_Store
+*.swp
+.idea/
+.vscode/
