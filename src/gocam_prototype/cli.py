@@ -115,10 +115,10 @@ _LANDING_HEAD = """<!DOCTYPE html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GO-CAM prototype — runs</title>
+  <title>GO-CAM curation prototype — draft models</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body>
+<body class="landing-body">
   <header class="site-header">
     <h1>GO-CAM curation prototype</h1>
     <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
@@ -134,23 +134,107 @@ _LANDING_HEAD = """<!DOCTYPE html>
     <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
   </header>
 
-  <main class="runs-list">
-    <h2>Available runs</h2>
-    <ul>
+  <main class="landing-main">
+
+    <section class="submit-card">
+      <h2>Submit a figure</h2>
+      <p class="card-intro">Paste the URL of a publicly-accessible pathway figure and we'll queue a
+         draft-model run. Today the form generates the <code>gh</code> command you copy into a
+         terminal; in v1 this becomes a one-click submit.</p>
+      <form id="submit-form" class="submit-form">
+        <label>
+          <span class="field-label">Image URL <small class="required">required</small></span>
+          <input type="url" name="image_url" placeholder="https://…/figure.png" required>
+        </label>
+        <label>
+          <span class="field-label">Species</span>
+          <input type="text" name="species" value="Caenorhabditis elegans">
+        </label>
+        <div class="form-row">
+          <label class="grow">
+            <span class="field-label">Species taxon</span>
+            <input type="text" name="species_taxon" placeholder="NCBITaxon:6239">
+          </label>
+          <label class="grow">
+            <span class="field-label">Run id</span>
+            <input type="text" name="run_id" placeholder="(auto: UTC timestamp)">
+          </label>
+        </div>
+        <label>
+          <span class="field-label">Process hint</span>
+          <textarea name="process_hint" rows="2"
+                    placeholder="Free-text hint describing the biological process the figure depicts"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="primary">Queue draft model</button>
+        </div>
+        <div id="submit-result" class="submit-result" hidden></div>
+      </form>
+    </section>
+
+    <section class="runs-list">
+      <h2>Draft models</h2>
+      <ul>
 """
 
-_LANDING_TAIL = """    </ul>
-    <p class="footer-note">Hand-built reference runs and live agent runs both land in the same
-      <code>docs/runs/&lt;run-id&gt;/</code> layout.</p>
+_LANDING_TAIL = """      </ul>
+    </section>
+
+    <p class="footer-note">Hand-built reference drafts and live agent runs both land in the same
+      <code>docs/runs/&lt;run-id&gt;/</code> layout. Each draft is ready for a curator to review,
+      confirm, dispute, or refine.</p>
+
   </main>
+  <script src="assets/landing.js"></script>
 </body>
 </html>
 """
 
 
+_BADGE_META: dict[str, tuple[str, str]] = {
+    "literature":       ("📚", "literature"),
+    "go_annotation":    ("🗂️", "GO annotation"),
+    "alliance":         ("🧬", "Alliance"),
+    "amigo":            ("🔍", "AmiGO"),
+    "orthology":        ("↗️", "orthology"),
+    "pathway_resource": ("🛤️", "pathway"),
+    "expert_review":    ("✔️", "expert review"),
+    "instinct":         ("⚠️", "instinct"),
+}
+
+
+def summarize_provenance(provenance_path: Path) -> dict[str, int]:
+    """Return source-type → count from a provenance.json file."""
+    try:
+        prov = json.loads(provenance_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+    counts: dict[str, int] = {}
+    for src in (prov.get("assertions") or {}).values():
+        t = src.get("source_type", "unknown")
+        counts[t] = counts.get(t, 0) + 1
+    return counts
+
+
+def _render_tag_cloud(counts: dict[str, int]) -> str:
+    if not counts:
+        return ""
+    chips: list[str] = []
+    # Render in a stable order (taxonomy order, then unknown trailing).
+    for key in list(_BADGE_META) + sorted(k for k in counts if k not in _BADGE_META):
+        if key not in counts:
+            continue
+        emoji, label = _BADGE_META.get(key, ("?", key))
+        chips.append(
+            f'<li class="tag {key}" title="{counts[key]} {label} assertion(s)">'
+            f'{emoji} {counts[key]}</li>'
+        )
+    return f'<ul class="tag-cloud">{"".join(chips)}</ul>'
+
+
 def regenerate_landing(docs_dir: Path) -> Path:
     runs_dir = docs_dir / "runs"
-    entries: list[tuple[str, str, int, str]] = []  # (run_id, title, activities, mtime-iso)
+    entries: list[dict] = []
     if runs_dir.is_dir():
         for run in sorted(runs_dir.iterdir()):
             if not run.is_dir():
@@ -162,25 +246,30 @@ def regenerate_landing(docs_dir: Path) -> Path:
                 data = yaml.safe_load(model_path.read_text()) or {}
             except yaml.YAMLError:
                 continue
-            entries.append((
-                run.name,
-                data.get("title") or run.name,
-                len(data.get("activities") or []),
-                datetime.fromtimestamp(model_path.stat().st_mtime, tz=timezone.utc)
-                    .strftime("%Y-%m-%d"),
-            ))
+            counts = summarize_provenance(run / "provenance.json")
+            entries.append({
+                "run_id": run.name,
+                "title": data.get("title") or run.name,
+                "n_activities": len(data.get("activities") or []),
+                "modified": datetime.fromtimestamp(
+                    model_path.stat().st_mtime, tz=timezone.utc
+                ).strftime("%Y-%m-%d"),
+                "source_counts": counts,
+            })
 
-    li_blocks = []
-    for run_id, title, n_activities, modified in entries:
+    li_blocks: list[str] = []
+    for e in entries:
+        tag_cloud = _render_tag_cloud(e["source_counts"])
         li_blocks.append(
-            f'      <li>\n'
-            f'        <a href="runs/{run_id}/">{_escape(title)}</a>\n'
-            f'        <span class="run-meta">{n_activities} activities · '
-            f'updated {modified} · <code>{run_id}</code></span>\n'
-            f'      </li>'
+            '        <li class="draft-model">\n'
+            f'          <a class="draft-title" href="runs/{e["run_id"]}/">{_escape(e["title"])}</a>\n'
+            f'          <span class="run-meta">{e["n_activities"]} activities · '
+            f'updated {e["modified"]} · <code>{e["run_id"]}</code></span>\n'
+            f'          {tag_cloud}\n'
+            '        </li>'
         )
     body = "\n".join(li_blocks) + "\n" if li_blocks else (
-        '      <li class="footer-note">No runs yet. Trigger the workflow with a figure to create one.</li>\n'
+        '        <li class="footer-note">No draft models yet. Submit a figure above to create one.</li>\n'
     )
     landing = _LANDING_HEAD + body + _LANDING_TAIL
     landing_path = docs_dir / "index.html"

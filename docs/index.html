@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GO-CAM prototype — runs</title>
+  <title>GO-CAM curation prototype — draft models</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body>
+<body class="landing-body">
   <header class="site-header">
     <h1>GO-CAM curation prototype</h1>
     <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
@@ -22,20 +22,65 @@
     <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
   </header>
 
-  <main class="runs-list">
-    <h2>Available runs</h2>
-    <ul>
-      <li>
-        <a href="runs/demo/">Demo: C. elegans serotonin/octopamine → intestinal fat loss (figure 1, hand-built)</a>
-        <span class="run-meta">4 activities · updated 2026-05-13 · <code>demo</code></span>
-      </li>
-      <li>
-        <a href="runs/figure1/">Agent run figure1: Caenorhabditis elegans — Serotonin and octopamine signaling from neurons triggers an endocrine signal that drives nhr-76-mediated transcription of atgl-1 in the intestine, resulting in fat loss</a>
-        <span class="run-meta">6 activities · updated 2026-05-13 · <code>figure1</code></span>
-      </li>
-    </ul>
-    <p class="footer-note">Hand-built reference runs and live agent runs both land in the same
-      <code>docs/runs/&lt;run-id&gt;/</code> layout.</p>
+  <main class="landing-main">
+
+    <section class="submit-card">
+      <h2>Submit a figure</h2>
+      <p class="card-intro">Paste the URL of a publicly-accessible pathway figure and we'll queue a
+         draft-model run. Today the form generates the <code>gh</code> command you copy into a
+         terminal; in v1 this becomes a one-click submit.</p>
+      <form id="submit-form" class="submit-form">
+        <label>
+          <span class="field-label">Image URL <small class="required">required</small></span>
+          <input type="url" name="image_url" placeholder="https://…/figure.png" required>
+        </label>
+        <label>
+          <span class="field-label">Species</span>
+          <input type="text" name="species" value="Caenorhabditis elegans">
+        </label>
+        <div class="form-row">
+          <label class="grow">
+            <span class="field-label">Species taxon</span>
+            <input type="text" name="species_taxon" placeholder="NCBITaxon:6239">
+          </label>
+          <label class="grow">
+            <span class="field-label">Run id</span>
+            <input type="text" name="run_id" placeholder="(auto: UTC timestamp)">
+          </label>
+        </div>
+        <label>
+          <span class="field-label">Process hint</span>
+          <textarea name="process_hint" rows="2"
+                    placeholder="Free-text hint describing the biological process the figure depicts"></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="primary">Queue draft model</button>
+        </div>
+        <div id="submit-result" class="submit-result" hidden></div>
+      </form>
+    </section>
+
+    <section class="runs-list">
+      <h2>Draft models</h2>
+      <ul>
+        <li class="draft-model">
+          <a class="draft-title" href="runs/demo/">Demo: C. elegans serotonin/octopamine → intestinal fat loss (figure 1, hand-built)</a>
+          <span class="run-meta">4 activities · updated 2026-05-13 · <code>demo</code></span>
+          <ul class="tag-cloud"><li class="tag literature" title="2 literature assertion(s)">📚 2</li><li class="tag go_annotation" title="3 GO annotation assertion(s)">🗂️ 3</li><li class="tag alliance" title="4 Alliance assertion(s)">🧬 4</li><li class="tag amigo" title="1 AmiGO assertion(s)">🔍 1</li><li class="tag orthology" title="1 orthology assertion(s)">↗️ 1</li><li class="tag pathway_resource" title="1 pathway assertion(s)">🛤️ 1</li><li class="tag expert_review" title="1 expert review assertion(s)">✔️ 1</li><li class="tag instinct" title="5 instinct assertion(s)">⚠️ 5</li></ul>
+        </li>
+        <li class="draft-model">
+          <a class="draft-title" href="runs/figure1/">Agent run figure1: Caenorhabditis elegans — Serotonin and octopamine signaling from neurons triggers an endocrine signal that drives nhr-76-mediated transcription of atgl-1 in the intestine, resulting in fat loss</a>
+          <span class="run-meta">6 activities · updated 2026-05-13 · <code>figure1</code></span>
+          <ul class="tag-cloud"><li class="tag go_annotation" title="23 GO annotation assertion(s)">🗂️ 23</li><li class="tag alliance" title="6 Alliance assertion(s)">🧬 6</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <p class="footer-note">Hand-built reference drafts and live agent runs both land in the same
+      <code>docs/runs/&lt;run-id&gt;/</code> layout. Each draft is ready for a curator to review,
+      confirm, dispute, or refine.</p>
+
   </main>
+  <script src="assets/landing.js"></script>
 </body>
 </html>

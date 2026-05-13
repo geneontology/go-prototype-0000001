@@ -43,24 +43,166 @@ code, .assertion-id {
 .site-header h1 { margin: 0 0 0.5rem; font-size: 1.6rem; }
 .tagline { color: var(--c-muted); max-width: 50em; }
 
-.runs-list {
-  padding: 1.5rem 2rem;
+.landing-main {
+  padding: 1.5rem 2rem 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
 }
-.runs-list ul { list-style: none; padding: 0; }
-.runs-list li {
-  padding: 0.75rem 1rem;
+
+.runs-list h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+.runs-list ul { list-style: none; padding: 0; margin: 0; }
+.runs-list li.draft-model {
+  padding: 0.85rem 1rem;
   background: var(--c-card);
   border: 1px solid var(--c-border);
   border-radius: 4px;
   margin-bottom: 0.5rem;
+  display: grid;
+  gap: 0.4rem;
 }
+.draft-title {
+  font-weight: 600;
+  display: block;
+  color: var(--c-fg);
+}
+.draft-title:hover { color: var(--c-lit); }
 .run-meta {
   display: block;
   color: var(--c-muted);
-  font-size: 0.9em;
-  margin-top: 0.25rem;
+  font-size: 0.85em;
 }
-.footer-note { color: var(--c-muted); font-size: 0.9em; margin-top: 2rem; }
+.footer-note { color: var(--c-muted); font-size: 0.9em; margin-top: 1rem; }
+
+/* Per-model tag cloud — one chip per source-type with count. */
+.tag-cloud {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.tag-cloud .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15em 0.6em;
+  border-radius: 1em;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: white;
+  background: var(--c-muted);
+}
+.tag-cloud .tag.literature       { background: var(--c-lit); }
+.tag-cloud .tag.go_annotation    { background: var(--c-goann); }
+.tag-cloud .tag.alliance         { background: var(--c-alliance); }
+.tag-cloud .tag.amigo            { background: var(--c-amigo); }
+.tag-cloud .tag.orthology        { background: var(--c-ortho); }
+.tag-cloud .tag.pathway_resource { background: var(--c-pathway); }
+.tag-cloud .tag.expert_review    { background: var(--c-expert); }
+.tag-cloud .tag.instinct         { background: var(--c-inst); }
+
+/* Submit-a-figure card */
+.submit-card {
+  padding: 1rem 1.25rem 1.25rem;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+}
+.submit-card h2 { margin: 0 0 0.25rem; font-size: 1.15rem; }
+.submit-card .card-intro { color: var(--c-muted); font-size: 0.9em; margin: 0 0 1rem; }
+
+.submit-form {
+  display: grid;
+  gap: 0.85rem;
+}
+.submit-form label {
+  display: grid;
+  gap: 0.25rem;
+}
+.submit-form .field-label {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--c-fg);
+}
+.submit-form .field-label .required {
+  color: var(--c-inst);
+  font-weight: 400;
+  font-size: 0.85em;
+  margin-left: 0.4em;
+}
+.submit-form input,
+.submit-form textarea {
+  font-family: inherit;
+  font-size: 0.95em;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--c-border);
+  border-radius: 3px;
+  background: white;
+  color: var(--c-fg);
+}
+.submit-form textarea { resize: vertical; }
+.submit-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+.submit-form .form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.submit-form button.primary {
+  padding: 0.55rem 1.1rem;
+  background: var(--c-lit);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+.submit-form button.primary:hover { filter: brightness(1.05); }
+.submit-form .submit-result {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+}
+.submit-form .submit-cmd {
+  padding: 0.6rem 0.75rem;
+  background: #1a1a1a;
+  color: #ffeb3b;
+  border-radius: 3px;
+  font-size: 0.85em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0.5rem 0;
+}
+.submit-form .submit-cmd-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.5rem 0 0.25rem;
+}
+.submit-form button.secondary {
+  padding: 0.35rem 0.85rem;
+  background: var(--c-card);
+  color: var(--c-fg);
+  border: 1px solid var(--c-border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+.submit-form .submit-note,
+.submit-form .submit-intro {
+  font-size: 0.85em;
+  color: var(--c-muted);
+  margin: 0.25rem 0;
+}
 
 /* ------------------------------------------------------------- viewer page */
 
