@@ -17,7 +17,7 @@ activities:
   occurs_in:
     type: CellularAnatomicalEntityAssociation
     evidence: []
-    term: CL:0000393
+    term: GO:0043005
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
@@ -27,10 +27,6 @@ activities:
     evidence: []
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1/mod1
-  - type: CausalAssociation
-    evidence: []
-    predicate: RO:0002304
-    downstream_activity: gomodel:run-figure1/atgl1
 - id: gomodel:run-figure1/mod1
   enabled_by:
     type: EnabledByGeneProductAssociation
@@ -53,10 +49,6 @@ activities:
     evidence: []
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1/nhr76
-  - type: CausalAssociation
-    evidence: []
-    predicate: RO:0002304
-    downstream_activity: gomodel:run-figure1/atgl1
 - id: gomodel:run-figure1/ser6
   enabled_by:
     type: EnabledByGeneProductAssociation
@@ -117,7 +109,7 @@ activities:
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
-    term: GO:1904123
+    term: GO:0045944
   causal_associations:
   - type: CausalAssociation
     evidence: []
@@ -191,11 +183,14 @@ objects:
 - id: GO:0006589
   label: octopamine biosynthetic process
   type: gocam:BiologicalProcessTermObject
+- id: GO:0045944
+  label: positive regulation of transcription by RNA polymerase II
+  type: gocam:BiologicalProcessTermObject
 - id: GO:0019433
   label: triglyceride catabolic process
   type: gocam:BiologicalProcessTermObject
-- id: CL:0000393
-  label: electrically responsive cell (ADF neuron)
+- id: GO:0043005
+  label: neuron projection
   type: gocam:CellularAnatomicalEntityTermObject
 - id: GO:0005886
   label: plasma membrane
