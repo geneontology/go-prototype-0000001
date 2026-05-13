@@ -102,7 +102,7 @@ def test_orchestrator_threads_tool_calls_into_builder() -> None:
                       local_part="tph1",
                       enabled_by_gene="WB:WBGene00006600",
                       gene_label="tph-1",
-                      source={"source_type": "database",
+                      source={"source_type": "alliance",
                               "source_id": "WB:WBGene00006600",
                               "tool_name": "alliance.resolve_symbol_to_curie"}),
         ),
@@ -111,7 +111,7 @@ def test_orchestrator_threads_tool_calls_into_builder() -> None:
                       local_part="mod1",
                       enabled_by_gene="WB:WBGene00003185",
                       gene_label="mod-1",
-                      source={"source_type": "database",
+                      source={"source_type": "alliance",
                               "source_id": "WB:WBGene00003185",
                               "tool_name": "alliance.resolve_symbol_to_curie"}),
         ),
@@ -120,7 +120,7 @@ def test_orchestrator_threads_tool_calls_into_builder() -> None:
                       activity_id="gomodel:test-001/tph1",
                       term="GO:0004510",
                       label="tryptophan 5-monooxygenase activity",
-                      source={"source_type": "database",
+                      source={"source_type": "go_annotation",
                               "source_id": "GO:0004510",
                               "tool_name": "go_api.gene_annotations"}),
         ),
@@ -146,7 +146,7 @@ def test_orchestrator_threads_tool_calls_into_builder() -> None:
     activity_ids = {a.id for a in (model.activities or [])}
     assert activity_ids == {"gomodel:test-001/tph1", "gomodel:test-001/mod1"}
 
-    assert ledger.count_by_source_type() == {"database": 3, "instinct": 1}
+    assert ledger.count_by_source_type() == {"alliance": 2, "go_annotation": 1, "instinct": 1}
     assert orch._finalized  # noqa: SLF001
     # The orchestrator should have made exactly len(script) API calls.
     assert len(orch.events) == len(script)

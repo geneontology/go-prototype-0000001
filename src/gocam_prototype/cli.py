@@ -122,9 +122,14 @@ _LANDING_HEAD = """<!DOCTYPE html>
   <header class="site-header">
     <h1>GO-CAM curation prototype</h1>
     <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
-      element shows where it came from: <span class="badge literature">📚 literature</span>,
-      <span class="badge database">🗄️ database</span>,
-      <span class="badge amigo">🔍 AmiGO</span>, or
+      element shows where it came from:
+      <span class="badge literature">📚 literature</span>
+      <span class="badge go_annotation">🗂️ GO annotation</span>
+      <span class="badge alliance">🧬 Alliance</span>
+      <span class="badge amigo">🔍 AmiGO</span>
+      <span class="badge orthology">↗️ orthology</span>
+      <span class="badge pathway_resource">🛤️ pathway</span>
+      <span class="badge expert_review">✔️ expert review</span>
       <span class="badge instinct">⚠️ instinct</span>.</p>
     <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
   </header>

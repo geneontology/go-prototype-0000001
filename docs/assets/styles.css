@@ -1,13 +1,17 @@
 :root {
-  --c-lit:  #1976d2;
-  --c-db:   #2e7d32;
-  --c-amigo:#ed6c02;
-  --c-inst: #d32f2f;
-  --c-fg:   #1a1a1a;
-  --c-bg:   #fafafa;
-  --c-card: #ffffff;
-  --c-muted:#666;
-  --c-border:#e0e0e0;
+  --c-lit:       #1976d2;
+  --c-goann:     #2e7d32;
+  --c-alliance:  #00838f;
+  --c-amigo:     #ed6c02;
+  --c-ortho:     #6a1b9a;
+  --c-pathway:   #5d4037;
+  --c-expert:    #455a64;
+  --c-inst:      #d32f2f;
+  --c-fg:        #1a1a1a;
+  --c-bg:        #fafafa;
+  --c-card:      #ffffff;
+  --c-muted:     #666;
+  --c-border:    #e0e0e0;
 }
 
 * { box-sizing: border-box; }
@@ -126,10 +130,14 @@ code, .assertion-id {
   padding: 0.75rem;
   margin-bottom: 0.75rem;
 }
-.source-card.literature { border-left-color: var(--c-lit); }
-.source-card.database   { border-left-color: var(--c-db); }
-.source-card.amigo      { border-left-color: var(--c-amigo); }
-.source-card.instinct   { border-left-color: var(--c-inst); }
+.source-card.literature       { border-left-color: var(--c-lit); }
+.source-card.go_annotation    { border-left-color: var(--c-goann); }
+.source-card.alliance         { border-left-color: var(--c-alliance); }
+.source-card.amigo            { border-left-color: var(--c-amigo); }
+.source-card.orthology        { border-left-color: var(--c-ortho); }
+.source-card.pathway_resource { border-left-color: var(--c-pathway); }
+.source-card.expert_review    { border-left-color: var(--c-expert); }
+.source-card.instinct         { border-left-color: var(--c-inst); }
 
 .source-card .slot {
   display: inline-block;
@@ -148,10 +156,14 @@ code, .assertion-id {
   color: white;
   margin-right: 0.5rem;
 }
-.badge.literature { background: var(--c-lit); }
-.badge.database   { background: var(--c-db); }
-.badge.amigo      { background: var(--c-amigo); }
-.badge.instinct   { background: var(--c-inst); }
+.badge.literature       { background: var(--c-lit); }
+.badge.go_annotation    { background: var(--c-goann); }
+.badge.alliance         { background: var(--c-alliance); }
+.badge.amigo            { background: var(--c-amigo); }
+.badge.orthology        { background: var(--c-ortho); }
+.badge.pathway_resource { background: var(--c-pathway); }
+.badge.expert_review    { background: var(--c-expert); }
+.badge.instinct         { background: var(--c-inst); }
 
 .source-id {
   font-family: "SF Mono", monospace;
@@ -178,6 +190,21 @@ code, .assertion-id {
   font-size: 0.75em;
   color: var(--c-muted);
   margin: 0.4rem 0 0;
+}
+.source-card dl.extra {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.15rem 0.5rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.8em;
+}
+.source-card dl.extra dt {
+  color: var(--c-muted);
+  font-weight: 600;
+}
+.source-card dl.extra dd {
+  margin: 0;
+  word-break: break-all;
 }
 
 #error {

@@ -39,18 +39,36 @@ SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
     "properties": {
         "source_type": {
             "type": "string",
-            "enum": ["literature", "database", "amigo", "instinct"],
+            "enum": [
+                "literature",
+                "go_annotation",
+                "alliance",
+                "amigo",
+                "orthology",
+                "pathway_resource",
+                "expert_review",
+                "instinct",
+            ],
         },
         "source_id": {
             "type": "string",
-            "description": "PMID/GO_REF/CURIE/URL. Required unless source_type='instinct'.",
+            "description": "PMID/GO_REF/CURIE/URL. Required unless source_type='instinct'. "
+                           "For orthology: the ortholog's CURIE. "
+                           "For pathway_resource: the Reactome/WikiPathways pathway id.",
         },
         "snippet": {"type": "string"},
         "justification": {
             "type": "string",
-            "description": "Required when source_type=='instinct'. Explain why no real evidence was found.",
+            "description": "Required when source_type='instinct'. Explain why no real evidence was found.",
         },
         "tool_name": {"type": "string"},
+        "extra": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "description": "Kind-specific fields. For orthology use {ortholog_species, from_annotation}. "
+                           "For pathway_resource use {resource, pathway_url}. "
+                           "For expert_review use {orcid, contributor_name}.",
+        },
     },
     "required": ["source_type"],
 }
@@ -65,18 +83,19 @@ complete, well-cited GO-CAM.
 WORKFLOW
 
 1. For each gene mention, call `alliance_resolve_symbol` to obtain a stable CURIE (e.g. tph-1 -> \
-   WB:WBGene00006600). If the resolver returns null, you may also try `alliance_gene_info` with a \
-   guessed CURIE, or fall back to using the symbol itself in a source_type='instinct' add_activity \
-   with a clear justification.
-2. For each resolved gene, call `go_gene_annotations` to pull existing GO annotations. Use the most \
-   informative annotations to choose:
-     - molecular function (MF, GO 'function' aspect)
-     - biological process (BP, GO 'process' aspect)
-     - cellular component / anatomy (CC, GO 'component' aspect, or a CL: term)
-3. Create one Activity per gene via `add_activity` (set source from the resolver/lookup), then call \
-   `set_molecular_function`, `set_part_of`, `set_occurs_in` as appropriate. Each call requires a \
-   source.
-4. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
+   WB:WBGene00006600). The resolution itself is a source_type='alliance' source — its source_id is \
+   the CURIE you got back, tool_name is 'alliance.resolve_symbol_to_curie'.
+2. For each resolved gene, call `go_gene_annotations` to pull existing GO annotations. The most \
+   informative annotations give you MF / BP / CC. Tag each assertion you derive this way as \
+   source_type='go_annotation' (its source_id is the GO term CURIE you used).
+3. If the gene has no useful GO annotations, fall back to:
+     - `alliance_gene_info` / phenotype / interactions / expression — tag as source_type='alliance'
+     - `alliance_gene_orthologs` — if you transfer an annotation by orthology, tag as \
+       source_type='orthology'. Set source_id to the ortholog's CURIE and put ortholog_species \
+       (e.g. 'Homo sapiens') in `extra`. Put the originating annotation's id in extra.from_annotation.
+4. Create one Activity per gene via `add_activity` (source from the resolver/lookup), then call \
+   `set_molecular_function`, `set_part_of`, `set_occurs_in` as appropriate. Each call requires a source.
+5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
      - RO:0002630  directly negatively regulates
@@ -85,25 +104,40 @@ WORKFLOW
      - RO:0002304  causally upstream of, positive effect
      - RO:0002305  causally upstream of, negative effect
    Then call `add_causal` with the predicate and a source.
-5. When the model is complete, call `finalize_model`.
+6. When the model is complete, call `finalize_model`.
+
+SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
+
+* `literature`        — a PMID you actually found via a tool. source_id is the PMID. NEVER fabricate.
+* `go_annotation`     — an existing GO annotation pulled via the GO API. source_id is the GO term CURIE.
+* `alliance`          — Alliance gene info / phenotypes / interactions / expression / orthologs.
+                        source_id is whatever CURIE / identifier the Alliance API returned.
+* `amigo`             — a direct Golr / AmiGO Solr query result.
+* `orthology`         — by-orthology inference. source_id = ortholog CURIE; extra.ortholog_species and
+                        extra.from_annotation give the surrounding context.
+* `pathway_resource`  — Reactome / WikiPathways cross-reference. source_id = pathway id;
+                        extra.resource = 'Reactome' or 'WikiPathways'; extra.pathway_url optional.
+* `expert_review`     — curator-asserted or expert-vetted. Use sparingly; not common in v0.
+* `instinct`          — LLM-only. REQUIRES a non-empty justification. The weakest tier — use ONLY \
+                        when no real evidence is available, and write down WHY in justification.
 
 NON-NEGOTIABLE RULES
 
-* Every assertion you attach to the model carries a source object.
-* source_type='literature' means a PMID you ACTUALLY found via a tool — never invent a PMID.
-* source_type='database' / 'amigo' must carry a real source_id (the CURIE or annotation key you found).
-* source_type='instinct' is ONLY for assertions you are making without external evidence; it requires \
-  a non-empty `justification`. Use this sparingly — it is the weakest evidence tier.
-* If a gene's annotations don't include an obvious MF, set MF to the most specific function you find \
-  with source_type='database' citing the annotation. Do not invent a function.
-* Prefer general RO predicates ("causally upstream of, positive effect") over "directly positively \
-  regulates" unless the figure makes the directness clear.
+* Every assertion attached to the model carries a source object whose source_type is the most \
+  specific applicable type from the taxonomy above.
+* Never invent a PMID. literature requires a real PMID returned by a tool.
+* Prefer database-grounded types (go_annotation / alliance / amigo / orthology / pathway_resource) \
+  over instinct whenever any external lookup produced relevant evidence.
+* Prefer general RO predicates ("causally upstream of, positive effect" / "negative effect") over \
+  "directly positively/negatively regulates" unless the figure makes the directness clear.
+* Always fill `snippet` with a brief summary of what the source actually says — even for database \
+  sources. The viewer panel relies on it for human-readable context.
 
 PRACTICAL
 
-* Keep the local_part for activity ids short and stable (e.g. 'tph1', 'mod1', 'nhr76').
-* Re-use the same activity_id when wiring causal edges (the strings you got back from add_activity).
-* Plan briefly in prose before each tool call. Do not narrate at length between calls.
+* Keep activity local_part short and stable (e.g. 'tph1', 'mod1', 'nhr76').
+* Re-use the activity_id returned by add_activity for set_* and add_causal calls.
+* Plan briefly before each tool call; do not narrate at length between calls.
 """
 
 
@@ -179,6 +213,20 @@ class Orchestrator:
                 "required": ["gene_curie"],
             },
             self._t_gene_info,
+        )
+        self._register(
+            "alliance_gene_orthologs",
+            "Fetch orthologs for a gene CURIE across model organisms. Use this when the gene has "
+            "no useful direct annotation — you can then transfer an ortholog's annotation and tag "
+            "the resulting assertion as source_type='orthology' (source_id=<ortholog CURIE>, "
+            "extra.ortholog_species, extra.from_annotation).",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {"gene_curie": {"type": "string"}},
+                "required": ["gene_curie"],
+            },
+            self._t_gene_orthologs,
         )
         self._register(
             "add_activity",
@@ -312,6 +360,26 @@ class Orchestrator:
             "species": species.get("name") if isinstance(species, dict) else species,
             "synonyms": g.get("synonyms") or [],
         }
+
+    def _t_gene_orthologs(self, inp: dict) -> dict:
+        try:
+            raw = alliance.gene_orthologs(inp["gene_curie"])
+        except httpx.HTTPError as e:
+            return {"error": f"HTTP error: {e}"}
+        slim: list[dict] = []
+        for o in (raw.get("results") or [])[:10]:
+            gene2 = o.get("gene2") or {}
+            species = gene2.get("species") or {}
+            slim.append({
+                "ortholog_curie": gene2.get("primaryKey") or gene2.get("id"),
+                "ortholog_symbol": gene2.get("symbol"),
+                "ortholog_species": (
+                    species.get("name") if isinstance(species, dict) else species
+                ),
+                "best_score": o.get("bestScore"),
+                "prediction_methods_matched": o.get("predictionMethodsMatched"),
+            })
+        return {"orthologs": slim}
 
     def _t_add_activity(self, inp: dict) -> dict:
         try:

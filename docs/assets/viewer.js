@@ -7,10 +7,14 @@
 //   4. Renders a custom provenance panel keyed by assertion id
 
 const SOURCE_META = {
-  literature: { emoji: "\u{1F4DA}", label: "Literature" },
-  database:   { emoji: "\u{1F5C4}", label: "Database" },
-  amigo:      { emoji: "\u{1F50D}", label: "AmiGO" },
-  instinct:   { emoji: "\u{26A0}\u{FE0F}",  label: "Instinct" },
+  literature:        { emoji: "\u{1F4DA}",          label: "Literature" },
+  go_annotation:     { emoji: "\u{1F5C2}\u{FE0F}",  label: "GO annotation" },
+  alliance:          { emoji: "\u{1F9EC}",          label: "Alliance" },
+  amigo:             { emoji: "\u{1F50D}",          label: "AmiGO" },
+  orthology:         { emoji: "\u{2197}\u{FE0F}",   label: "Orthology" },
+  pathway_resource:  { emoji: "\u{1F6E4}\u{FE0F}",  label: "Pathway" },
+  expert_review:     { emoji: "\u{2714}\u{FE0F}",   label: "Expert review" },
+  instinct:          { emoji: "\u{26A0}\u{FE0F}",   label: "Instinct" },
 };
 
 const SLOT_PRETTY = {
@@ -322,6 +326,24 @@ function renderSource(slot, src) {
     p.innerHTML = `<strong>Justification:</strong> ${escapeHtml(src.justification)}`;
     card.appendChild(p);
   }
+  if (src.extra && Object.keys(src.extra).length) {
+    const dl = document.createElement("dl");
+    dl.className = "extra";
+    for (const [k, v] of Object.entries(src.extra)) {
+      const dt = document.createElement("dt"); dt.textContent = prettifyKey(k);
+      const dd = document.createElement("dd");
+      if (k === "pathway_url" || /^https?:/.test(String(v))) {
+        const a = document.createElement("a");
+        a.href = String(v); a.textContent = String(v);
+        a.target = "_blank"; a.rel = "noopener noreferrer";
+        dd.appendChild(a);
+      } else {
+        dd.textContent = String(v);
+      }
+      dl.appendChild(dt); dl.appendChild(dd);
+    }
+    card.appendChild(dl);
+  }
   if (src.tool_name) {
     const t = document.createElement("p");
     t.className = "tool";
@@ -347,7 +369,20 @@ function sourceUrl(id) {
   if (id.startsWith("ECO:"))  return `https://www.evidenceontology.org/term/${id}`;
   if (id.startsWith("CL:"))   return `https://amigo.geneontology.org/amigo/term/${id}`;
   if (id.startsWith("GO_REF:")) return `https://github.com/geneontology/go-site/blob/master/metadata/gorefs/${id}`;
+  if (id.startsWith("HGNC:")) return `https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/${id}`;
+  if (id.startsWith("MGI:"))  return `https://www.informatics.jax.org/marker/${id}`;
+  if (id.startsWith("ZFIN:")) return `https://zfin.org/${id.slice(5)}`;
+  if (id.startsWith("RGD:"))  return `https://rgd.mcw.edu/rgdweb/report/gene/main.html?id=${id.slice(4)}`;
+  if (id.startsWith("FB:") || id.startsWith("FlyBase:")) return `https://flybase.org/reports/${id.split(":")[1]}.html`;
+  if (id.startsWith("SGD:"))  return `https://www.yeastgenome.org/locus/${id.slice(4)}`;
+  if (/^R-[A-Z]{3,4}-\d+/.test(id)) return `https://reactome.org/content/detail/${id}`;
+  if (/^WP\d+/.test(id))      return `https://www.wikipathways.org/pathways/${id}.html`;
+  if (/^https?:/.test(id))    return id;
   return "#";
+}
+
+function prettifyKey(k) {
+  return k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function escapeHtml(s) {

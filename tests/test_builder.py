@@ -8,7 +8,7 @@ import yaml
 from gocam.datamodel import Model
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
-from gocam_prototype.provenance import database, instinct, literature
+from gocam_prototype.provenance import alliance, go_annotation, instinct, literature
 
 
 def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
@@ -20,7 +20,7 @@ def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
     aid_a = b.add_activity(
         "act-A",
         enabled_by_gene="WB:WBGene00006600",
-        enabled_by_source=database(source_id="WB:WBGene00006600",
+        enabled_by_source=alliance(source_id="WB:WBGene00006600",
                                    tool_name="alliance.resolve_symbol_to_curie"),
         gene_label="tph-1",
     )
@@ -28,8 +28,8 @@ def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
                              source=literature(pmid="PMID:111", snippet="IDA"),
                              label="tryptophan 5-monooxygenase activity")
     b.set_part_of(aid_a, "GO:0042427",
-                  source=database(source_id="GO:0042427",
-                                  tool_name="go_api.gene_annotations"),
+                  source=go_annotation(source_id="GO:0042427",
+                                       tool_name="go_api.gene_annotations"),
                   label="serotonin biosynthetic process")
     b.set_occurs_in(aid_a, "CL:0000540",
                     source=instinct(justification="figure labels neurons; CL:0000540 is the canonical neuron CL term"),
@@ -38,7 +38,7 @@ def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
     aid_b = b.add_activity(
         "act-B",
         enabled_by_gene="WB:WBGene00003185",
-        enabled_by_source=database(source_id="WB:WBGene00003185",
+        enabled_by_source=alliance(source_id="WB:WBGene00003185",
                                    tool_name="alliance.resolve_symbol_to_curie"),
         gene_label="mod-1",
     )
@@ -98,7 +98,7 @@ def test_builder_ledger_has_all_assertions() -> None:
     }
     # Source-type mix reflects the test data.
     counts = ledger.count_by_source_type()
-    assert counts == {"database": 3, "literature": 3, "instinct": 1}
+    assert counts == {"alliance": 2, "go_annotation": 1, "literature": 3, "instinct": 1}
 
 
 def test_evidence_only_attached_for_literature() -> None:

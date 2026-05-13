@@ -18,7 +18,17 @@ def test_build_demo_writes_three_files(tmp_path: Path) -> None:
     assert summary["activities"] == 4
     assert summary["sidecar_entries"] >= 14
     # Demo deliberately exercises all four source types except amigo.
-    assert {"database", "instinct", "literature"} <= set(summary["source_mix"])
+    # The demo deliberately exercises every entry in the taxonomy.
+    assert {
+        "alliance",
+        "amigo",
+        "expert_review",
+        "go_annotation",
+        "instinct",
+        "literature",
+        "orthology",
+        "pathway_resource",
+    } == set(summary["source_mix"])
 
     viewer = json.loads((tmp_path / "viewer.json").read_text())
     assert set(viewer.keys()) == {"id", "individuals", "facts", "annotations"}

@@ -2,9 +2,9 @@
 
 This is NOT the agent's output — it's a deterministic artifact that mirrors
 figure 1 (C. elegans serotonin/octopamine → intestinal fat loss) and lets us
-wire up the static viewer page (issue #10) without burning Vertex tokens on
-every iteration. Once the GH Actions workflow (issue #11) is in place,
-real agent runs land in the same `docs/runs/<run-id>/` layout.
+wire up the static viewer page without burning Vertex tokens on every
+iteration. The demo deliberately exercises every entry in the source-type
+taxonomy so the static page's badges are all visible.
 
 Run with:
 
@@ -17,7 +17,16 @@ import json
 from pathlib import Path
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
-from gocam_prototype.provenance import database, instinct, literature
+from gocam_prototype.provenance import (
+    alliance,
+    amigo,
+    expert_review,
+    go_annotation,
+    instinct,
+    literature,
+    orthology,
+    pathway_resource,
+)
 from gocam_prototype.viewer import linkml_to_viewer_json
 
 
@@ -32,7 +41,7 @@ def build_demo(out_dir: Path) -> dict:
     tph1 = b.add_activity(
         "tph1",
         enabled_by_gene="WB:WBGene00006600",
-        enabled_by_source=database(
+        enabled_by_source=alliance(
             source_id="WB:WBGene00006600",
             tool_name="alliance.resolve_symbol_to_curie",
             snippet="tph-1 resolved via Alliance gene search",
@@ -41,7 +50,7 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.set_molecular_function(
         tph1, "GO:0004510",
-        source=database(
+        source=go_annotation(
             source_id="GO:0004510",
             tool_name="go_api.gene_annotations",
             snippet="Existing GO annotation: tryptophan 5-monooxygenase activity, IDA",
@@ -50,10 +59,10 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.set_part_of(
         tph1, "GO:0042427",
-        source=database(
+        source=amigo(
             source_id="GO:0042427",
-            tool_name="go_api.gene_annotations",
-            snippet="Existing GO annotation: serotonin biosynthetic process",
+            tool_name="golr.annotations_for_gene",
+            snippet="Golr annotation doc: serotonin biosynthetic process, ISS evidence",
         ),
         label="serotonin biosynthetic process",
     )
@@ -69,7 +78,7 @@ def build_demo(out_dir: Path) -> dict:
     mod1 = b.add_activity(
         "mod1",
         enabled_by_gene="WB:WBGene00003533",
-        enabled_by_source=database(
+        enabled_by_source=alliance(
             source_id="WB:WBGene00003533",
             tool_name="alliance.resolve_symbol_to_curie",
         ),
@@ -96,7 +105,7 @@ def build_demo(out_dir: Path) -> dict:
     nhr76 = b.add_activity(
         "nhr76",
         enabled_by_gene="WB:WBGene00003640",
-        enabled_by_source=database(
+        enabled_by_source=alliance(
             source_id="WB:WBGene00003640",
             tool_name="alliance.resolve_symbol_to_curie",
         ),
@@ -104,7 +113,7 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.set_molecular_function(
         nhr76, "GO:0004879",
-        source=database(
+        source=go_annotation(
             source_id="GO:0004879",
             tool_name="go_api.gene_annotations",
             snippet="Existing GO annotation: nuclear receptor transcription factor activity",
@@ -113,7 +122,7 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.set_part_of(
         nhr76, "GO:0006357",
-        source=database(
+        source=go_annotation(
             source_id="GO:0006357",
             tool_name="go_api.gene_annotations",
             snippet="Existing GO annotation: regulation of transcription by RNA polymerase II",
@@ -128,11 +137,12 @@ def build_demo(out_dir: Path) -> dict:
         label="enterocyte",
     )
 
-    # atgl-1: adipose triglyceride lipase in intestine.
+    # atgl-1: adipose triglyceride lipase in intestine — uses orthology + pathway_resource
+    # to exercise those source-type badges.
     atgl1 = b.add_activity(
         "atgl1",
         enabled_by_gene="WB:WBGene00010532",
-        enabled_by_source=database(
+        enabled_by_source=alliance(
             source_id="WB:WBGene00010532",
             tool_name="alliance.resolve_symbol_to_curie",
         ),
@@ -140,19 +150,25 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.set_molecular_function(
         atgl1, "GO:0004806",
-        source=database(
-            source_id="GO:0004806",
-            tool_name="go_api.gene_annotations",
-            snippet="Existing GO annotation: triacylglycerol lipase activity",
+        source=orthology(
+            ortholog_curie="HGNC:17431",
+            ortholog_species="Homo sapiens",
+            from_annotation="GO:0004806",
+            tool_name="alliance.gene_orthologs",
+            snippet="Human PNPLA2 (the ATGL ortholog) carries an experimental annotation to "
+                    "triacylglycerol lipase activity; transferred by orthology.",
         ),
         label="triacylglycerol lipase activity",
     )
     b.set_part_of(
         atgl1, "GO:0019433",
-        source=database(
-            source_id="GO:0019433",
-            tool_name="go_api.gene_annotations",
-            snippet="Existing GO annotation: triglyceride catabolic process",
+        source=pathway_resource(
+            resource="Reactome",
+            source_id="R-HSA-163560",
+            pathway_url="https://reactome.org/PathwayBrowser/#/R-HSA-163560",
+            tool_name="reactome.content_service",
+            snippet="Reactome 'Triglyceride catabolism' pathway includes PNPLA2 (ATGL ortholog) "
+                    "performing this step.",
         ),
         label="triglyceride catabolic process",
     )
@@ -164,7 +180,7 @@ def build_demo(out_dir: Path) -> dict:
         label="enterocyte",
     )
 
-    # Causal edges.
+    # Causal edges — exercise literature, instinct, and expert_review.
     b.add_causal(
         tph1, mod1,
         predicate="RO:0002304",
@@ -178,17 +194,21 @@ def build_demo(out_dir: Path) -> dict:
         mod1, nhr76,
         predicate="RO:0002304",
         source=instinct(
-            justification="Figure 1 panel E draws an 'endocrine signal' arrow from the NEURONS compartment (containing mod-1) to the INTESTINE compartment (containing nhr-76); the directionality is shown but no direct molecular link is annotated in GO yet.",
+            justification="Figure 1 panel E draws an 'endocrine signal' arrow from the NEURONS compartment "
+                          "(containing mod-1) to the INTESTINE compartment (containing nhr-76); the "
+                          "directionality is shown but no direct molecular link is annotated in GO yet.",
         ),
         predicate_label="causally upstream of, positive effect",
     )
     b.add_causal(
         nhr76, atgl1,
         predicate="RO:0002629",
-        source=database(
-            source_id="GO:0006357",
-            tool_name="go_api.gene_annotations",
-            snippet="nhr-76 is annotated as a transcriptional regulator; figure indicates atgl-1 as a direct downstream target.",
+        source=expert_review(
+            source_id="curator-note-2026-05-12-001",
+            orcid="0000-0001-0000-0000",
+            contributor_name="GO biocurator (placeholder)",
+            snippet="Confirmed during curator review: nhr-76 → atgl-1 transcriptional link in C. elegans "
+                    "is consistent with both the figure and published expression data.",
         ),
         predicate_label="directly positively regulates",
     )
