@@ -22,6 +22,8 @@ const SLOT_PRETTY = {
 };
 
 async function main() {
+  installOffsiteLinkDefault();
+
   const [viewerData, prov] = await Promise.all([
     fetchJson("viewer.json"),
     fetchJson("provenance.json"),
@@ -35,17 +37,58 @@ async function main() {
   await customElements.whenDefined("go-gocam-viewer");
   const viewerEl = document.querySelector("#viewer");
 
+  hideBuiltinSidebar(viewerEl);
   await viewerEl.setModelData(viewerData);
 
   // Node-click is upstream-supported — wire it directly.
   viewerEl.addEventListener("nodeClick", (e) => {
-    const node = e.detail;
-    handleNodeClick(node, prov);
+    handleNodeClick(e.detail, prov);
   });
 
   // Edge-click is NOT upstream-supported. Try multiple paths to the
   // cytoscape instance; fall back to wiring on first node click.
   await wireEdgeClicks(viewerEl, prov);
+}
+
+/* --------------------------------------------- shadow-DOM customisations */
+
+// `<go-gocam-viewer>` declares `shadow: true` (gocam-viewer.tsx:56) and
+// internally renders `<go-gocam-viewer-sidebar>` (line 809). The built-in
+// sidebar exposes PMID / AmiGO / WormBase links that open same-tab and
+// competes with our own custom provenance panel. Inject a <style> into the
+// shadow root to hide it. show-legend="false" already gates the legend.
+function hideBuiltinSidebar(viewerEl) {
+  if (!viewerEl?.shadowRoot) return;
+  const css = `
+    go-gocam-viewer-sidebar { display: none !important; }
+    /* Take the freed real estate. */
+    .gocam-graph, .gocam-viz, [class*="graph"] { width: 100% !important; }
+  `;
+  const sheet = document.createElement("style");
+  sheet.setAttribute("data-injected-by", "go-prototype-viewer-wrapper");
+  sheet.textContent = css;
+  viewerEl.shadowRoot.appendChild(sheet);
+}
+
+// Audit + default any off-site anchor click to `target=_blank` + `rel=noopener`,
+// so future links anywhere on the page inherit the behaviour without per-call
+// wiring. Same-origin links are left alone (so '← all runs' still navigates
+// in-tab). Anchors that already declare a target are not touched.
+function installOffsiteLinkDefault() {
+  document.addEventListener("click", (ev) => {
+    const a = ev.target instanceof Element ? ev.target.closest("a[href]") : null;
+    if (!a || a.target) return;
+    const href = a.getAttribute("href");
+    if (!href || href.startsWith("#")) return;
+    try {
+      const url = new URL(href, window.location.href);
+      if (url.origin === window.location.origin) return;
+      a.target = "_blank";
+      a.rel = a.rel ? `${a.rel} noopener noreferrer` : "noopener noreferrer";
+    } catch {
+      /* relative or otherwise non-URL href — leave it */
+    }
+  }, /* useCapture */ true);
 }
 
 async function fetchJson(path) {
