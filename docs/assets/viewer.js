@@ -30,6 +30,57 @@ const SLOT_PRETTY = {
 // same browser. v1 will swap this for a real curator-review backend.
 const ACTIONS_STORE_KEY = (modelId) => `gocam-proto-actions/${modelId}`;
 
+// GH issue-forms bridge: every curator action also opens a pre-populated
+// GitHub Issue Form so the curator's click escapes localStorage. The
+// user's GH auth in the browser is the auth — no backend required.
+const REPO = "geneontology/go-prototype-0000001";
+const CURATOR_ACTION_TEMPLATE = "curator-action.yml";
+
+// Per-run id derived from the URL: `/runs/<run-id>/`. The viewer page is
+// served from that path on GH Pages.
+function inferRunId() {
+  const m = window.location.pathname.match(/\/runs\/([^/]+)\/?(?:index\.html)?$/);
+  return m ? m[1] : "";
+}
+const CURRENT_RUN_ID = inferRunId();
+
+function curatorActionIssueUrl({ actionKind, assertionId, slot, srcSummary, note }) {
+  const params = new URLSearchParams({ template: CURATOR_ACTION_TEMPLATE });
+  if (actionKind)     params.set("action_kind", actionKind);
+  if (CURRENT_RUN_ID) params.set("model_run_id", CURRENT_RUN_ID);
+  if (assertionId)    params.set("assertion_id", assertionId);
+  if (slot)           params.set("slot", slot);
+  if (srcSummary)     params.set("current_source", srcSummary);
+  if (note)           params.set("note", note);
+  // Help GH pre-render a usable issue title.
+  if (actionKind && assertionId) {
+    const shortId = assertionId.split("/").slice(-2).join("/");
+    params.set("title", `[curator] ${actionKind} ${shortId}`);
+  }
+  return `https://github.com/${REPO}/issues/new?${params.toString()}`;
+}
+
+function summarizeSource(src) {
+  if (!src) return "";
+  const lines = [];
+  if (src.source_type)   lines.push(`source_type: ${src.source_type}`);
+  if (src.source_id)     lines.push(`source_id:   ${src.source_id}`);
+  if (src.tool_name)     lines.push(`tool_name:   ${src.tool_name}`);
+  if (src.snippet)       lines.push(`snippet:     ${src.snippet}`);
+  if (src.justification) lines.push(`justification: ${src.justification}`);
+  return lines.join("\n");
+}
+
+function openInNewTab(url) {
+  const w = window.open(url, "_blank", "noopener,noreferrer");
+  if (!w) {
+    // Popup blocked — fallback to nav in current tab via a temp anchor.
+    const a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
 function loadActions(modelId) {
   try {
     return JSON.parse(localStorage.getItem(ACTIONS_STORE_KEY(modelId)) || "[]");
@@ -122,14 +173,67 @@ function installModelActionsHeader() {
     const btn = ev.target.closest("[data-action='propose']");
     if (!btn) return;
     const actions = loadActions(CURRENT_MODEL_ID);
-    showModal({
-      title: "Propose changes (prototype)",
-      body: actions.length
-        ? `You've recorded ${actions.length} pending action${actions.length === 1 ? "" : "s"} on this model. In v1 these would batch into a curator-review submission; today they're stored locally in your browser.`
-        : "No pending actions yet. Use the per-assertion buttons (confirm / dispute / comment) on the source cards to mark things up; this button would package them into a curator-review submission in v1.",
-      details: actions,
-    });
+    showProposeChangesModal(actions);
   });
+}
+
+function showProposeChangesModal(actions) {
+  if (!actions.length) {
+    showModal({
+      title: "Propose changes",
+      body: "No pending actions yet. Use the per-assertion buttons (confirm / dispute / comment / add evidence / edit relation) on the source cards to mark things up; once you have a few, this button bundles them into a single GitHub issue for review.",
+    });
+    return;
+  }
+  const noteBody = renderActionsAsMarkdown(actions);
+  const issueUrl = curatorActionIssueUrl({
+    actionKind: "propose-changes-batch",
+    assertionId: "model",
+    slot: "model",
+    srcSummary: "",
+    note: noteBody,
+  });
+  // Reuse showModal for visual consistency, then append a primary CTA.
+  document.querySelector("#dummy-modal")?.remove();
+  const m = document.createElement("div");
+  m.id = "dummy-modal";
+  m.className = "modal-backdrop";
+  m.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Propose changes">
+      <h3>Propose changes — ${actions.length} pending action${actions.length === 1 ? "" : "s"}</h3>
+      <p>Bundle all pending actions into a single curator-review issue. Your local
+         records stay in place; the issue is the durable, reviewable artifact.</p>
+      <pre class="modal-actions-preview">${escapeHtml(noteBody)}</pre>
+      <div class="modal-actions">
+        <a class="curator-btn primary" href="${issueUrl}" target="_blank" rel="noopener noreferrer">Open as GitHub issue ↗</a>
+        <button type="button" class="curator-btn">Close</button>
+      </div>
+    </div>
+  `;
+  m.addEventListener("click", (ev) => {
+    if (ev.target === m) m.remove();
+    if (ev.target.closest("button.curator-btn")) m.remove();
+    // Anchor click — let it open the new tab, then dismiss.
+    if (ev.target.closest("a.curator-btn")) setTimeout(() => m.remove(), 100);
+  });
+  document.body.appendChild(m);
+}
+
+function renderActionsAsMarkdown(actions) {
+  // Most recent first; cap at 50 to keep the issue URL within reasonable
+  // limits (GitHub silently truncates very long query strings).
+  const recent = actions.slice(-50).reverse();
+  const lines = [
+    `Curator submitted ${actions.length} pending action${actions.length === 1 ? "" : "s"} on \`${CURRENT_RUN_ID || "(unknown run)"}\`.`,
+    "",
+    "| # | Action | Assertion | Note | Timestamp |",
+    "| - | ------ | --------- | ---- | --------- |",
+  ];
+  recent.forEach((a, i) => {
+    const note = (a.payload || "").replace(/\|/g, "\\|").replace(/\n/g, " ⏎ ");
+    lines.push(`| ${i + 1} | ${a.kind} | \`${a.assertionId}\` | ${note} | ${a.ts} |`);
+  });
+  return lines.join("\n");
 }
 
 function installToastHost() {
@@ -519,7 +623,13 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
   }
 }
 
+// Lookup of the live source object by assertion id. Filled lazily as
+// renderSource gets called for each slot in the current panel; the
+// curator-action handler reads it back when building the GH issue body.
+const SRC_BY_ASSERTION = new Map();
+
 function renderSource(slot, src, assertionId) {
+  SRC_BY_ASSERTION.set(assertionId, src);
   const card = document.createElement("div");
   card.className = `source-card ${src.source_type}`;
 
@@ -620,7 +730,8 @@ function renderCuratorActions(assertionId, slot) {
     btn.type = "button";
     btn.className = `curator-btn micro action-${b.kind}`;
     btn.textContent = b.label;
-    btn.addEventListener("click", () => handleCuratorAction(assertionId, b.kind));
+    btn.title = "Records locally, then offers to open a GitHub issue with the details pre-filled.";
+    btn.addEventListener("click", () => handleCuratorAction(assertionId, slot, b.kind));
     wrap.appendChild(btn);
   }
 
@@ -641,21 +752,56 @@ function renderCuratorActions(assertionId, slot) {
   return wrap;
 }
 
-function handleCuratorAction(assertionId, kind) {
+function handleCuratorAction(assertionId, slot, kind) {
+  let note = null;
   if (kind === "comment" || kind === "add-evidence" || kind === "edit-relation") {
     const label = kind === "comment" ? "Comment" :
                   kind === "add-evidence" ? "New evidence (PMID / snippet)" :
                   "New relation (free-text suggestion)";
-    const text = prompt(`${label}:`);
-    if (!text) return;
-    recordAction(CURRENT_MODEL_ID, assertionId, kind, text);
-    toast(`\u{1F4DD} ${kind} recorded (prototype — saved locally)`);
-  } else {
-    recordAction(CURRENT_MODEL_ID, assertionId, kind, null);
-    toast(`✓ ${kind} recorded (prototype — saved locally)`);
+    note = prompt(`${label}:`);
+    if (!note) return;
   }
-  // Re-render the current panel so the new chip shows up without a full page click.
+  recordAction(CURRENT_MODEL_ID, assertionId, kind, note);
+
+  // Offer a one-click GH-issue path. The action is already saved locally —
+  // this just escalates it from "noted in this browser" to "filed in the
+  // project tracker".
+  const src = SRC_BY_ASSERTION.get(assertionId);
+  const issueUrl = curatorActionIssueUrl({
+    actionKind: kind,
+    assertionId,
+    slot,
+    srcSummary: summarizeSource(src),
+    note: note || "",
+  });
+  toastWithAction(
+    `✓ ${kind} saved locally`,
+    "Open as GitHub issue ↗",
+    () => openInNewTab(issueUrl),
+  );
   document.querySelector("#provenance-panel")?.dispatchEvent(new CustomEvent("rerender"));
+}
+
+// Toast variant with an inline action link. The action button persists
+// until the toast fades; clicking it doesn't dismiss early because the
+// open-in-new-tab navigation also closes the parent toast naturally.
+function toastWithAction(message, actionLabel, onClick) {
+  installToastHost();
+  const host = document.querySelector("#toast-host");
+  const el = document.createElement("div");
+  el.className = "toast toast-with-action";
+  const text = document.createElement("span");
+  text.textContent = message;
+  el.appendChild(text);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "toast-action";
+  btn.textContent = actionLabel;
+  btn.addEventListener("click", onClick);
+  el.appendChild(btn);
+  host.appendChild(el);
+  setTimeout(() => el.classList.add("fade-out"), 6000);
+  setTimeout(() => el.remove(), 6600);
 }
 
 function sourceUrl(id) {

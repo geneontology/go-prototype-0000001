@@ -560,6 +560,39 @@ code, .assertion-id {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 .toast.fade-out { opacity: 0; transform: translateY(6px); }
+.toast.toast-with-action {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  pointer-events: auto;
+}
+.toast .toast-action {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+  cursor: pointer;
+}
+.toast .toast-action:hover { background: rgba(255, 255, 255, 0.12); }
+
+.modal-actions-preview {
+  background: var(--c-bg-alt, #f6f8fa);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.78em;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.modal a.curator-btn.primary {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
 
 .modal-backdrop {
   position: fixed;
@@ -583,6 +616,7 @@ code, .assertion-id {
 .modal-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
   margin-top: 1rem;
 }
 .modal-details {

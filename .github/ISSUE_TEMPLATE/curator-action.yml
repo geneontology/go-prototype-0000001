@@ -1,0 +1,99 @@
+name: "Curator action (confirm / dispute / comment / propose change)"
+description: "File a curator action on a draft GO-CAM assertion. Usually opened by clicking a button on the model viewer page."
+title: "[curator] "
+labels: ["curator-action"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is normally opened from a draft-model viewer page (per-assertion or
+        model-level Propose-changes button). The viewer pre-populates everything except
+        your note and ORCID.
+
+        If you got here directly, fill in at least the model run id and assertion id so
+        we know which draft and which clickable element you're acting on.
+
+  - type: dropdown
+    id: action_kind
+    attributes:
+      label: Action
+      description: What are you doing to this assertion / model?
+      options:
+        - confirm
+        - dispute
+        - comment
+        - add-evidence
+        - edit-relation
+        - propose-changes-batch
+    validations:
+      required: true
+
+  - type: input
+    id: model_run_id
+    attributes:
+      label: Model run id
+      description: The `<run-id>` segment under `docs/runs/`. E.g. `figure1`, `20260513T034501Z`.
+      placeholder: figure1
+    validations:
+      required: true
+
+  - type: input
+    id: assertion_id
+    attributes:
+      label: Assertion id
+      description: |
+        The provenance.json key for the clickable element you're acting on.
+        E.g. `gomodel:run-figure1/tph1/molecular_function`,
+        `gomodel:run-figure1/nhr76/causal/gomodel:run-figure1/atgl1`.
+        Use `model` for model-level actions (propose-changes-batch).
+      placeholder: gomodel:run-figure1/tph1/molecular_function
+    validations:
+      required: true
+
+  - type: input
+    id: slot
+    attributes:
+      label: Slot
+      description: The slot kind — enabled_by, molecular_function, part_of, occurs_in, causal, or model.
+      placeholder: molecular_function
+    validations:
+      required: false
+
+  - type: textarea
+    id: current_source
+    attributes:
+      label: Current source (auto-filled)
+      description: |
+        Pre-filled by the viewer with the current source_type / source_id / snippet for
+        the assertion. Leave as-is unless you spot something to correct.
+      placeholder: |
+        source_type: go_annotation
+        source_id: GO:0004510
+        snippet: tph-1 annotated to GO:0004510 …
+    validations:
+      required: false
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Curator note
+      description: |
+        For `dispute` — why is the current assertion wrong, and what would you put in its place?
+        For `comment` — your free-text observation.
+        For `add-evidence` — supply a PMID (or DOI / URL) and the snippet you'd quote.
+        For `edit-relation` — propose a new RO predicate (CURIE preferred) and the rationale.
+        For `propose-changes-batch` — auto-filled with your pending local actions.
+      placeholder: |
+        PMID:24120942 — Noble et al. 2013 panel E directly shows tph-1 → mod-1 via 5-HT; replace the
+        instinct source with this literature citation.
+    validations:
+      required: false
+
+  - type: input
+    id: orcid
+    attributes:
+      label: Your ORCID (optional)
+      description: For attribution in any downstream curator-review record.
+      placeholder: 0000-0002-1825-0097
+    validations:
+      required: false
