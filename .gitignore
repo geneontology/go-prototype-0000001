@@ -31,3 +31,6 @@ node_modules/
 *.swp
 .idea/
 .vscode/
+
+# Claude Code per-user local settings (allowlists etc.)
+.claude/settings.local.json
