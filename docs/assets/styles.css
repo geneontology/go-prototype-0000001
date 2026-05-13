@@ -192,6 +192,33 @@ code, .assertion-id {
   background: var(--c-bg);
   border: 1px solid var(--c-border);
   border-radius: 4px;
+  display: grid;
+  gap: 0.75rem;
+}
+.submit-form .submit-primary {
+  display: grid;
+  gap: 0.5rem;
+}
+.submit-form .primary-link {
+  display: inline-block;
+  padding: 0.65rem 1.1rem;
+  background: var(--c-goann);
+  color: white !important;
+  border-radius: 3px;
+  font-weight: 600;
+  text-decoration: none;
+  width: max-content;
+}
+.submit-form .primary-link:hover { filter: brightness(1.05); text-decoration: none; }
+.submit-form details.submit-secondary {
+  border-top: 1px solid var(--c-border);
+  padding-top: 0.65rem;
+}
+.submit-form details.submit-secondary > summary {
+  cursor: pointer;
+  color: var(--c-muted);
+  font-size: 0.9em;
+  list-style: revert;
 }
 .submit-form .submit-cmd {
   padding: 0.6rem 0.75rem;

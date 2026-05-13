@@ -20,8 +20,9 @@
     <section class="submit-card">
       <h2>Submit a figure</h2>
       <p class="card-intro">Paste the URL of a publicly-accessible pathway figure and we'll queue a
-         draft-model run. Today the form generates the <code>gh</code> command you copy into a
-         terminal; in v1 this becomes a one-click submit.</p>
+         draft-model run. Submit opens a pre-populated <a href="https://github.com/geneontology/go-prototype-0000001/issues/new?template=run-agent.yml" target="_blank" rel="noopener noreferrer">GitHub Issue Form</a>;
+         clicking Submit there fires the GitHub Actions workflow and the result is commented back
+         on the issue when the agent finishes.</p>
       <form id="submit-form" class="submit-form">
         <label>
           <span class="field-label">Image URL <small class="required">required</small></span>

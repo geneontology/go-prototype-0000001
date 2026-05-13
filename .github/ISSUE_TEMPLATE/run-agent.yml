@@ -1,0 +1,58 @@
+name: "Run agent (draft a GO-CAM)"
+description: "Submit a research-paper figure URL and we'll queue an agent run that drafts a GO-CAM."
+title: "[draft-model] "
+labels: ["run-agent-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Filling this in will trigger a GitHub Actions run that drafts a GO-CAM model from
+        your figure. The result will be commented back on this issue when the agent finishes,
+        and the draft will appear on the [Pages site](https://geneontology.github.io/go-prototype-0000001/).
+
+        **Tip:** the landing page's *Submit a figure* form pre-populates this template for you.
+
+  - type: input
+    id: image_url
+    attributes:
+      label: Image URL
+      description: Publicly-accessible URL of the pathway figure (PNG / JPG / WebP).
+      placeholder: https://example.com/figure.png
+    validations:
+      required: true
+
+  - type: input
+    id: species
+    attributes:
+      label: Species
+      description: Free-text species name.
+      value: Caenorhabditis elegans
+    validations:
+      required: false
+
+  - type: input
+    id: species_taxon
+    attributes:
+      label: Species taxon
+      description: NCBITaxon CURIE — e.g. `NCBITaxon:6239` for C. elegans.
+      placeholder: NCBITaxon:6239
+    validations:
+      required: false
+
+  - type: textarea
+    id: process_hint
+    attributes:
+      label: Process hint
+      description: Free-text hint describing the biological process the figure depicts.
+      placeholder: e.g., Serotonin signaling from neurons triggers fat loss in the intestine.
+    validations:
+      required: false
+
+  - type: input
+    id: run_id
+    attributes:
+      label: Run id
+      description: Optional override for the generated run id. Default is a UTC timestamp.
+      placeholder: (auto)
+    validations:
+      required: false
