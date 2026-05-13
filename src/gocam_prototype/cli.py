@@ -48,6 +48,34 @@ def _slugify(s: str, max_len: int = 60) -> str:
     return out.strip("-")[:max_len] or "run"
 
 
+# Inputs come from the `Fetch input image` workflow step as
+# `/tmp/agent-input/figure` (no extension), so sniff magic bytes.
+_IMAGE_MAGIC: tuple[tuple[bytes, str], ...] = (
+    (b"\x89PNG\r\n\x1a\n",                         ".png"),
+    (b"\xff\xd8\xff",                              ".jpg"),
+    (b"GIF87a",                                    ".gif"),
+    (b"GIF89a",                                    ".gif"),
+)
+
+def _detect_image_extension(path: Path) -> str:
+    head = path.read_bytes()[:16]
+    for magic, ext in _IMAGE_MAGIC:
+        if head.startswith(magic):
+            return ext
+    if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        return ".webp"
+    return path.suffix.lower() or ".bin"
+
+
+def _find_run_figure(run_dir: Path) -> Path | None:
+    """Return the saved source-figure path for a run, or None."""
+    for ext in (".png", ".jpg", ".jpeg", ".webp", ".gif"):
+        p = run_dir / f"figure{ext}"
+        if p.is_file():
+            return p
+    return None
+
+
 def _default_run_id() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
@@ -66,6 +94,11 @@ def run_pipeline(
     run_id = run_id or _default_run_id()
     out_dir = docs_dir / "runs" / _slugify(run_id)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Preserve the source figure under runs/<id>/figure.<ext> so the landing
+    # list and the viewer page can show a thumbnail.
+    fig_ext = _detect_image_extension(image_path)
+    shutil.copy(image_path, out_dir / f"figure{fig_ext}")
 
     print(f"[1/4] Vision pass on {image_path}", flush=True)
     intent = extract_curator_intent(
@@ -264,6 +297,7 @@ def regenerate_landing(docs_dir: Path) -> Path:
             except yaml.YAMLError:
                 continue
             counts = summarize_provenance(run / "provenance.json")
+            figure = _find_run_figure(run)
             entries.append({
                 "run_id": run.name,
                 "title": data.get("title") or run.name,
@@ -272,17 +306,31 @@ def regenerate_landing(docs_dir: Path) -> Path:
                     model_path.stat().st_mtime, tz=timezone.utc
                 ).strftime("%Y-%m-%d"),
                 "source_counts": counts,
+                "figure_filename": figure.name if figure else None,
             })
 
     li_blocks: list[str] = []
     for e in entries:
         tag_cloud = _render_tag_cloud(e["source_counts"])
-        li_blocks.append(
-            '        <li class="draft-model">\n'
+        body_html = (
             f'          <a class="draft-title" href="runs/{e["run_id"]}/">{_escape(e["title"])}</a>\n'
             f'          <span class="run-meta">{e["n_activities"]} activities · '
             f'updated {e["modified"]} · <code>{e["run_id"]}</code></span>\n'
-            f'          {tag_cloud}\n'
+            f'          {tag_cloud}'
+        )
+        thumb_html = ""
+        if e["figure_filename"]:
+            thumb_html = (
+                f'\n          <a class="run-thumb-link" href="runs/{e["run_id"]}/" '
+                f'aria-label="Open draft model for {_escape(e["run_id"])}">'
+                f'<img class="run-thumb" loading="lazy" '
+                f'src="runs/{e["run_id"]}/{e["figure_filename"]}" '
+                f'alt="Source figure for {_escape(e["run_id"])}"></a>'
+            )
+        li_blocks.append(
+            '        <li class="draft-model">\n'
+            f'          <div class="draft-body">\n{body_html}\n          </div>'
+            f'{thumb_html}\n'
             '        </li>'
         )
     body = "\n".join(li_blocks) + "\n" if li_blocks else (
