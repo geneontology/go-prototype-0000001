@@ -21,6 +21,9 @@ dev = [
     "ruff>=0.5",
 ]
 
+[project.scripts]
+gocam-prototype = "gocam_prototype.cli:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

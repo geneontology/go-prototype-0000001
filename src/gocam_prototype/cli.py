@@ -1,0 +1,239 @@
+"""CLI entry point: ``gocam-prototype run --image ... --species ...``.
+
+Drives the full agent pipeline (vision → orchestrator → viewer translator)
+and writes a run directory under ``docs/runs/<run-id>/`` containing
+everything the static viewer page needs:
+
+* ``curator_intent.json`` — the structured output from the vision pass
+* ``model.yaml`` — the gocam-py model
+* ``provenance.json`` — the sidecar ledger
+* ``viewer.json`` — bbop-graph "active model" JSON for setModelData()
+* ``index.html`` — the per-run viewer page (copied from a template)
+
+After writing the run, refreshes the top-level ``docs/index.html`` so the
+landing page lists the new run.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+from datetime import datetime, timezone
+from pathlib import Path
+
+import yaml
+
+from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
+from gocam_prototype.orchestrator import orchestrate
+from gocam_prototype.viewer import linkml_to_viewer_json
+from gocam_prototype.vision import extract_curator_intent
+
+# Repo-level paths (resolved at import time so tests can override via cwd).
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_DOCS = REPO_ROOT / "docs"
+DEFAULT_RUNS = DEFAULT_DOCS / "runs"
+RUN_TEMPLATE = DEFAULT_RUNS / "demo" / "index.html"
+
+DEFAULT_TAXON = "NCBITaxon:6239"  # C. elegans (v0 test case)
+
+
+# ----------------------------------------------------------- pipeline ----
+
+
+def _slugify(s: str, max_len: int = 60) -> str:
+    out = "".join(c if c.isalnum() or c == "-" else "-" for c in s.lower())
+    while "--" in out:
+        out = out.replace("--", "-")
+    return out.strip("-")[:max_len] or "run"
+
+
+def _default_run_id() -> str:
+    return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def run_pipeline(
+    image_path: Path,
+    species: str,
+    *,
+    species_taxon: str | None = None,
+    process_hint: str | None = None,
+    run_id: str | None = None,
+    docs_dir: Path | None = None,
+    max_turns: int = 80,
+) -> dict:
+    docs_dir = (docs_dir or DEFAULT_DOCS).resolve()
+    run_id = run_id or _default_run_id()
+    out_dir = docs_dir / "runs" / _slugify(run_id)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"[1/4] Vision pass on {image_path}", flush=True)
+    intent = extract_curator_intent(
+        image_path, species_hint=species, process_hint=process_hint
+    )
+    (out_dir / "curator_intent.json").write_text(
+        intent.model_dump_json(indent=2, exclude_none=True)
+    )
+
+    print("[2/4] Orchestrator (Claude tool-use loop)", flush=True)
+    builder = GoCamBuilder(
+        model_id=f"gomodel:run-{_slugify(run_id)}",
+        title=f"Agent run {run_id}: {species}"
+              + (f" — {process_hint}" if process_hint else ""),
+        taxon=species_taxon or DEFAULT_TAXON,
+    )
+    model, ledger = orchestrate(intent, builder, max_turns=max_turns)
+
+    print("[3/4] Writing model + provenance + viewer JSON", flush=True)
+    write_model_and_ledger(model, ledger, out_dir)
+    viewer_json = linkml_to_viewer_json(model)
+    (out_dir / "viewer.json").write_text(json.dumps(viewer_json, indent=2))
+
+    if RUN_TEMPLATE.is_file():
+        shutil.copy(RUN_TEMPLATE, out_dir / "index.html")
+
+    print("[4/4] Regenerating landing page", flush=True)
+    regenerate_landing(docs_dir)
+
+    summary = {
+        "run_id": _slugify(run_id),
+        "out_dir": str(out_dir),
+        "activities": len(model.activities or []),
+        "sidecar_entries": len(ledger.assertions),
+        "source_mix": ledger.count_by_source_type(),
+        "viewer_individuals": len(viewer_json["individuals"]),
+        "viewer_facts": len(viewer_json["facts"]),
+    }
+    return summary
+
+
+# ----------------------------------------------------------- landing page -
+
+
+_LANDING_HEAD = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GO-CAM prototype — runs</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>GO-CAM curation prototype</h1>
+    <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
+      element shows where it came from: <span class="badge literature">📚 literature</span>,
+      <span class="badge database">🗄️ database</span>,
+      <span class="badge amigo">🔍 AmiGO</span>, or
+      <span class="badge instinct">⚠️ instinct</span>.</p>
+    <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
+  </header>
+
+  <main class="runs-list">
+    <h2>Available runs</h2>
+    <ul>
+"""
+
+_LANDING_TAIL = """    </ul>
+    <p class="footer-note">Hand-built reference runs and live agent runs both land in the same
+      <code>docs/runs/&lt;run-id&gt;/</code> layout.</p>
+  </main>
+</body>
+</html>
+"""
+
+
+def regenerate_landing(docs_dir: Path) -> Path:
+    runs_dir = docs_dir / "runs"
+    entries: list[tuple[str, str, int, str]] = []  # (run_id, title, activities, mtime-iso)
+    if runs_dir.is_dir():
+        for run in sorted(runs_dir.iterdir()):
+            if not run.is_dir():
+                continue
+            model_path = run / "model.yaml"
+            if not model_path.is_file():
+                continue
+            try:
+                data = yaml.safe_load(model_path.read_text()) or {}
+            except yaml.YAMLError:
+                continue
+            entries.append((
+                run.name,
+                data.get("title") or run.name,
+                len(data.get("activities") or []),
+                datetime.fromtimestamp(model_path.stat().st_mtime, tz=timezone.utc)
+                    .strftime("%Y-%m-%d"),
+            ))
+
+    li_blocks = []
+    for run_id, title, n_activities, modified in entries:
+        li_blocks.append(
+            f'      <li>\n'
+            f'        <a href="runs/{run_id}/">{_escape(title)}</a>\n'
+            f'        <span class="run-meta">{n_activities} activities · '
+            f'updated {modified} · <code>{run_id}</code></span>\n'
+            f'      </li>'
+        )
+    body = "\n".join(li_blocks) + "\n" if li_blocks else (
+        '      <li class="footer-note">No runs yet. Trigger the workflow with a figure to create one.</li>\n'
+    )
+    landing = _LANDING_HEAD + body + _LANDING_TAIL
+    landing_path = docs_dir / "index.html"
+    landing_path.write_text(landing)
+    return landing_path
+
+
+def _escape(s: str) -> str:
+    return (
+        s.replace("&", "&amp;")
+         .replace("<", "&lt;")
+         .replace(">", "&gt;")
+         .replace('"', "&quot;")
+    )
+
+
+# ----------------------------------------------------------- CLI -----
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="gocam-prototype")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    run_p = sub.add_parser("run", help="Run the full agent pipeline on an image")
+    run_p.add_argument("--image", required=True, type=Path)
+    run_p.add_argument("--species", default="Caenorhabditis elegans",
+                       help="Free-text species name (default: Caenorhabditis elegans)")
+    run_p.add_argument("--species-taxon", default=None,
+                       help="NCBITaxon CURIE (default: NCBITaxon:6239 for C. elegans)")
+    run_p.add_argument("--process-hint", default=None)
+    run_p.add_argument("--run-id", default=None,
+                       help="Override the generated UTC-timestamp run id")
+    run_p.add_argument("--docs", type=Path, default=None,
+                       help="Override docs/ root (default: REPO_ROOT/docs)")
+    run_p.add_argument("--max-turns", type=int, default=80)
+
+    idx_p = sub.add_parser("regenerate-index",
+                           help="Refresh docs/index.html from docs/runs/*")
+    idx_p.add_argument("--docs", type=Path, default=DEFAULT_DOCS)
+
+    args = parser.parse_args()
+    if args.cmd == "run":
+        summary = run_pipeline(
+            args.image,
+            args.species,
+            species_taxon=args.species_taxon,
+            process_hint=args.process_hint,
+            run_id=args.run_id,
+            docs_dir=args.docs,
+            max_turns=args.max_turns,
+        )
+        print("\nDone.")
+        for k, v in summary.items():
+            print(f"  {k:20s} {v}")
+    elif args.cmd == "regenerate-index":
+        path = regenerate_landing(args.docs)
+        print(f"wrote {path}")
+
+
+if __name__ == "__main__":
+    main()

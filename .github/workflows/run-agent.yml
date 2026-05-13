@@ -1,0 +1,125 @@
+name: Run agent
+
+# Manual trigger (workflow_dispatch) for testing, plus repository_dispatch
+# so a future submit-form can POST to the GH API to start a run.
+on:
+  workflow_dispatch:
+    inputs:
+      image_url:
+        description: "Public URL of the input pathway figure (PNG/JPG)"
+        required: true
+      species:
+        description: "Species (free-text, e.g., 'Caenorhabditis elegans')"
+        required: false
+        default: "Caenorhabditis elegans"
+      species_taxon:
+        description: "NCBITaxon CURIE (e.g., 'NCBITaxon:6239')"
+        required: false
+        default: ""
+      process_hint:
+        description: "Optional biological-process hint (free-text)"
+        required: false
+        default: ""
+      run_id:
+        description: "Override run id; default is a UTC timestamp"
+        required: false
+        default: ""
+
+  repository_dispatch:
+    types: [run-agent]
+
+concurrency:
+  group: run-agent-${{ github.event.client_payload.run_id || github.event.inputs.run_id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install Python deps
+        run: uv sync --extra dev
+
+      - name: Write Vertex SA key
+        env:
+          GCP_KEY: ${{ secrets.GCP_VERTEX_SA_KEY }}
+        run: |
+          if [ -z "$GCP_KEY" ]; then
+            echo "::error::GCP_VERTEX_SA_KEY repo secret is not set."
+            exit 1
+          fi
+          printf '%s' "$GCP_KEY" > "$RUNNER_TEMP/sa.json"
+          chmod 600 "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: Configure Vertex env
+        run: |
+          {
+            echo "CLAUDE_CODE_USE_VERTEX=1"
+            echo "ANTHROPIC_VERTEX_PROJECT_ID=gene-ontology-465618"
+            echo "CLOUD_ML_REGION=us-east5"
+            echo "ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6@default"
+            echo "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6@default"
+            echo "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001"
+          } >> "$GITHUB_ENV"
+
+      - name: Resolve input image URL
+        id: inputs
+        run: |
+          IMG_URL="${{ github.event.client_payload.image_url || github.event.inputs.image_url }}"
+          SPECIES="${{ github.event.client_payload.species || github.event.inputs.species }}"
+          SPECIES_TAXON="${{ github.event.client_payload.species_taxon || github.event.inputs.species_taxon }}"
+          PROCESS_HINT="${{ github.event.client_payload.process_hint || github.event.inputs.process_hint }}"
+          RUN_ID="${{ github.event.client_payload.run_id || github.event.inputs.run_id }}"
+          if [ -z "$IMG_URL" ]; then
+            echo "::error::No image_url provided (workflow inputs or repository_dispatch client_payload)."
+            exit 1
+          fi
+          {
+            echo "img_url=$IMG_URL"
+            echo "species=$SPECIES"
+            echo "species_taxon=$SPECIES_TAXON"
+            echo "process_hint=$PROCESS_HINT"
+            echo "run_id=$RUN_ID"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fetch input image
+        run: |
+          mkdir -p /tmp/agent-input
+          curl -sSL "${{ steps.inputs.outputs.img_url }}" -o /tmp/agent-input/figure
+          file /tmp/agent-input/figure
+
+      - name: Run agent
+        run: |
+          extra=()
+          [ -n "${{ steps.inputs.outputs.species_taxon }}" ] && extra+=(--species-taxon "${{ steps.inputs.outputs.species_taxon }}")
+          [ -n "${{ steps.inputs.outputs.process_hint }}"  ] && extra+=(--process-hint  "${{ steps.inputs.outputs.process_hint }}")
+          [ -n "${{ steps.inputs.outputs.run_id }}"        ] && extra+=(--run-id        "${{ steps.inputs.outputs.run_id }}")
+          uv run gocam-prototype run \
+            --image /tmp/agent-input/figure \
+            --species "${{ steps.inputs.outputs.species }}" \
+            "${extra[@]}"
+
+      - name: Commit run
+        run: |
+          git config user.name  "gocam-prototype-bot"
+          git config user.email "bot@geneontology.org"
+          git add docs/runs/ docs/index.html
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "Agent run ${{ steps.inputs.outputs.run_id || github.run_id }}
+
+Triggered by ${{ github.event_name }} on ${{ steps.inputs.outputs.img_url }}
+Species: ${{ steps.inputs.outputs.species }}"
+          git push origin HEAD:main
