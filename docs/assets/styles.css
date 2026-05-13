@@ -106,6 +106,31 @@ code, .assertion-id {
 }
 .footer-note { color: var(--c-muted); font-size: 0.9em; margin-top: 1rem; }
 
+/* Surfaced by the docs/assets/landing.js poller when GitHub has new
+   run directories under docs/runs/ that aren't shown on this page. */
+.new-drafts-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: #fff8e1;
+  border: 1px solid var(--c-amigo);
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.new-drafts-banner .count { font-size: 1.05em; }
+.new-drafts-banner .reload-btn {
+  padding: 0.35rem 0.85rem;
+  background: var(--c-amigo);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.new-drafts-banner .reload-btn:hover { filter: brightness(1.05); }
+
 /* Per-model tag cloud — one chip per source-type with count. */
 .tag-cloud {
   list-style: none;

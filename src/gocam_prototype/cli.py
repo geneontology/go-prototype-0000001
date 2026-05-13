@@ -201,6 +201,7 @@ _LANDING_TAIL = """        </ul>
       confirm, dispute, or refine.</p>
 
   </main>
+  <script src="assets/landing.js"></script>
 </body>
 </html>
 """
