@@ -128,11 +128,22 @@ The whole point of a GO-CAM is its causal edges. The activity nodes only exist t
 endpoints of edges. Treat every causal edge as its own research target — never as a tail step
 that inherits a source from one of its endpoints.
 
+BEFORE every add_causal call you SHOULD attempt:
+
+  1. `alliance_gene_interactions` on one or both endpoints — surfaces curated interactions with
+     PMIDs you can cite directly as source_type='literature'.
+  2. `europepmc_search` with a query like "<gene_a> <gene_b> <species> <process_term>" —
+     returns titles + PMIDs of relevant papers.
+
+If either of those returns a relevant PMID, use it. Only fall back to instinct (with a
+figure-referencing justification) when neither yields useful evidence.
+
 Concrete rules for `add_causal` source objects:
 
 * DO NOT use source_type='go_annotation' on a causal edge. GO annotations are per-gene-to-term
   assertions; they do not encode causal edges between two genes' activities. Tagging an edge as
-  go_annotation just because both endpoint genes happen to be GO-annotated is WRONG.
+  go_annotation just because both endpoint genes happen to be GO-annotated is WRONG. The
+  `add_causal` tool will return is_error if you try.
 * Acceptable types for causal edges, in roughly descending preference:
     - `literature`: a PMID that describes the specific regulatory relationship (gene A's product
        directly affects gene B's activity). The `snippet` must quote or paraphrase the relevant
@@ -266,6 +277,37 @@ class Orchestrator:
                 "required": ["gene_curie"],
             },
             self._t_gene_orthologs,
+        )
+        self._register(
+            "alliance_gene_interactions",
+            "Fetch documented interactions (genetic + physical) for a gene CURIE. Often returns "
+            "interaction pairs with PMIDs — use this BEFORE add_causal to find literature-backed "
+            "evidence for the edge you're about to wire. The PMID you get back becomes "
+            "source_type='literature' for the causal edge.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {"gene_curie": {"type": "string"}},
+                "required": ["gene_curie"],
+            },
+            self._t_gene_interactions,
+        )
+        self._register(
+            "europepmc_search",
+            "Free-text Europe PMC search. Use to find a PMID for the SPECIFIC regulatory "
+            "relationship between two genes (e.g., 'tph-1 mod-1 Caenorhabditis elegans "
+            "serotonin signalling'). Returns the top results' titles + PMIDs. The PMID you "
+            "pick becomes source_type='literature' for the causal edge.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "query": {"type": "string"},
+                    "max_results": {"type": "integer", "minimum": 1, "maximum": 20, "default": 5},
+                },
+                "required": ["query"],
+            },
+            self._t_europepmc_search,
         )
         self._register(
             "add_activity",
@@ -420,6 +462,65 @@ class Orchestrator:
             })
         return {"orthologs": slim}
 
+    def _t_gene_interactions(self, inp: dict) -> dict:
+        try:
+            raw = alliance.gene_interactions(inp["gene_curie"])
+        except httpx.HTTPError as e:
+            return {"error": f"HTTP error: {e}"}
+        slim: list[dict] = []
+        for r in (raw.get("results") or [])[:20]:
+            partner = r.get("interactor") or r.get("geneInteractor") or {}
+            slim.append({
+                "interactor_curie": partner.get("id") or partner.get("primaryKey"),
+                "interactor_symbol": partner.get("symbol"),
+                "interaction_type": r.get("interactionType")
+                                    or r.get("type")
+                                    or r.get("interactionDirection"),
+                "publications": [
+                    (p or {}).get("pubMedId") or (p or {}).get("primaryKey")
+                    for p in (r.get("publications") or r.get("references") or [])
+                ][:3],
+            })
+        return {"interactions": slim}
+
+    def _t_europepmc_search(self, inp: dict) -> dict:
+        import httpx as _httpx
+        query = inp["query"]
+        max_results = max(1, min(int(inp.get("max_results", 5)), 20))
+        try:
+            with _httpx.Client(
+                base_url="https://www.ebi.ac.uk/europepmc/webservices/rest",
+                timeout=20.0,
+                follow_redirects=True,
+            ) as c:
+                r = c.get(
+                    "/search",
+                    params={
+                        "query": query,
+                        "format": "json",
+                        "pageSize": max_results,
+                        "resultType": "core",
+                    },
+                )
+                r.raise_for_status()
+                payload = r.json()
+        except _httpx.HTTPError as e:
+            return {"error": f"HTTP error: {e}"}
+        results: list[dict] = []
+        for it in ((payload.get("resultList") or {}).get("result") or [])[:max_results]:
+            pmid = it.get("pmid") or it.get("id")
+            doi = it.get("doi")
+            results.append({
+                "pmid": f"PMID:{pmid}" if pmid and pmid.isdigit() else (it.get("id") or ""),
+                "doi": f"DOI:{doi}" if doi else None,
+                "title": it.get("title"),
+                "authors": it.get("authorString"),
+                "journal": (it.get("journalInfo") or {}).get("journal", {}).get("title"),
+                "year": it.get("pubYear"),
+                "is_open_access": it.get("isOpenAccess") == "Y",
+            })
+        return {"results": results}
+
     def _t_add_activity(self, inp: dict) -> dict:
         try:
             src = self._make_source(inp["source"])
@@ -453,6 +554,27 @@ class Orchestrator:
     def _t_add_causal(self, inp: dict) -> dict:
         try:
             src = self._make_source(inp["source"])
+        except Exception as e:
+            return {"error": str(e)}
+        # GO annotations are per-gene-to-term assertions; they cannot encode a causal
+        # edge between two activities. Refuse the assignment rather than letting the
+        # agent quietly mis-cite a BP term as 'edge evidence' (see issue #20).
+        if src.source_type == "go_annotation":
+            return {
+                "error": (
+                    "source_type='go_annotation' is invalid for causal edges. GO annotations "
+                    "are per-gene-to-term assertions and do not encode causal relationships "
+                    "between activities. Pick the most authoritative reachable type instead: "
+                    "'literature' (call europepmc_search for a PMID describing the specific "
+                    "regulatory relationship, then cite it), 'alliance' (call "
+                    "alliance_gene_interactions for a documented genetic / physical interaction "
+                    "with a PMID), 'pathway_resource' (Reactome / WikiPathways pathway "
+                    "containing this step), 'orthology' (annotated ortholog pair), or "
+                    "'instinct' (figure-supported, no external source — justification must "
+                    "reference the figure)."
+                )
+            }
+        try:
             self.builder.add_causal(
                 inp["source_activity_id"],
                 inp["target_activity_id"],
