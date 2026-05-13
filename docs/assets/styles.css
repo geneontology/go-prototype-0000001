@@ -51,8 +51,30 @@ code, .assertion-id {
   gap: 1.5rem;
 }
 
-.runs-list h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+.runs-list h2 { margin: 0 0 0.4rem; font-size: 1.15rem; }
 .runs-list ul { list-style: none; padding: 0; margin: 0; }
+.runs-list-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--c-border);
+}
+.runs-list-header .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.4rem;
+  margin: 0;
+  align-items: center;
+  font-size: 0.85em;
+}
+.runs-list-header .legend-label {
+  color: var(--c-muted);
+  font-size: 0.9em;
+  margin-right: 0.25rem;
+}
 .runs-list li.draft-model {
   padding: 0.85rem 1rem;
   background: var(--c-card);

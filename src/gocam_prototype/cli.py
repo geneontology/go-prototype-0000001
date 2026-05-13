@@ -121,16 +121,9 @@ _LANDING_HEAD = """<!DOCTYPE html>
 <body class="landing-body">
   <header class="site-header">
     <h1>GO-CAM curation prototype</h1>
-    <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM. Every clickable
-      element shows where it came from:
-      <span class="badge literature">📚 literature</span>
-      <span class="badge go_annotation">🗂️ GO annotation</span>
-      <span class="badge alliance">🧬 Alliance</span>
-      <span class="badge amigo">🔍 AmiGO</span>
-      <span class="badge orthology">↗️ orthology</span>
-      <span class="badge pathway_resource">🛤️ pathway</span>
-      <span class="badge expert_review">✔️ expert review</span>
-      <span class="badge instinct">⚠️ instinct</span>.</p>
+    <p class="tagline">An LLM agent reads a research-paper figure and builds a GO-CAM that a curator
+       can review, dispute, or refine. Every clickable element on each draft model traces back to its
+       source.</p>
     <p><a href="https://github.com/geneontology/go-prototype-0000001">source &amp; issues on GitHub</a></p>
   </header>
 
@@ -173,7 +166,20 @@ _LANDING_HEAD = """<!DOCTYPE html>
     </section>
 
     <section class="runs-list">
-      <h2>Draft models</h2>
+      <header class="runs-list-header">
+        <h2>Draft models</h2>
+        <p class="legend" aria-label="Source-type key">
+          <span class="legend-label">Source types:</span>
+          <span class="badge literature">📚 literature</span>
+          <span class="badge go_annotation">🗂️ GO annotation</span>
+          <span class="badge alliance">🧬 Alliance</span>
+          <span class="badge amigo">🔍 AmiGO</span>
+          <span class="badge orthology">↗️ orthology</span>
+          <span class="badge pathway_resource">🛤️ pathway</span>
+          <span class="badge expert_review">✔️ expert review</span>
+          <span class="badge instinct">⚠️ instinct</span>
+        </p>
+      </header>
       <ul>
 """
 
