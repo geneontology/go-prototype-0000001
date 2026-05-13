@@ -1,0 +1,220 @@
+id: gomodel:run-figure1
+title: 'Agent run figure1: Caenorhabditis elegans — Serotonin and octopamine signaling
+  from neurons triggers an endocrine signal that drives nhr-76-mediated transcription
+  of atgl-1 in the intestine, resulting in fat loss'
+taxon: NCBITaxon:6239
+status: development
+activities:
+- id: gomodel:run-figure1/tph1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00006600
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004510
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: CL:0000393
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0006587
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/mod1
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/atgl1
+- id: gomodel:run-figure1/mod1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00003386
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0160039
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005886
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:1904123
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/nhr76
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/atgl1
+- id: gomodel:run-figure1/ser6
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00021897
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004989
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005886
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:1904122
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/nhr76
+- id: gomodel:run-figure1/tbh1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00006541
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004836
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0045202
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0006589
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1/ser6
+- id: gomodel:run-figure1/nhr76
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00015497
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:1904123
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure1/atgl1
+- id: gomodel:run-figure1/atgl1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00015484
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004806
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005811
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0019433
+objects:
+- id: WB:WBGene00006600
+  label: tph-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00003386
+  label: mod-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00021897
+  label: ser-6
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00006541
+  label: tbh-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015497
+  label: nhr-76
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015484
+  label: atgl-1
+  type: gocam:GeneProductTermObject
+- id: GO:0004510
+  label: tryptophan 5-monooxygenase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0160039
+  label: serotonin-gated chloride channel activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004989
+  label: octopamine receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004836
+  label: tyramine-beta hydroxylase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0003700
+  label: DNA-binding transcription factor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004806
+  label: triacylglycerol lipase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0006587
+  label: serotonin biosynthetic process from L-tryptophan
+  type: gocam:BiologicalProcessTermObject
+- id: GO:1904123
+  label: positive regulation of fatty acid beta-oxidation by serotonin receptor signaling
+    pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:1904122
+  label: positive regulation of fatty acid beta-oxidation by octopamine signaling
+    pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0006589
+  label: octopamine biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0019433
+  label: triglyceride catabolic process
+  type: gocam:BiologicalProcessTermObject
+- id: CL:0000393
+  label: electrically responsive cell (ADF neuron)
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0005886
+  label: plasma membrane
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0045202
+  label: synapse
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0005634
+  label: nucleus
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0005811
+  label: lipid droplet
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: RO:0002304
+  label: causally upstream of, positive effect
+  type: gocam:PredicateTermObject
+- id: RO:0002629
+  label: directly positively regulates
+  type: gocam:PredicateTermObject
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject

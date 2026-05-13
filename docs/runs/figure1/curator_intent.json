@@ -1,0 +1,154 @@
+{
+  "species": "Caenorhabditis elegans",
+  "species_taxon": "NCBITaxon:6239",
+  "processes_hinted": [
+    "serotonin signaling",
+    "octopamine signaling",
+    "endocrine signaling",
+    "fat metabolism",
+    "beta-oxidation",
+    "fat loss",
+    "lipid droplet regulation",
+    "ATGL-mediated lipolysis",
+    "nuclear receptor transcription"
+  ],
+  "compartments": [
+    {
+      "label": "NEURONS",
+      "kind": "cell_type",
+      "confidence": 1.0,
+      "snippet": "Large central compartment in panel E labeled 'NEURONS', containing multiple neuronal cell types (ADF, AWB, URX, RIC) and their associated genes."
+    },
+    {
+      "label": "ADF",
+      "kind": "cell_type",
+      "confidence": 1.0,
+      "snippet": "Blue pentagon labeled 'ADF' within the NEURONS compartment in panel E; associated with tph-1 and serotonin (5-HT) production."
+    },
+    {
+      "label": "AWB",
+      "kind": "cell_type",
+      "confidence": 1.0,
+      "snippet": "Green triangle labeled 'AWB' within the NEURONS compartment in panel E; associated with ser-6."
+    },
+    {
+      "label": "URX",
+      "kind": "cell_type",
+      "confidence": 1.0,
+      "snippet": "Yellow hexagon labeled 'URX' within the NEURONS compartment in panel E; associated with mod-1."
+    },
+    {
+      "label": "RIC",
+      "kind": "cell_type",
+      "confidence": 1.0,
+      "snippet": "Red hexagon labeled 'RIC' within the NEURONS compartment in panel E; associated with tbh-1 and octopamine (Oct)."
+    },
+    {
+      "label": "INTESTINE",
+      "kind": "tissue",
+      "confidence": 1.0,
+      "snippet": "Green rounded rectangle on the right side of panel E labeled 'INTESTINE', containing nhr-76, ATGL, and downstream beta-oxidation / fat loss."
+    }
+  ],
+  "genes": [
+    {
+      "symbol": "tph-1",
+      "in_compartment": "ADF",
+      "confidence": 1.0,
+      "snippet": "Labeled next to the ADF neuron in panel E; also compared as a mutant (tph-1) in panels A and B."
+    },
+    {
+      "symbol": "mod-1",
+      "in_compartment": "URX",
+      "confidence": 1.0,
+      "snippet": "Labeled inside the URX hexagon in panel E; also referenced in transgene Pflp-8::mod-1SAS in panels C and D."
+    },
+    {
+      "symbol": "ser-6",
+      "in_compartment": "AWB",
+      "confidence": 1.0,
+      "snippet": "Labeled next to the AWB triangle in panel E within the NEURONS compartment."
+    },
+    {
+      "symbol": "tbh-1",
+      "in_compartment": "RIC",
+      "confidence": 1.0,
+      "snippet": "Labeled next to the RIC hexagon in panel E within the NEURONS compartment; associated with octopamine (Oct) production."
+    },
+    {
+      "symbol": "nhr-76",
+      "in_compartment": "INTESTINE",
+      "confidence": 1.0,
+      "snippet": "Shown in the INTESTINE compartment in panel E; depicted as activating ATGL with an arrow."
+    },
+    {
+      "symbol": "ATGL",
+      "in_compartment": "INTESTINE",
+      "confidence": 1.0,
+      "snippet": "Shown in the INTESTINE compartment in panel E downstream of nhr-76; leads to beta-oxidation and fat loss. Also referenced by transgene Patgl-1::GFP used as reporter in panels A-D."
+    }
+  ],
+  "tentative_edges": [
+    {
+      "from_symbol": "tph-1",
+      "to_symbol": "mod-1",
+      "from_compartment": "ADF",
+      "to_compartment": "URX",
+      "relation": "synthesizes / produces",
+      "via": "5-HT",
+      "confidence": 1.0,
+      "snippet": "In panel E, tph-1 in ADF produces 5-HT (serotonin), which signals to mod-1 in URX via an arrow labeled '5-HT'."
+    },
+    {
+      "from_symbol": "tbh-1",
+      "to_symbol": "ser-6",
+      "from_compartment": "RIC",
+      "to_compartment": "AWB",
+      "relation": "synthesizes / produces octopamine signal to",
+      "via": "Oct",
+      "confidence": 0.9,
+      "snippet": "In panel E, tbh-1 in RIC produces octopamine (Oct) with a dashed arrow pointing back toward AWB (ser-6), suggesting a feedback or lateral signal."
+    },
+    {
+      "from_compartment": "NEURONS",
+      "to_compartment": "INTESTINE",
+      "relation": "endocrine signal to",
+      "confidence": 1.0,
+      "snippet": "In panel E, a dashed arrow labeled 'endocrine signal' connects the NEURONS compartment (emanating from URX/mod-1) to the INTESTINE compartment."
+    },
+    {
+      "from_symbol": "nhr-76",
+      "to_symbol": "ATGL",
+      "from_compartment": "INTESTINE",
+      "to_compartment": "INTESTINE",
+      "relation": "positively regulates transcription of",
+      "confidence": 1.0,
+      "snippet": "In panel E within the INTESTINE, an arrow from nhr-76 points to ATGL, indicating nhr-76-mediated transcriptional activation."
+    },
+    {
+      "from_symbol": "ATGL",
+      "from_compartment": "INTESTINE",
+      "relation": "promotes beta-oxidation and fat loss",
+      "confidence": 1.0,
+      "snippet": "In panel E within the INTESTINE, an arrow from ATGL leads to the label 'β-oxidation / Fat loss', indicating ATGL drives these downstream outcomes."
+    },
+    {
+      "from_symbol": "tph-1",
+      "to_symbol": "ATGL",
+      "from_compartment": "ADF",
+      "to_compartment": "INTESTINE",
+      "relation": "negatively regulates atgl-1 expression (loss of serotonin reduces GFP reporter)",
+      "confidence": 0.95,
+      "snippet": "Panels A and B show that tph-1 mutants have significantly reduced Patgl-1::GFP fluorescence compared to wild-type, indicating tph-1 (serotonin) is required for full atgl-1 expression."
+    },
+    {
+      "from_symbol": "mod-1",
+      "to_symbol": "ATGL",
+      "from_compartment": "URX",
+      "to_compartment": "INTESTINE",
+      "relation": "blocking mod-1 in URX suppresses 5-HT-induced atgl-1 upregulation",
+      "confidence": 0.9,
+      "snippet": "Panels C and D show that expression of mod-1SAS (dominant negative) in URX neurons (Pflp-8::mod-1SAS) blocks the 5-HT-induced increase in Patgl-1::GFP fluorescence in the intestine."
+    }
+  ]
+}
