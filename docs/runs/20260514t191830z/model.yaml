@@ -1,0 +1,9 @@
+id: gomodel:run-20260514t191830z
+title: 'Agent run 20260514T191830Z: Hammus Burgerus'
+taxon: NCBITaxon:6239
+status: development
+activities: []
+objects:
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject

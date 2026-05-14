@@ -1,0 +1,24 @@
+{
+  "id": "gomodel:run-20260514t191830z",
+  "individuals": [],
+  "facts": [],
+  "annotations": [
+    {
+      "key": "title",
+      "value": "Agent run 20260514T191830Z: Hammus Burgerus"
+    },
+    {
+      "key": "http://www.geneontology.org/formats/oboInOwl#id",
+      "value": "gomodel:run-20260514t191830z"
+    },
+    {
+      "key": "https://w3id.org/biolink/vocab/in_taxon",
+      "value": "NCBITaxon:6239",
+      "value-type": "IRI"
+    },
+    {
+      "key": "state",
+      "value": "development"
+    }
+  ]
+}
