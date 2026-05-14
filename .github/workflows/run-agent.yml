@@ -256,8 +256,8 @@ jobs:
           fi
           git commit -m "Agent run ${{ steps.inputs.outputs.run_id }}
 
-Triggered by ${{ github.event_name }} on ${{ steps.inputs.outputs.img_url }}
-Species: ${{ steps.inputs.outputs.species }}"
+          Triggered by ${{ github.event_name }} on ${{ steps.inputs.outputs.img_url }}
+          Species: ${{ steps.inputs.outputs.species }}"
           git push origin HEAD:main
 
       - name: Comment success on issue + close
