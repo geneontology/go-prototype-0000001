@@ -208,6 +208,19 @@ jobs:
           if [ -z "$RUN_ID" ]; then
             RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"
           fi
+          # Bash port of src/gocam_prototype/cli.py:_slugify — keep the URL we
+          # quote back to the user identical to the directory the CLI writes
+          # under docs/runs/. GH Pages is case-sensitive, so a mismatched
+          # uppercase/lowercase letter is a guaranteed 404.
+          slugify() {
+            local s="${1,,}"
+            s="${s//[^a-z0-9-]/-}"
+            while [[ "$s" == *--* ]]; do s="${s//--/-}"; done
+            s="${s#-}"; s="${s%-}"; s="${s:0:60}"
+            [ -z "$s" ] && s="run"
+            printf '%s' "$s"
+          }
+          RUN_ID="$(slugify "$RUN_ID")"
           {
             echo "img_url=$IMG_URL"
             echo "species=${SPECIES:-Caenorhabditis elegans}"
