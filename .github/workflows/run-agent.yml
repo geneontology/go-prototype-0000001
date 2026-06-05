@@ -88,8 +88,9 @@ jobs:
             echo "CLAUDE_CODE_USE_VERTEX=1"
             echo "CLOUD_ML_REGION=us-east5"
             echo "ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6@default"
-            echo "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6@default"
+            echo "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8"
             echo "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001"
+            echo "ANTHROPIC_VERTEX_OPUS_REGION=global"
           } >> "$GITHUB_ENV"
 
       # When the trigger is an issue (the user submitted the GH Issue Form),

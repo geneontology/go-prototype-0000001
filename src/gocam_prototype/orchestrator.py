@@ -21,6 +21,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable
 
 import httpx
@@ -29,7 +30,19 @@ from gocam.datamodel import Model
 
 from gocam_prototype import alliance, go_api
 from gocam_prototype.builder import GoCamBuilder
-from gocam_prototype.llm import VertexConfig, make_client
+from gocam_prototype.llm import VertexConfig, create_message, make_client
+
+# The GO/GO-CAM curation guidelines (knowledge/go-curation-guidelines.md) are
+# injected into the system prompt so the agent reasons under GO standards.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_GUIDELINES_PATH = _REPO_ROOT / "knowledge" / "go-curation-guidelines.md"
+
+
+def _load_guidelines() -> str:
+    try:
+        return _GUIDELINES_PATH.read_text(encoding="utf-8")
+    except OSError:
+        return ""
 from gocam_prototype.provenance import ProvenanceLedger, SourceObject
 from gocam_prototype.vision import CuratorIntent
 
@@ -222,6 +235,9 @@ class Orchestrator:
     client: AnthropicVertex
     model_name: str
     max_turns: int = 60
+    effort: str = "xhigh"            # Opus 4.8 effort for the agentic build loop
+    adaptive_thinking: bool = True   # let the model reason about ambiguous edges
+    max_tokens: int = 16000          # room for thinking + tool calls (was 4096)
 
     _tools: list[dict] = field(default_factory=list, init=False)
     _handlers: dict[str, Callable[[dict], dict]] = field(default_factory=dict, init=False)
@@ -775,16 +791,33 @@ class Orchestrator:
     # -- loop ---------------------------------------------------------------
 
     def run(self, intent: CuratorIntent) -> tuple[Model, ProvenanceLedger]:
+        guidelines = _load_guidelines()
+        system_text = SYSTEM_PROMPT
+        if guidelines:
+            system_text += (
+                "\n\n# GO / GO-CAM curation guidelines (authoritative)\n\n"
+                "Apply these GO standards when choosing terms, relations, and "
+                "evidence, and when deciding what to model.\n\n" + guidelines
+            )
+        # One cached system block — the guidelines are large and constant per run.
+        system_blocks = [{
+            "type": "text", "text": system_text,
+            "cache_control": {"type": "ephemeral"},
+        }]
+
         messages: list[dict] = [
             {"role": "user", "content": self._initial_user_message(intent)},
         ]
         for turn in range(self.max_turns):
-            response = self.client.messages.create(
+            response = create_message(
+                self.client,
                 model=self.model_name,
-                max_tokens=4096,
-                system=SYSTEM_PROMPT,
+                max_tokens=self.max_tokens,
+                system=system_blocks,
                 messages=messages,
                 tools=self._tools,
+                effort=self.effort,
+                adaptive_thinking=self.adaptive_thinking,
             )
             usage = getattr(response, "usage", None)
             self.events.append({
@@ -799,7 +832,21 @@ class Orchestrator:
             assistant_content: list[dict] = []
             for block in response.content:
                 btype = getattr(block, "type", None)
-                if btype == "text":
+                if btype == "thinking":
+                    # When adaptive thinking returns thinking blocks, they MUST be
+                    # echoed back (with signature) ahead of tool_use or the next
+                    # turn 400s. Preserve order as returned.
+                    assistant_content.append({
+                        "type": "thinking",
+                        "thinking": block.thinking,
+                        "signature": getattr(block, "signature", ""),
+                    })
+                elif btype == "redacted_thinking":
+                    assistant_content.append({
+                        "type": "redacted_thinking",
+                        "data": block.data,
+                    })
+                elif btype == "text":
                     assistant_content.append({"type": "text", "text": block.text})
                 elif btype == "tool_use":
                     assistant_content.append({
@@ -868,11 +915,15 @@ def orchestrate(
     max_turns: int = 60,
 ) -> tuple[Model, ProvenanceLedger]:
     """Convenience entry point. Pulls Vertex config from env if no client given."""
-    cli = client or make_client(VertexConfig.from_env())
+    cfg = VertexConfig.from_env()
+    # Opus 4.8 is only provisioned on the Vertex *global* endpoint for this
+    # project; regional endpoints (us-east5, ...) return 429/404.
+    region = os.environ.get("ANTHROPIC_VERTEX_OPUS_REGION", "global")
+    cli = client or make_client(cfg, region=region)
     mdl = (
         model_name
-        or os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL")
-        or "claude-sonnet-4-6@default"
+        or os.environ.get("ANTHROPIC_DEFAULT_OPUS_MODEL")
+        or "claude-opus-4-8"
     )
     orch = Orchestrator(builder=builder, client=cli, model_name=mdl, max_turns=max_turns)
     return orch.run(intent)

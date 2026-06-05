@@ -37,7 +37,7 @@ class VertexConfig:
                 "ANTHROPIC_DEFAULT_SONNET_MODEL", "claude-sonnet-4-6@default"
             ),
             opus_model=os.environ.get(
-                "ANTHROPIC_DEFAULT_OPUS_MODEL", "claude-opus-4-6@default"
+                "ANTHROPIC_DEFAULT_OPUS_MODEL", "claude-opus-4-8"
             ),
             haiku_model=os.environ.get(
                 "ANTHROPIC_DEFAULT_HAIKU_MODEL", "claude-haiku-4-5@20251001"
@@ -52,7 +52,51 @@ def _require(name: str) -> str:
     return value
 
 
-def make_client(config: VertexConfig | None = None) -> AnthropicVertex:
-    """Return a configured AnthropicVertex client."""
+def make_client(
+    config: VertexConfig | None = None, *, region: str | None = None
+) -> AnthropicVertex:
+    """Return a configured AnthropicVertex client.
+
+    `region` overrides the configured region. Opus 4.8 is only provisioned on
+    the Vertex **global** endpoint for this project (regional endpoints return
+    429/404), so callers that use Opus 4.8 must pass region="global".
+    """
     cfg = config or VertexConfig.from_env()
-    return AnthropicVertex(project_id=cfg.project_id, region=cfg.region)
+    return AnthropicVertex(project_id=cfg.project_id, region=region or cfg.region)
+
+
+def create_message(
+    client: AnthropicVertex,
+    *,
+    model: str,
+    messages: list,
+    system=None,
+    tools: list | None = None,
+    max_tokens: int = 16000,
+    effort: str | None = None,
+    adaptive_thinking: bool = False,
+    **kwargs,
+):
+    """Single entry point for Vertex Messages calls with Opus-4.8 controls.
+
+    On Opus 4.8/4.7 the effort level lives under `output_config.effort`
+    (low/medium/high/xhigh/max) and thinking is adaptive (`thinking.type ==
+    "adaptive"`); manual `budget_tokens`, `temperature`/`top_p`/`top_k`, and
+    assistant prefill are unsupported. The installed anthropic SDK has no
+    native `effort`/`output_config` kwarg, so we pass them through `extra_body`.
+    """
+    extra: dict = {}
+    if effort:
+        extra["output_config"] = {"effort": effort}
+    if adaptive_thinking:
+        extra["thinking"] = {"type": "adaptive"}
+
+    params: dict = {"model": model, "max_tokens": max_tokens, "messages": messages}
+    if system is not None:
+        params["system"] = system
+    if tools is not None:
+        params["tools"] = tools
+    if extra:
+        params["extra_body"] = extra
+    params.update(kwargs)
+    return client.messages.create(**params)
