@@ -101,30 +101,42 @@ PERCEPTION_SYSTEM = (
     "- Every arrow / connector as its own line: SOURCE -> TARGET, the arrow's END "
     "TYPE, and any molecule written on the arrow.\n\n"
     + GLYPH_LEGEND
-    + "\n\nOutput an itemized transcription (lists, not prose). Do not infer biology "
-    "that is not drawn. Attend to each arrow END individually — confusing a pointed "
-    "arrowhead with a T-bar flips the biological meaning."
+    + "\n\nOutput an itemized transcription (lists, not prose). Capture the figure with "
+    "MAXIMUM FIDELITY — every node, every edge, every labelled cell/compartment, even small "
+    "or peripheral ones. Do not infer biology that is not drawn. Attend to each arrow END "
+    "individually — confusing a pointed arrowhead with a T-bar flips the biological meaning. "
+    "If a label is faint or ambiguous, transcribe your best reading AND mark it uncertain "
+    "(e.g. \"ADF? — faint\"); never silently normalize or guess a label."
 )
 
 STRUCTURE_SYSTEM = (
     "You convert an exhaustive transcription of a pathway figure into a structured "
-    "curator-intent JSON for GO-CAM construction. Rules:\n"
-    "1. Use only content present in the transcription; do not invent genes, "
-    "compartments, or edges.\n"
+    "curator-intent JSON for GO-CAM construction. The downstream goal is MAXIMUM FIDELITY "
+    "to the figure with uncertainty flagged (not dropped). Rules:\n"
+    "1. Include EVERY gene, compartment, and edge present in the transcription — do not omit "
+    "anything the figure shows, and do not invent anything it does not.\n"
     "2. Use gene symbols exactly as transcribed.\n"
-    "3. Map each arrow to a natural-language relation by its END TYPE: pointed arrow "
-    "-> 'positively regulates'; T-bar -> 'negatively regulates'; dashed -> name the "
-    "indirect signal (e.g. 'endocrine signal'). Preserve any molecule on the arrow in `via`.\n"
-    "4. Edges between whole compartments use from_compartment/to_compartment; gene-gene "
-    "edges use from_symbol/to_symbol.\n"
-    "5. Call submit_curator_intent exactly once with the complete result."
+    "3. Map each arrow to a natural-language relation by its END TYPE: pointed arrow -> "
+    "'positively regulates'; T-bar -> 'negatively regulates'; dashed -> name the indirect "
+    "signal (e.g. 'endocrine signal'). Preserve any molecule on the arrow in `via`.\n"
+    "4. Compartment `kind`: a tissue / cell-group label (e.g. NEURONS, INTESTINE) is "
+    "'tissue' or 'cell_type'; an individual named cell (e.g. ADF, URX, RIC, a specific "
+    "neuron) is 'cell_type'. Keep these distinct rather than collapsing them.\n"
+    "5. CONFIDENCE carries uncertainty: set a low confidence (<=0.4) on any gene, compartment, "
+    "or edge whose transcription was marked faint/ambiguous/uncertain, and explain in `snippet`. "
+    "Keep the item — never drop it for being uncertain.\n"
+    "6. Edges between whole compartments use from_compartment/to_compartment; gene-gene edges "
+    "use from_symbol/to_symbol.\n"
+    "7. Call submit_curator_intent exactly once with the complete result."
 )
 
 EDGE_VERIFY_SYSTEM = (
-    "You have perfect vision. You are double-checking candidate causal edges against "
-    "the actual figure to catch hallucinated or mis-directed edges. For each candidate, "
-    "decide whether the figure VISUALLY shows that connector, whether the DIRECTION "
-    "(source->target) is correct, and whether the sign matches the arrow end.\n\n"
+    "You have perfect vision. You are double-checking candidate causal edges against the actual "
+    "figure. The goal is to FLAG uncertainty, not to delete edges: for each candidate decide "
+    "whether the figure VISUALLY shows that connector in that direction, and whether the sign "
+    "matches the arrow end. If it is not clearly drawn, mark it NOT confirmed (it will be kept but "
+    "flagged low-confidence for the curator to scrutinize). If the arrow end implies a different "
+    "sign/relation, give the corrected relation.\n\n"
     + GLYPH_LEGEND
 )
 
@@ -283,14 +295,21 @@ def _verify_edges_against_figure(
             break
     if not checks:
         return intent
+    # Flag, never delete: keep every edge; apply a corrected sign if given; and downweight +
+    # annotate edges the figure does not clearly confirm so the curator knows to scrutinize them.
     kept = []
     for i, e in enumerate(edges):
         c = checks.get(i)
         if c is None:
             kept.append(e)
             continue
-        if not c.get("confirmed", True):
-            continue
+        update: dict = {}
         cr = c.get("corrected_relation")
-        kept.append(e.model_copy(update={"relation": cr}) if cr else e)
+        if cr:
+            update["relation"] = cr
+        if not c.get("confirmed", True):
+            update["confidence"] = min((e.confidence if e.confidence is not None else 1.0), 0.3)
+            note = (e.snippet or "").rstrip()
+            update["snippet"] = (note + " " if note else "") + "[unconfirmed against figure in verification]"
+        kept.append(e.model_copy(update=update) if update else e)
     return intent.model_copy(update={"tentative_edges": kept})

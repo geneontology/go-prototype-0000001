@@ -31,6 +31,8 @@ from gocam.datamodel import Model
 from gocam_prototype import alliance, go_api
 from gocam_prototype.builder import GoCamBuilder
 from gocam_prototype.llm import VertexConfig, create_message, make_client
+from gocam_prototype.provenance import ProvenanceLedger, SourceObject
+from gocam_prototype.vision import CuratorIntent
 
 # The GO/GO-CAM curation guidelines (knowledge/go-curation-guidelines.md) are
 # injected into the system prompt so the agent reasons under GO standards.
@@ -43,8 +45,7 @@ def _load_guidelines() -> str:
         return _GUIDELINES_PATH.read_text(encoding="utf-8")
     except OSError:
         return ""
-from gocam_prototype.provenance import ProvenanceLedger, SourceObject
-from gocam_prototype.vision import CuratorIntent
+
 
 SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -94,6 +95,25 @@ The vision pass has already produced a curator-intent JSON listing the species, 
 mentions, and tentative causal edges visible in the figure. Your job is to turn that intent into a \
 complete, well-cited GO-CAM.
 
+MODELING FIDELITY vs EVIDENCE SCRUTINY (the governing principle)
+
+Hand the curator a model that already MATCHES THE FIGURE, with the easy/concrete work done and \
+the uncertain parts clearly flagged for them to dig into. Two SEPARATE standards:
+
+* FIDELITY (reproduce everything): model EVERY gene mention as an activity and EVERY tentative_edge \
+  as a causal edge. Inclusion is NOT gated by how strong the evidence is. Never drop a node or edge \
+  because you could not find a citation — only omit an element the figure genuinely does not support.
+* EVIDENCE SCRUTINY (be strict HERE): back each assertion with the strongest REAL evidence you can \
+  find (literature / go_annotation / alliance / pathway_resource / orthology). Where no real source \
+  can be found but the figure shows it, STILL INCLUDE the element tagged source_type='instinct' with \
+  a figure-referencing justification — never fabricate a citation, never silently drop it. The \
+  instinct tag (and low confidence) is exactly how the curator sees "verify this one."
+
+Read the injected GO/GO-CAM guidelines accordingly: "incomplete models are valid" and "quality over \
+quantity" mean do NOT invent unknown aspects (use root terms) and do NOT pad one gene with junk \
+terms — they are NOT license to skip genes or edges the figure shows. Full figure fidelity is \
+required here; the evidence tier (concrete vs instinct) is what carries the uncertainty.
+
 WORKFLOW
 
 1. For each gene mention, call `alliance_resolve_symbol` to obtain a stable CURIE (e.g. tph-1 -> \
@@ -107,8 +127,10 @@ WORKFLOW
      - `alliance_gene_orthologs` — if you transfer an annotation by orthology, tag as \
        source_type='orthology'. Set source_id to the ortholog's CURIE and put ortholog_species \
        (e.g. 'Homo sapiens') in `extra`. Put the originating annotation's id in extra.from_annotation.
-4. Create one Activity per gene via `add_activity` (source from the resolver/lookup), then call \
-   `set_molecular_function`, `set_part_of`, `set_occurs_in` as appropriate. Each call requires a source.
+4. Create one Activity for EVERY gene mention in the intent via `add_activity` (source from the \
+   resolver/lookup), then call `set_molecular_function`, `set_part_of`, `set_occurs_in` as \
+   appropriate. Each call requires a source. Do not skip a gene because its evidence looks thin — \
+   model it and let the source tier (instinct/low-confidence) carry the uncertainty.
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -118,7 +140,10 @@ WORKFLOW
      - RO:0002304  causally upstream of, positive effect
      - RO:0002305  causally upstream of, negative effect
    Then call `add_causal` with the predicate and a source.
-6. When the model is complete, call `finalize_model`.
+6. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
+   causal edge (or you have recorded a figure-based reason an element cannot be mapped). Do NOT \
+   finalize a partial model just because the well-evidenced core is done — fidelity to the figure \
+   comes first; uncertain elements stay in, marked as instinct/low-confidence.
 
 SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 
