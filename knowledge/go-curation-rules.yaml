@@ -1,0 +1,1045 @@
+# GO curation rules — machine-readable ruleset for the GO-CAM model-builder
+# Loadable by the orchestrator for BOTH prompting and programmatic validation.
+# Hand-authored from the adversarially-verified extracts; do NOT edit by hand
+# without re-deriving from knowledge/sources/extracts/. PREFER _corrected
+# wording where the extract carried a correction.
+
+meta:
+  title: "GO / GO-CAM curation rules for C. elegans signaling-pathway figure models"
+  purpose: >-
+    A single committed ruleset the orchestrator loads to (a) prompt the
+    figure->GO-CAM model-building agent with the relations, evidence codes,
+    activity-unit schema, and signaling-domain vocabulary it must use, and
+    (b) programmatically validate model output against the machine-checkable
+    subset. Scoped to research-paper pathway figures of C. elegans signaling
+    pathways (ligand/receptor/relay/TF, inter-cellular endocrine/paracrine).
+  generated_from:
+    - knowledge/sources/extracts/_consolidated.json
+    - knowledge/sources/extracts/_digest.md
+    - knowledge/sources/extracts/_critic.json
+  source_corpus:
+    - "GO docs: geneontology.github.io/_docs/ (go-annotations.md, guide-go-evidence-codes.md, gocam-overview.md, submitting-go-annotations.md, annotation-contributors.md)"
+    - "GO wiki pages: knowledge/sources/wiki/pages/Main/ (relation pages, Signaling_Curation_Manual, Annotating_ligand-receptor_pathways, Annotating_from_phenotypes, Annotating_regulation, Annotating_binding, Annotating_downstream_processes, Misused_terms, Identifiers, Occurs_in, Noctua_MOD_Imports, Multi-species_processes, Biological_Pathways_as_GO-CAMs, Tips to Produce High Quality Annotations)"
+    - "go-shapes go-cam-shapes.shex / .shapeMap (ShEx shape constraints)"
+    - "GO QC rules (GORULE:0000002/0000004/0000005/0000008/0000017/0000018/0000036/0000046)"
+    - "Primary literature: PMC3706743 (evidence codes), PMID:31548717 / PMC7012280 (GO-CAM paper)"
+    - "ChEBI / NCBITaxon / WormBase canonical IDs (verified)"
+  counts:
+    rules: 191
+    relations: 49
+    machine_checkable: 95
+    flagged: 3
+  caveats: >-
+    Three rules were adversarially flagged and are retained here as PROJECT
+    HEURISTICS, not source-grounded doctrine:
+    (1) gocam-shapes-no-self-causal-edge — a sound modeling heuristic the
+    project enforces in orchestrator.py; it is NOT a ShEx constraint
+    (go-cam-shapes.shex does not constrain subject != object).
+    (2) evidence-codes-six-categories strength ordering — only a SOFT
+    preference; sources support 'experimental preferred, author-statement
+    discouraged, IEA unreviewed' but NOT a strict full 6-tier ranking.
+    (3) relations-structural-small-molecule-regulators — the cited wiki pages
+    are empty WIP stubs; directionality/types are inferred from RO term names,
+    not stated by the source. Prefer has_small_molecule_activator/inhibitor
+    (RO:0012001 family) whose shape range is grounded.
+    Wiki-page claims throughout were cross-checked against canonical GO docs
+    and go-cam-shapes.shex; where a wiki claim was unsupported the rule carries
+    a correction note, reflected here in the chosen wording.
+  curie_validation: >-
+    Every GO/RO/BFO/CHEBI CURIE was validated against the live ontology
+    (knowledge/tools/validate_curies.py -> OLS4 + GO API). This caught stale
+    terms from the older Signaling Curation Manual: GO:0005057 'signal
+    transducer activity, downstream of receptor' and its kinase/phosphatase
+    children GO:0004702/0004716/0004728/0009400 are OBSOLETE (relays now take a
+    specific catalytic MF); GO:0048018 is now 'receptor ligand activity' (was
+    'receptor agonist activity'); the multi-organism rule was RESOLVED to the
+    current GO:0044419 (interspecies-interaction process) replacing obsolete
+    GO:0051704/GO:0044215, and the karyopherin rule RESOLVED to GO:0061608 /
+    GO:0005049 (nuclear import/export signal receptor activity) replacing
+    obsolete GO:0008565; GO:0070997 'neuron death' is OBSOLETE (cited only as a
+    do-not-use). Any remaining obsolete CURIEs appear ONLY in explicit
+    do-not-use context. The
+    relation CURIEs (RO/BFO incl. the RO:0012xxx family) were confirmed present
+    in go-cam-shapes.shex. Re-run validate_curies.py after editing terms.
+
+# ---------------------------------------------------------------------------
+# EVIDENCE CODES — one entry per GO evidence code (PMC3706743 + guide-go-evidence-codes.md)
+# ---------------------------------------------------------------------------
+evidence_codes:
+  - code: EXP
+    name: "Inferred from Experiment"
+    category: experimental
+    when_to_use: "Generic experimental code when a more specific experimental subtype (IDA/IPI/IMP/IGI/IEP) does not apply; the paper shows a physical characterization directly supporting the term."
+    requires_with: {required: false, contents: "n/a"}
+    example: "A demonstrated experimental result with no fitting subtype -> EXP."
+
+  - code: IDA
+    name: "Inferred from Direct Assay"
+    category: experimental
+    when_to_use: "A direct assay characterizes the function: enzyme assays, in vitro reconstitution, immunofluorescence or cell fractionation (for CC), or physical interaction/binding assays."
+    requires_with: {required: false, contents: "Optional; IDA is not on the list of with/from-required codes. Do not assume with/from must be empty."}
+    example: "Subcellular localization shown by immunofluorescence -> IDA."
+
+  - code: IPI
+    name: "Inferred from Physical Interaction"
+    category: experimental
+    when_to_use: "Direct protein-protein or protein-ligand interaction/binding experiments: two-hybrid, co-purification, co-IP, ion/protein binding. Standard evidence for binding-term annotations."
+    requires_with: {required: true, contents: "with/from MUST contain the identifier(s) of the interacting partner(s); multiple allowed. For self-binding terms (homodimerization etc.) with/from must equal the subject gene product (GORULE:0000046)."}
+    example: "Co-IP of protein A with protein B -> IPI on A with B's identifier in with/from."
+
+  - code: IMP
+    name: "Inferred from Mutant Phenotype"
+    category: experimental
+    when_to_use: "Function inferred from perturbation of the SAME gene: mutations, allelic variation, RNAi, anti-sense, antibody depletion, inhibitors/blockers, environmental shifts, over/ectopic expression. Distinguish direct involvement from downstream/indirect effects before assigning."
+    requires_with: {required: false, contents: "Optional; with/from may carry an allele identifier (Table 3)."}
+    example: "RNAi of a C. elegans gene producing a developmental phenotype -> IMP (annotate only the direct role, not downstream effects)."
+
+  - code: IGI
+    name: "Inferred from Genetic Interaction"
+    category: experimental
+    when_to_use: "Function of the annotated gene inferred from perturbation of a DIFFERENT gene: suppressors, synthetic lethals, functional complementation, rescue, epistasis. Discriminator vs IMP: two genes involved -> IGI; one gene -> IMP."
+    requires_with: {required: true, contents: "with/from MUST contain the identifier(s) of the other interacting gene(s)."}
+    example: "A suppressor screen where mutation in gene B rescues gene A -> IGI on A with B in with/from."
+
+  - code: IEP
+    name: "Inferred from Expression Pattern"
+    category: experimental
+    when_to_use: "BIOLOGICAL PROCESS terms ONLY, based on timing/location of gene/protein expression (Northern, microarray, Western). Weak evidence: a change in expression does not by itself establish a role. Never for MF or CC."
+    requires_with: {required: false, contents: "Not addressed by sources; treat as not required."}
+    example: "A gene upregulated during a stress response -> IEP to the BP term only."
+
+  - code: ISS
+    name: "Inferred from Sequence or structural Similarity"
+    category: computational
+    when_to_use: "A term transferred from a characterized homolog. The source gene must itself be experimentally annotated (IDA/IMP/IGI/IPI/IEP) to the same-or-more-specific term; the curator must validate the alignment. Take extra care transferring developmental BP terms."
+    requires_with: {required: true, contents: "with/from MUST hold a stable identifier of the similar gene/gene product. NOT annotations must not be ISS-propagated."}
+    example: "GO_REF:0000024 manual ISS transfer of an experimentally verified ortholog annotation."
+
+  - code: ISO
+    name: "Inferred from Sequence Orthology"
+    category: computational
+    when_to_use: "ISS subtype: an orthology assertion between organisms."
+    requires_with: {required: true, contents: "WITH column required (per PMC)."}
+    example: "Ortholog-based transfer of an experimental annotation -> ISO."
+
+  - code: ISA
+    name: "Inferred from Sequence Alignment"
+    category: computational
+    when_to_use: "ISS subtype: pairwise or multiple sequence alignment."
+    requires_with: {required: true, contents: "WITH column required (per PMC)."}
+    example: "Alignment-based functional transfer -> ISA."
+
+  - code: ISM
+    name: "Inferred from Sequence Model"
+    category: computational
+    when_to_use: "ISS subtype: prediction from sequence models, for noncoding-RNA genes (tRNAscan-SE, Snoscan, Rfam)."
+    requires_with: {required: false, contents: "Sources do not state a with/from requirement for ISM."}
+    example: "tRNAscan-SE prediction of a tRNA gene -> ISM."
+
+  - code: IGC
+    name: "Inferred from Genomic Context"
+    category: computational
+    when_to_use: "Function inferred from genomic organization: operon structure, syntenic regions, pathway/genome-scale context."
+    requires_with: {required: false, contents: "Not specified."}
+    example: "Co-operonic genes implying shared pathway membership -> IGC."
+
+  - code: IKR
+    name: "Inferred from Key Residues"
+    category: "computational (PMC) / phylogenetic (GitHub guide)"
+    when_to_use: "Inference from presence/absence of key sequence residues; supports a NOT (loss-of-function) annotation when catalytic residues are absent. Classification differs between sources: PMC classifies IKR as computational/sequence analysis, the GitHub guide lists it under phylogenetically-inferred annotations."
+    requires_with: {required: false, contents: "Conditional: required (cite GO_REF:0000047) when the residue analysis is curator-performed."}
+    example: "A pseudo-enzyme lacking catalytic residues -> IKR with NOT for the enzymatic-activity term."
+
+  - code: IBA
+    name: "Inferred from Biological aspect of Ancestor"
+    category: phylogenetic
+    when_to_use: "Phylogenetically-inferred annotation from an explicit model of gain/loss over a gene tree, traceable to direct experimental annotations at other nodes. Treat as a manually-reviewed phylogenetic inference, NOT direct experimental evidence. (Related GitHub-grouped phylogenetic codes: IBD, IRD.)"
+    requires_with: {required: false, contents: "Not specified in cited sources."}
+    example: "A function present across a clade inferred at an ancestral node -> IBA in descendants."
+
+  - code: TAS
+    name: "Traceable Author Statement"
+    category: author-statement
+    when_to_use: "An author statement traceable to original experimental work (often a review). DISCOURAGED: the GOC strongly recommends going to the primary article and annotating the experimental results directly with an EXP-family code instead."
+    requires_with: {required: false, contents: "Not specified."}
+    example: "A review states a function citing a primary paper -> prefer annotating the primary paper with IDA/IMP, not the review with TAS."
+
+  - code: NAS
+    name: "Non-traceable Author Statement"
+    category: author-statement
+    when_to_use: "An author assertion that cannot be traced to another article or experiment. Author-statement codes are discouraged generally; at best NAS, ideally do not annotate."
+    requires_with: {required: false, contents: "Not specified."}
+    example: "An uncited author claim in an introduction -> at best NAS."
+
+  - code: IC
+    name: "Inferred by Curator"
+    category: curatorial
+    when_to_use: "A curator reasonably infers an annotation from one or more OTHER existing GO annotations on the same gene plus general biological knowledge. No circular inference: the supporting annotation must be held independently of the one being created."
+    requires_with: {required: true, contents: "with/from (FROM) MUST supply the supporting GO ID(s); multiple GO IDs for multi-source inferences (cite GO_REF:0000036)."}
+    example: "A gene experimentally annotated to a DNA-binding TF activity can be IC-annotated to the nucleus, with that MF GO ID in with/from."
+
+  - code: ND
+    name: "No biological Data available"
+    category: curatorial
+    when_to_use: "Only after an exhaustive literature search finds no experimental or sequence-based evidence; assign to the relevant ontology ROOT (GO:0003674, GO:0008150, or GO:0005575) and cite GO_REF:0000015. Remove once any real annotation becomes available."
+    requires_with: {required: false, contents: "Not applicable."}
+    example: "A gene with no characterized function after literature review -> ND on GO:0003674 with GO_REF:0000015."
+
+  - code: IEA
+    name: "Inferred from Electronic Annotation"
+    category: electronic
+    when_to_use: "Automatically generated, NON-manually-reviewed annotations (InterPro2GO, UniProt keyword/EC conversion, Ensembl 1:1 ortholog transfer). Traces ultimately to homology/sequence but generally not to a specific experimental source."
+    requires_with: {required: true, contents: "Always populate with/from with the signature, program, or ortholog used."}
+    example: "An InterPro signature match -> IEA with the InterPro identifier in with/from."
+
+  - code: "HTP / HDA / HMP / HGI / HEP"
+    name: "High-throughput evidence family (general / direct assay / mutant phenotype / genetic interaction / expression pattern)"
+    category: "experimental (high-throughput)"
+    when_to_use: "Use the matching HTP-family code instead of the standard experimental code (IDA->HDA, IMP->HMP, IGI->HGI, IEP->HEP, generic->HTP) when the supporting experiment is high-throughput. Treat such data as unvalidated screens; weigh the assay before annotating."
+    requires_with: {required: false, contents: "Follow the matching standard code's with/from rule (e.g. HGI like IGI)."}
+    example: "A genome-wide RNAi screen phenotype -> HMP rather than IMP."
+
+# ---------------------------------------------------------------------------
+# EVIDENCE PRINCIPLES — cross-cutting evidence rules
+# ---------------------------------------------------------------------------
+evidence_principles:
+  - id: evidence-codes-no-fabricated-evidence
+    statement: "Evidence MUST be real: every annotation rests on actual experimental results, valid bioinformatic analysis, or a genuine cited statement. Never fabricate an evidence code, a with/from identifier, or a reference. Speculative/hypothetical assertions (e.g. from a paper's Discussion) are not annotatable."
+    source: "PMC3706743"
+  - id: evidence-codes-six-categories
+    statement: "Recognize the six evidence-code categories (experimental, phylogenetic, computational, author statements, curatorial statements, automatically generated/electronic). Experimental evidence is the preferred/strongest basis, author-statement codes (TAS/NAS) are discouraged, and IEA is non-manually-reviewed; prefer the strongest evidence the cited reference actually supports."
+    status: "soft preference — the full strict 6-tier strength ranking is NOT stated by the sources; this is a flagged heuristic, not doctrine"
+    source: "guide-go-evidence-codes.md; PMC3706743"
+  - id: evidence-codes-experimental-requires-physical-characterization
+    statement: "Use an experimental code (EXP/IDA/IPI/IMP/IGI/IEP) only when the cited paper displays results from a physical characterization of the gene/gene product that directly supports the term."
+    source: "guide-go-evidence-codes.md"
+  - id: evidence-codes-imp-direct-vs-indirect
+    statement: "Before assigning IMP (or interpreting any mutant phenotype), distinguish the gene's direct role from downstream/indirect consequences; annotate only the direct role, using domain knowledge to exclude downstream effects."
+    source: "PMC3706743"
+  - id: evidence-codes-no-overgeneralization
+    statement: "Annotate only what the experiment demonstrated, not the authors' broader extrapolation; do not promote a specific shown result to a more general term."
+    example: "If serine and threonine transport is shown but authors claim 'any amino acid', annotate only serine transport (GO:0032329) and threonine transport (GO:0015826)."
+    source: "PMC3706743"
+  - id: evidence-codes-annotate-definition-not-name
+    statement: "Select the GO term by its DEFINITION, not its name (the name is a surrogate); verify the definition in AmiGO/QuickGO before assigning a term and its evidence."
+    source: "PMC3706743"
+  - id: evidence-codes-ic-no-circular-inference
+    statement: "Do not create circular inferences: an inferred annotation (IC or homology transfer) is valid only when the supporting/similar gene is, or can be, annotated to the same term independently of the annotation being created."
+    source: "PMC3706743"
+  - id: evidence-codes-not-not-transferred
+    statement: "NOT (negated) annotations MUST NOT be propagated by ISS or other homology transfer."
+    source: "PMC3706743"
+  - id: evidence-codes-eco-mapping
+    statement: "Each GO evidence code maps to an ECO term; use the official GOC mapping (gaf-eco-mapping.txt in the evidenceontology repo) when an ECO identifier is required — do not invent one. In GO-CAM, evidence individuals MUST be typed by an ECO:0000000 descendant."
+    source: "guide-go-evidence-codes.md; go-cam-shapes.shex <Evidence>"
+  - id: evidence-codes-ai-derived-needs-manual-review
+    statement: "AI-suggested term-gene associations must be manually reviewed by a trained biocurator to confirm experimental basis, correctness, and standards compliance before acceptance; flag agent output as review candidates, and only use an experimental code after manual confirmation."
+    source: "Wiki: Tips to Produce High Quality Annotations"
+  - id: evidence-on-reified-edge
+    statement: "In GO-CAM, evidence is attached to an assertion via a reified edge (owl:Axiom <AnnotatedEdge> with owl:annotatedSource/Property/Target), carrying zero-or-more evidence: links to Evidence individuals; each Evidence individual carries exactly one source string (e.g. a PMID) and MAY carry one with: string. Evidence is never a direct node property."
+    source: "go-shapes go-cam-shapes.shex <AnnotatedEdge>, <Evidence>"
+
+# ---------------------------------------------------------------------------
+# ACTIVITY UNIT — the GO-CAM activity-unit schema
+# ---------------------------------------------------------------------------
+activity_unit:
+  central_node: >-
+    The central node of every GO-CAM activity unit is a GO Molecular Function
+    (the activity), NOT the gene product. Each MF node is typed by exactly one
+    MolecularFunctionClass (GO:0003674 descendant) or a NegatedMolecularFunctionClass.
+    A MolecularEvent (reacto.owl#molecular_event class) is an allowed alternative
+    activity-unit type and a valid object of most MF causal relations; treat
+    MolecularFunction and MolecularEvent as interchangeable activity object types
+    where the schema lists (MF OR ME).
+  required_slot:
+    relation: enabled_by
+    curie: RO:0002333
+    target: "gene product (InformationBiomacromolecule) OR ProteinContainingComplex"
+    note: >-
+      Every activity node should have an enabled_by edge to an active entity
+      (gene/gene product/complex); an activity with no enabler is incomplete.
+      enabled_by is THE relation for all MF-to-gene-product associations.
+      Cardinality caveat: the ShEx schema does NOT force enabled_by to be present
+      or restrict it to exactly one — 'exactly one enabler' is a curation
+      convention/lint, not a shape constraint.
+  recommended_slots:
+    - relation: occurs_in
+      curie: BFO:0000066
+      target: "AnatomicalEntity — a CellularComponent (GO:0005575/GO:0110165), Cell (CL), or anatomical structure (UBERON / WBbt for worm)"
+      cardinality: "{0,1} on an MF/BP node (ShEx-enforced)"
+      note: "Gives the location of the activity. For a BP only assert when ALL constituent MFs share the location. Do not restate a location already in the term label/definition. In GO-CAM link nested locations to each other with part_of rather than repeating occurs_in."
+    - relation: part_of
+      curie: BFO:0000050
+      target: "BiologicalProcess (GO:0008150 descendant)"
+      cardinality: "MF->BP and BP->BP allowed; part_of-to-complex is {0,1}"
+      note: "Places the activity in its biological program (the MF is an integral first/last/intervening step). Nest BPs inside larger BPs with further part_of."
+  molecule_flow:
+    - relation: has_input
+      curie: RO:0002233
+      target: "ChemicalEntity (ChEBI), ProteinContainingComplex, or gene/gene product"
+      note: "The consumed/acted-on entity (substrate, binding partner, TF target gene) when more specific than the GO term. Direct physical-interaction evidence is NOT required."
+    - relation: has_output
+      curie: RO:0002234
+      target: "ChemicalEntity (ChEBI), ProteinContainingComplex, or gene/gene product"
+      note: "The produced entity (incl. modified protein forms). Capture both input and output on the same activity when known; inputs+outputs logically define the catalytic MF (RHEA-based defs), letting a reasoner classify it."
+  input_output_exclusions: >-
+    Do NOT capture has_input/has_output for: entities already in the GO term
+    label/definition; currency molecules (ATP/ADP for kinases); cofactors,
+    coenzymes, metal ions; x-dependent modifiers (e.g. calcium for a
+    calcium-dependent kinase); chemical analogs/assay conditions; Sequence
+    Ontology terms.
+  other_cardinality_notes:
+    - "is_active_in (gene product -> CC), located_in, part_of-to-complex, and contributes_to are each {0,1}."
+    - "An AnatomicalEntity/Cell/CellularComponent node MAY have at most one part_of to a containing anatomical entity (WBbt context terms are the exception — multiple allowed; see species_celegans)."
+    - "Each typed node must be rdf:type a class whose subClassOf chain reaches the correct ontology root (MF<-GO:0003674, BP<-GO:0008150, CC<-GO:0005575, complex<-GO:0032991, ChemicalEntity<-CHEBI:24431, InformationBiomacromolecule<-CHEBI:33695, Protein<-CHEBI:36080, AnatomicalEntity<-UBERON:0001062, Cell<-CL:0000000, Organism<-NCBITaxon:1, Evidence<-ECO:0000000)."
+    - "Model metadata (<GoCamModel>): >=1 contributor, exactly 1 modification_date, >=1 provided_by, exactly 1 title, exactly 1 modelstate; in_taxon is optional but should be set to the species (NCBITaxon:6239 for C. elegans)."
+
+# ---------------------------------------------------------------------------
+# RELATIONS — the canonical causal/structural relation matrix (deduped)
+# Order: core structural & flow; then causal family; then small-molecule.
+# used_in: gocam | standard | both | unknown (parent-only)
+# ---------------------------------------------------------------------------
+relations:
+
+  # --- core structural / flow (enabled_by, part_of, occurs_in, has_input/output) ---
+  - name: enabled_by
+    curie: RO:0002333
+    used_in: both
+    subject_type: "molecular function (activity)"
+    object_type: "gene or gene product (InformationBiomacromolecule) / complex"
+    when_to_use: "Link an MF activity unit to the gene/gene product that executes it; in GO-CAM this is THE relation for all MF-to-gene-product associations."
+    when_not_to_use: "Do not use to relate activities to processes, locations, complexes, or chemicals."
+    example: "protein kinase activity enabled_by MAPK1; ubiquitin-protein ligase activity enabled_by NEDD4 (PMID:17996703)"
+    source: "wiki:Enabled_by; RO:0002333"
+
+  - name: part_of
+    curie: BFO:0000050
+    used_in: both
+    subject_type: "molecular function; or biological process; or anatomical entity; or gene product"
+    object_type: "biological process (MF->BP, BP->BP); anatomical entity incl. CC (AE->AE); protein-containing complex (gene-product->complex, standard annotation)"
+    when_to_use: "GO-CAM: link MF->BP (MF is an integral first/last/intervening step), BP->BP (subprocess), AE->AE (containment, CC included). Standard annotation: also link gene products to complexes (GO:0032991). Also used to place a sequence-specific TF's MF (GO:0003700) under regulation of transcription (GO:0006355), and a signaling pathway within the anatomical/developmental process it contributes to."
+    when_not_to_use: "Do not use part_of to put a gene product into a cellular anatomical entity (use located_in / is_active_in). Do not use part_of to attach the downstream executing process to the signaling pathway (that process is downstream, not part_of)."
+    example: "cytokinesis part_of mitotic cell cycle; nucleus part_of hepatocyte; sequence-specific DNA-binding TF activity part_of regulation of transcription, DNA-templated"
+    source: "wiki:Part_of_relation; wiki:Signaling_Curation_Manual"
+
+  - name: occurs_in
+    curie: BFO:0000066
+    used_in: both
+    subject_type: "molecular function; or biological process"
+    object_type: "AnatomicalEntity: cellular anatomical entity (GO:0110165), cell (CL/WBbt), or anatomical structure (UBERON)"
+    when_to_use: "Specify the location of an MF or BP. For a BP only when ALL constituent MFs share that location. Cardinality {0,1}."
+    when_not_to_use: "Do not restate a location already in the term label/definition. Do not assert occurs_in on a BP whose steps span different compartments/cells. In GO-CAM link nested structures with part_of rather than repeating occurs_in. Target must be a CC/cell/anatomical term, never an MF or BP term."
+    example: "DNA ligase activity occurs_in mitochondrion (GO:0005739); MF occurs_in WBbt:<neuron term>"
+    source: "wiki:Occurs_in; go-cam-shapes.shex"
+
+  - name: has_input
+    curie: RO:0002233
+    used_in: both
+    subject_type: "MF or BP"
+    object_type: "chemical entity (ChEBI), complex, or gene/gene product"
+    when_to_use: "Name the specific molecular target/substrate of an MF/BP (enzyme substrate, binding/adaptor interactor, TF target gene) when more specific than the GO term. Direct physical-interaction evidence not required."
+    when_not_to_use: "When already in the term label/definition; currency chemicals (ATP for a kinase); cofactors/coenzymes/metal ions; x-dependent modifiers; analogs/assay conditions; SO terms."
+    example: "protein kinase activity has_input UniProtKB:P49736 (MCM2) for CDC7 (PMID:15668232)"
+    source: "wiki:Has_input; RO:0002233"
+
+  - name: has_output
+    curie: RO:0002234
+    used_in: both
+    subject_type: "MF or BP"
+    object_type: "chemical entity (ChEBI), complex, or gene/gene product"
+    when_to_use: "Name the specific molecular product of an MF (or biosynthetic/assembly BP), incl. modified protein forms, when more specific than the GO term. Capture both input and output on one activity when known."
+    when_not_to_use: "When already in the term label/definition; currency products (ADP for a kinase)."
+    example: "diacylglycerol kinase activity has_output CHEBI:78385 for DGKA (PMID:22627129)"
+    source: "wiki:Has_output; RO:0002234"
+
+  # --- causal family ---
+  - name: provides_input_for
+    curie: RO:0002413
+    used_in: gocam
+    subject_type: "MF (activity)"
+    object_type: "MF (activity) / MolecularEvent"
+    when_to_use: "Chain two directly successive activities where the upstream OUTPUT is the downstream input/substrate AND that output is a macromolecule NOT in ChEBI (typically a modified protein or RNA)."
+    when_not_to_use: "When the shared molecule IS in ChEBI — instead use upstream has_output[ChEBI] -> downstream has_input[ChEBI]. Not used in standard annotation extensions."
+    example: "AKT1 phospho-RAC1 (not in ChEBI) provides_input_for FBXL19 substrate-adaptor activity (PMID:23512198)"
+    source: "wiki:Provides_input_for; RO:0002413"
+
+  - name: directly_positively_regulates
+    curie: RO:0002629
+    used_in: gocam
+    subject_type: "activity (MF)"
+    object_type: "activity (MF / MolecularEvent)"
+    when_to_use: "Two MFs in DIRECT succession (no intervening activity) where upstream ENHANCES the downstream enabler's ability to function, mechanism known (often direct physical interaction, or producing/degrading a small-molecule regulator). Maps to a pointed (positive) arrow between two gene-product activities."
+    when_not_to_use: "If an intervening MF exists (use indirectly_positively_regulates); for constitutive upstream activities; in standard annotation extensions."
+    example: "receptor ligand activity directly_positively_regulates receptor activity; successive MAPK-cascade kinases directly_positively_regulate one another (PMID:18050474)"
+    source: "wiki:Directly_positively_regulates; RO:0002629"
+
+  - name: directly_negatively_regulates
+    curie: RO:0002630
+    used_in: gocam
+    subject_type: "activity (MF)"
+    object_type: "activity (MF / MolecularEvent)"
+    when_to_use: "Two MFs in DIRECT succession where upstream REDUCES the downstream enabler's ability to function, mechanism known (e.g. a phosphatase on the enabler, removal of an activator). Maps to a T-bar (negative) arrow between two direct gene-product activities."
+    when_not_to_use: "If an intervening activity exists (use indirectly_negatively_regulates); for constitutive upstream activities; in standard annotation extensions."
+    example: "SHP-1 (PTPN6) directly_negatively_regulates TLR3-activated JNK2 (MAPK9) phosphorylation (PMID:27830702)"
+    source: "wiki:Directly_negatively_regulates; RO:0002630"
+
+  - name: directly_regulates
+    curie: RO:0002578
+    used_in: gocam
+    subject_type: "MolecularFunction"
+    object_type: "MolecularFunction OR MolecularEvent"
+    when_to_use: "Direct regulation of UNSPECIFIED sign between two activities."
+    when_not_to_use: "Prefer the signed directly_positively/negatively variant when the direction is known."
+    example: "MF(A) directly_regulates MF(B)"
+    source: "go-cam-shapes.shex <MolecularFunction>"
+
+  - name: indirectly_positively_regulates
+    curie: RO:0002407
+    used_in: gocam
+    subject_type: "activity (MF)"
+    object_type: "activity (MF)"
+    when_to_use: "Upstream INCREASES execution of downstream through INTERVENING activities / a reusable module (e.g. TF activity -> activity of the transcribed gene's product). Also add a part_of link from the upstream activity to a 'regulation of transcription' BP (has_input the target gene) to record the omitted module."
+    when_not_to_use: "When the two act in direct succession (use directly_positively_regulates); in standard annotation extensions."
+    example: "C. elegans DAF-16 TF activity indirectly_positively_regulates the CDK-inhibitor activity of CKI-1"
+    source: "wiki:Indirectly_positively_regulates; RO:0002407"
+
+  - name: indirectly_negatively_regulates
+    curie: RO:0002409
+    used_in: gocam
+    subject_type: "activity (MF)"
+    object_type: "activity (MF)"
+    when_to_use: "Upstream DECREASES execution of downstream through INTERVENING activities / a reusable module (e.g. ubiquitin ligase -> activity of the degraded target). Also add a part_of link to a regulation BP."
+    when_not_to_use: "When the two act in direct succession (use directly_negatively_regulates); in standard annotation extensions."
+    example: "C. elegans MSI-1 translational repressor activity indirectly_negatively_regulates the actin-binding activity of ARX-2 (PMID:24630719)"
+    source: "wiki:Indirectly_negatively_regulates; RO:0002409"
+
+  - name: regulates
+    curie: RO:0002211
+    used_in: both
+    subject_type: "activity/process"
+    object_type: "activity/process"
+    when_to_use: "Generic causal-regulation parent when upstream affects downstream via an effect on the enabler, mechanism understood, non-constitutive. Acceptable in standard annotation; in GO-CAM refine."
+    when_not_to_use: "In GO-CAMs do not stop at bare 'regulates' between MFs — always refine to a directional+proximity child. Do not use for constitutive activities or the normal forward step of a cascade."
+    example: "An upstream process regulates a downstream process via an effect on the downstream enabler."
+    source: "wiki:Regulates; RO:0002211"
+
+  - name: positively_regulates
+    curie: RO:0002213
+    used_in: both
+    subject_type: "activity/process"
+    object_type: "activity/process"
+    when_to_use: "Upstream INCREASES rate/magnitude of downstream via a positive effect on its enabler, mechanism understood, non-constitutive, upstream before downstream."
+    when_not_to_use: "Do not leave at this level for GO-CAM curation; refine to directly_/indirectly_positively_regulates."
+    example: "Upstream activity increases execution of a downstream activity via a positive effect on its enabler."
+    source: "wiki:Positively_regulates; RO:0002213"
+
+  - name: negatively_regulates
+    curie: RO:0002212
+    used_in: both
+    subject_type: "activity/process"
+    object_type: "activity/process"
+    when_to_use: "Upstream DECREASES rate/magnitude of downstream via an effect on its enabler, mechanism understood, non-constitutive, upstream before downstream."
+    when_not_to_use: "Do not leave at this level for GO-CAM curation; refine to directly_/indirectly_negatively_regulates."
+    example: "Upstream activity decreases execution of a downstream activity via a negative effect on its enabler."
+    source: "wiki:Negatively_regulates; RO:0002212"
+
+  - name: "causally_upstream_of, positive effect"
+    curie: RO:0002304
+    used_in: gocam
+    subject_type: "MF (activity)"
+    object_type: "MF (activity)"
+    when_to_use: "Upstream occurs before and has a POSITIVE causal effect on downstream but the MECHANISM IS NOT UNDERSTOOD; use only if no more specific causal relation fits."
+    when_not_to_use: "When the mechanism IS known (shared molecule, direct regulation) — use has_output->has_input, provides_input_for, or directly_positively_regulates."
+    example: "Two MFs, upstream positively drives downstream, mechanism unknown."
+    source: "wiki:Causally_upstream_of__positive_effect; RO:0002304"
+
+  - name: causally_upstream_of_negative_effect
+    curie: RO:0002305
+    used_in: gocam
+    subject_type: "MolecularFunction OR BiologicalProcess"
+    object_type: "BiologicalProcess OR MolecularFunction OR MolecularEvent"
+    when_to_use: "Upstream causal link whose net effect is NEGATIVE but is not a direct regulation; mechanism not asserted/known."
+    when_not_to_use: "When an actual direct regulatory relationship is meant (use a regulates variant)."
+    example: "MF(A) causally_upstream_of_negative_effect BP(B)"
+    source: "go-cam-shapes.shex <MolecularFunction>/<BiologicalProcess>"
+
+  - name: causally_upstream_of
+    curie: RO:0002411
+    used_in: gocam
+    subject_type: "MolecularFunction OR BiologicalProcess"
+    object_type: "BiologicalProcess OR MolecularFunction OR MolecularEvent"
+    when_to_use: "Generic causal-upstream link when neither regulation sign nor directness is asserted. Use causally_upstream_of(_positive/_negative) when the downstream node is a PROCESS or the link is indirect (positively_regulates from an MF must NOT target a BP)."
+    when_not_to_use: "Prefer a regulates variant when an actual regulatory relationship is meant."
+    example: "MF(A) causally_upstream_of BP(downstream process)"
+    source: "go-cam-shapes.shex <MolecularFunction>/<BiologicalProcess>"
+
+  - name: "causally_upstream_of_or_within (parent only)"
+    curie: RO:0002418
+    used_in: unknown
+    subject_type: "MF or BP"
+    object_type: "MF or BP"
+    when_to_use: "DO NOT use directly in annotations or GO-CAMs; parent relation only. Always choose a more specific child."
+    when_not_to_use: "Any annotation or model — pick a precise sub-relation."
+    example: "(not used directly)"
+    source: "wiki:Causally_upstream_of_or_within"
+
+  - name: "causally_upstream_of_or_within, positive effect"
+    curie: RO:0004047
+    used_in: standard
+    subject_type: "MF (activity)"
+    object_type: "BP"
+    when_to_use: "Standard annotation linking an MF to a BP with a demonstrated POSITIVE effect but UNKNOWN mechanism."
+    when_not_to_use: "When the mechanism is known (use causally_upstream_of, positive effect)."
+    example: "MF positively affects a BP, mechanism unclear."
+    source: "wiki:Causally_upstream_of_or_within__positive_effect; RO:0004047"
+
+  - name: "causally_upstream_of_or_within, negative effect"
+    curie: RO:0004046
+    used_in: standard
+    subject_type: "MF (activity)"
+    object_type: "BP"
+    when_to_use: "Standard annotation linking an MF to a BP with a demonstrated NEGATIVE effect but UNKNOWN mechanism."
+    when_not_to_use: "When the mechanism is known (use causally_upstream_of, negative effect)."
+    example: "MF negatively affects a BP, mechanism unclear."
+    source: "wiki:Causally_upstream_of_or_within__negative_effect; RO:0004046"
+
+  - name: constitutively_upstream_of
+    curie: RO:0012009
+    used_in: gocam
+    subject_type: "MF (activity)"
+    object_type: "MF (activity)"
+    when_to_use: "Upstream activity is REQUIRED for downstream, occurs before it, runs at an approximately CONSTANT rate, and does NOT regulate it (housekeeping/maturation/processing). Mechanism is understood."
+    when_not_to_use: "When upstream regulates downstream (use a regulatory relation); when upstream precedes but is not required for downstream."
+    example: "Zdhhc9 palmitoyltransferase activity constitutively_upstream_of mature Nras G-protein activity (PMID:26493479)"
+    source: "wiki:Constitutively_upstream_of; RO:0012009"
+
+  - name: removes_input_for
+    curie: RO:0012010
+    used_in: gocam
+    subject_type: "MF (activity)"
+    object_type: "MF (activity)"
+    when_to_use: "Upstream and downstream act on the SAME target/site so executing upstream makes an input UNAVAILABLE for downstream (a molecular switch, e.g. histone/ubiquitin code)."
+    when_not_to_use: "For ordinary inducible substrate depletion that regulates a process; in standard annotation extensions."
+    example: "KMT5A H4K20 methylation removes_input_for TONSL histone-reader activity (PMID:27338793)"
+    source: "wiki:Removes_input_for; RO:0012010"
+
+  # --- gene-product -> BP causal relations (standard-annotation decomposition) ---
+  - name: involved_in
+    curie: RO:0002331
+    used_in: standard
+    subject_type: "gene/gene product"
+    object_type: "biological process"
+    when_to_use: "Only when the gene product enables an MF that is part_of that BP (the MF is an integral part of the BP)."
+    when_not_to_use: "From a phenotype alone, when the MF is unknown, or when the gene is merely 'required for' the process without its MF being part of it."
+    example: "A gene whose kinase activity is part of MAPK signaling is involved_in MAPK signaling."
+    source: "wiki:Annotating_from_phenotypes; RO:0002331"
+
+  - name: acts_upstream_of_or_within
+    curie: RO:0002264
+    used_in: both
+    subject_type: "gene/gene product"
+    object_type: "biological process"
+    when_to_use: "Safe default between a gene product and a BP when it is NOT known mechanistically how the MF affects the process (phenotype-based or ambiguous participation-vs-regulation). Positive/negative-effect children (RO:0004032/RO:0004033) capture directionality when known."
+    when_not_to_use: "When the MF is known to be part_of the BP (use involved_in) or when a clearer upstream relation applies."
+    example: "An unknown-MF gene with a brood-size phenotype: acts_upstream_of_or_within reproduction (not involved_in)."
+    source: "wiki:Annotating_from_phenotypes; wiki:Annotating_regulation; RO:0002264"
+
+  - name: acts_upstream_of
+    curie: RO:0002263
+    used_in: standard
+    subject_type: "gene/gene product"
+    object_type: "biological process"
+    when_to_use: "When the gene product's MF is in a process causally upstream of (chronologically before, not part of, and affecting) the target process."
+    when_not_to_use: "When the MF is actually part of the target process, or the relationship is too distant to be informative."
+    example: "A gene acting in an earlier process that affects a later one -> acts_upstream_of the later process."
+    source: "wiki:Annotating_from_phenotypes; RO:0002263"
+
+  # --- other structural relations ---
+  - name: is_active_in
+    curie: RO:0002432
+    used_in: both
+    subject_type: "gene product"
+    object_type: "cellular component (AnatomicalEntity OR RootCellularComponent GO:0005575)"
+    when_to_use: "The cellular location where a gene product enables its MF. Cardinality {0,1}."
+    when_not_to_use: "When the protein was merely detected without evidence of activity there (use located_in)."
+    example: "gene product is_active_in CL:<cell type>"
+    source: "go-annotations.md; RO:0002432"
+
+  - name: located_in
+    curie: RO:0001025
+    used_in: standard
+    subject_type: "gene product"
+    object_type: "cellular component"
+    when_to_use: "Default CC relation for a cellular anatomical entity / virion component in which a gene product was detected; also default for CC root-term annotations. ChIP-derived data -> located_in/part_of chromatin (GO:0000785 or child)."
+    when_not_to_use: "For complexes (use part_of); when activity location is known (prefer is_active_in)."
+    example: "gene product located_in GO:0000785 (chromatin) from ChIP"
+    source: "go-annotations.md; RO:0001025"
+
+  - name: contributes_to
+    curie: RO:0002326
+    used_in: standard
+    subject_type: "gene product"
+    object_type: "molecular function"
+    when_to_use: "Links a complex subunit to an MF executed by the complex when the function cannot be ascribed to an individual subunit; annotate only the required subunits. Cardinality {0,1}."
+    when_not_to_use: "When a single gene product directly executes the function (use enables)."
+    example: "subunit contributes_to the complex's MF"
+    source: "go-annotations.md; RO:0002326"
+
+  - name: has_part
+    curie: BFO:0000051
+    used_in: gocam
+    subject_type: "ProteinContainingComplex (or, for receptors, receptor activity)"
+    object_type: "InformationBiomacromolecule OR ProteinContainingComplex (complex members); or a ligand-binding term (for receptor activity)"
+    when_to_use: "Enumerate the gene-product/sub-complex members of a complex. Also: connect a receptor activity term to its corresponding ligand-binding term where one exists."
+    when_not_to_use: "For receptor activity, only where a corresponding binding term exists."
+    example: "ProteinContainingComplex(C) has_part Protein(subunit1); receptor activity has_part <ligand> binding"
+    source: "go-cam-shapes.shex <ProteinContainingComplex>; wiki:Signaling_Curation_Manual"
+
+  - name: happens_during
+    curie: RO:0002092
+    used_in: both
+    subject_type: "molecular function; or biological process"
+    object_type: "temporal phase: biological phase (GO:0044848 child) or life-cycle stage (UBERON:0000105 child)"
+    when_to_use: "Attach a temporal phase during which an MF/BP occurs (cell-cycle phase, life-cycle stage)."
+    when_not_to_use: "Not for attaching a co-occurring BP when the gene product's role is unclear; if the entity is actually part of a process use part_of."
+    example: "protein localization to nucleus happens_during mitotic anaphase (GO:0000090, PMID:24626187)"
+    source: "wiki:Happens_during; RO:0002092"
+
+  - name: transports_or_maintains_localization_of
+    curie: RO:0002313
+    used_in: gocam
+    subject_type: "BiologicalProcess (incl. Localization) OR TransporterActivity (MF)"
+    object_type: "for BP/Localization: AnatomicalEntity / ChemicalEntity / InformationBiomacromolecule / complex; for TransporterActivity: ChemicalEntity / InformationBiomacromolecule / complex"
+    when_to_use: "Name the cargo being transported/localized by a transport process or transporter activity (pairs with has_target_start_location / has_target_end_location, RO:0002338/0002339)."
+    when_not_to_use: "n/a"
+    example: "MF(transporter activity) transports_or_maintains_localization_of ChemicalEntity(ion)"
+    source: "go-cam-shapes.shex <BiologicalProcess>/<Localization>/<TransporterActivity>"
+
+  # --- small-molecule regulators ---
+  - name: "has_small_molecule_regulator / _activator / _inhibitor"
+    curie: "RO:0012000 / RO:0012001 / RO:0012002"
+    used_in: gocam
+    subject_type: "MolecularFunction"
+    object_type: "ChemicalEntity (CHEBI:24431 descendant)"
+    when_to_use: "Attach a small-molecule chemical that regulates/activates/inhibits an activity (MF -> chemical direction). Shape-grounded; PREFER this family over the WIP is_small_molecule_* relations."
+    when_not_to_use: "Object must be a ChemicalEntity, not a gene product/complex."
+    example: "MF(receptor activity) has_small_molecule_activator ChemicalEntity(ligand)"
+    source: "go-cam-shapes.shex <MolecularFunction>"
+
+  - name: "is_small_molecule_activator_of / is_small_molecule_inhibitor_of"
+    curie: "RO:0012005 / RO:0012006"
+    used_in: gocam
+    subject_type: "chemical / small molecule"
+    object_type: "molecular function (activity)"
+    when_to_use: "Relate a small-molecule chemical to an activity it activates/inhibits (chemical -> MF direction)."
+    when_not_to_use: "Not used in the ontology itself. HEURISTIC ONLY: the cited wiki pages are empty WIP stubs; subject/object types and directionality are inferred from the RO term names, not stated by the source. Prefer the shape-grounded has_small_molecule_activator/inhibitor (RO:0012001 family)."
+    example: "(no example on source page)"
+    source: "wiki:Is_small_molecule_activator_of / Is_small_molecule_inhibitor_of (WIP stubs)"
+
+  - name: "activated_by / inhibited_by"
+    curie: "RO:0002406 / RO:0002408 (MOD-import idiom)"
+    used_in: both
+    subject_type: "molecular function"
+    object_type: "chemical (ChEBI)"
+    when_to_use: "Represent a small-molecule ligand that activates/inhibits an MF (single cardinality each in MOD import, e.g. WormBase Noctua imports)."
+    when_not_to_use: "Not for protein regulators (use the regulates relations / has_input)."
+    example: "receptor MF activated_by CHEBI:17134 (octopamine)"
+    source: "wiki:Noctua_MOD_Imports"
+
+  - name: has_regulation_target
+    curie: "(annotation-extension property)"
+    used_in: standard
+    subject_type: "ligand MF (receptor agonist/antagonist activity)"
+    object_type: "receptor (UniProt AC)"
+    when_to_use: "On a ligand's receptor agonist/antagonist annotation, name the specific receptor (by UniProt AC) the ligand acts on (column-16 extension)."
+    when_not_to_use: "Not for receptors or relay proteins; only for ligands acting on a named receptor."
+    example: "receptor ligand activity has_regulation_target <receptor UniProt AC>"
+    source: "wiki:Signaling_Curation_Manual (Signals/Ligands)"
+
+# ---------------------------------------------------------------------------
+# CAUSAL RELATION SELECTION — explicit decision rules
+# ---------------------------------------------------------------------------
+causal_relation_selection:
+  decision_tree:
+    statement: >-
+      To link two activities, connect from the UPSTREAM activity to the
+      DOWNSTREAM activity (never downstream->upstream), then answer in order:
+      (1) sign — is upstream's effect on downstream positive, negative, or
+      unknown/neutral? (2) directness — do the two act in immediate succession
+      with no intervening molecular function? (3) if not direct, what
+      intervening activity-regulating module sits between them?
+    source: "wiki:Noctua_Manual__Linking_Activities_in_Form; gocam-overview.md"
+  direct_vs_indirect:
+    statement: >-
+      DIRECT (directly_positively/negatively_regulates) when the two activities
+      act in immediate succession with no intervening MF — typically a direct
+      physical interaction or the production/degradation of a small-molecule
+      regulator. INDIRECT (indirectly_positively/negatively_regulates) when
+      intervening activities or a reusable larger module (gene expression,
+      proteasomal degradation, general transcription machinery) lie between
+      them; when using an indirect relation, ALSO add a part_of link from the
+      upstream activity to a 'regulation of' BP term (with has_input the target)
+      to record the omitted module.
+    examples:
+      - "TF activity -> target gene-product activity = indirect (DAF-16 -> CKI-1)."
+      - "Translational repressor -> target activity = indirect (MSI-1 -> ARX-2)."
+      - "Ubiquitin ligase -> degraded target's activity = indirect."
+    source: "wiki:Directly_/Indirectly_positively/negatively_regulates"
+  chebi_chaining_vs_provides_input_for:
+    statement: >-
+      THE decision for connecting two consecutive activities that share an
+      intermediate molecule. If the shared molecule IS available in ChEBI
+      (small molecule / metabolite), connect them via the molecule: upstream MF
+      has_output[ChEBI] and downstream MF has_input[same ChEBI id] — do NOT use
+      provides_input_for. Use provides_input_for (RO:0002413) ONLY when the
+      shared output is a MACROMOLECULE NOT in ChEBI (a modified protein or RNA).
+      For C. elegans biosynthetic steps (e.g. tryptophan->serotonin,
+      tyramine->octopamine) the correct idiom is ChEBI small-molecule chaining,
+      NOT provides_input_for.
+    examples:
+      - "ChEBI shared: upstream has_output(CHEBI:78385) -> downstream has_input(CHEBI:78385)."
+      - "Non-ChEBI macromolecule: AKT1 phospho-RAC1 provides_input_for FBXL19 (PMID:23512198)."
+    source: "wiki:Provides_input_for; wiki:Has_input; wiki:Has_output"
+  regulation_vs_input:
+    statement: >-
+      Use a regulates relation when the upstream activity CONTROLS the
+      downstream activity (changes its rate/magnitude via the enabler). Use
+      provides_input_for / has_output->has_input when there is NO control, only
+      a substrate hand-off (metabolic chains). Do not use a regulates relation
+      for a pure substrate hand-off, and do not use provides_input_for for a
+      control relationship.
+    source: "gocam-overview.md; wiki:Provides_input_for"
+  mechanism_known_vs_unknown:
+    statement: >-
+      When the mechanism IS known, pick the most specific causal relation the
+      figure/evidence supports. When the mechanism is UNKNOWN, use
+      causally_upstream_of(_positive/_negative effect) (RO:0002304/RO:0002305)
+      between two MFs in GO-CAM, or causally_upstream_of_or_within(,positive/
+      negative effect) (RO:0004047/RO:0004046) between an MF and a BP in
+      standard annotation. Never use bare causally_upstream_of_or_within
+      (RO:0002418) directly.
+    source: "wiki:Causally_upstream_of_or_within and *_effect pages"
+  figure_glyph_mapping:
+    statement: >-
+      Map figure conventions to relation + sign BEFORE choosing a relation.
+      Misreading a glyph flips the causal sign or the direct/indirect choice.
+    glyphs:
+      - glyph: "pointed/barbed arrow (-->)"
+        meaning: "activation / positive causal effect"
+        maps_to: "positive relation: directly_positively_regulates (direct) or indirectly_positively_regulates / causally_upstream_of_positive_effect (indirect/unknown mechanism)"
+      - glyph: "blunt T-bar (--|)"
+        meaning: "inhibition / negative causal effect"
+        maps_to: "negative relation: directly_negatively_regulates (direct) or indirectly_negatively_regulates / causally_upstream_of_negative_effect"
+      - glyph: "dashed arrow"
+        meaning: "indirect / inferred link, or transport across distance (e.g. an endocrine signal traveling between cells)"
+        maps_to: "an indirect relation, or an inter-cellular transport step modeled UPSTREAM of signal transduction (see signaling_patterns.inter_cellular)"
+      - glyph: "compartment box / cell outline (e.g. NEURONS, INTESTINE)"
+        meaning: "occurs_in cell/compartment; cell boundaries mark the inter-cellular split"
+        maps_to: "occurs_in a Cell (WBbt/CL) or CellularComponent; split activities across cells per the outline"
+    source: "_critic.json figure-glyph gap; wiki:Noctua_Manual__Linking_Activities_in_Form"
+
+# ---------------------------------------------------------------------------
+# VALIDATION RULES — the machine_checkable subset (95 rules)
+# severity: error (hard / shape / QC) | warn (soft report / lint / convention)
+# status: enforced (source-grounded) | heuristic (flagged / project-only)
+# ---------------------------------------------------------------------------
+validation_rules:
+  # --- GO-CAM shape / structure (ShEx-grounded) ---
+  - {id: gocam-shapes-node-typed-by-class-under-root, statement: "Each typed node must rdf:type a class whose subClassOf chain reaches the correct ontology root.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-relation-domain-range-enforced, statement: "Every relation must connect node types permitted by the ShEx subject-shape's range; reject triples violating declared domain/range.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-mf-activity-unit, statement: "An MF node is typed by exactly one MolecularFunctionClass (GO:0003674 descendant) or NegatedMolecularFunctionClass; enabled_by (when present) targets an InformationBiomacromolecule or complex.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-bp-typed-once, statement: "A BiologicalProcess node is typed by exactly one BiologicalProcessClass (GO:0008150 descendant) or NegatedBiologicalProcessClass; subtype shapes require the term descend from the matching GO subtree.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-molecular-event-alternative, statement: "A MolecularEvent node is an allowed activity-unit type and a valid object of provides_input_for / regulates variants / causally_upstream_of family.", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: gocam-shapes-mf-causal-target-activity, statement: "MF-shape regulation/direct-regulation/provides_input_for/constitutively_upstream_of/removes_input_for edges MUST target an MF or MolecularEvent, never a BP or physical entity (use causally_upstream_of_* to reach a BP).", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-no-self-causal-edge, statement: "A causal/regulatory edge must connect two DISTINCT activity/process nodes; do not assert A regulates A.", applies_to: [gocam, validation], severity: warn, status: heuristic}
+  - {id: gocam-shapes-occurs-in-cardinality, statement: "occurs_in on an MF/BP is {0,1}; is_active_in, located_in, part_of-to-complex, contributes_to are each {0,1}.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-occurs-in-range-cc, statement: "occurs_in / located_in target MUST be an AnatomicalEntity; is_active_in target MUST be an AnatomicalEntity or the RootCellularComponent (GO:0005575); not an MF/BP term.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-anatomical-part-of-single, statement: "An AnatomicalEntity/Cell/CellularComponent node MAY have at most one part_of to a containing anatomical entity.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-complex-membership, statement: "Model complex composition with has_part on the complex (-> InformationBiomacromolecule/sub-complex) and/or part_of on each member (-> complex, at most one).", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: gocam-shapes-chemical-vs-gene-product, statement: "Distinguish entity types by CHEBI/GO ancestry (Protein<-CHEBI:36080, InformationBiomacromolecule<-CHEBI:33695, ChemicalEntity<-CHEBI:24431, complex<-GO:0032991); enabled_by/has_part/cargo/small-molecule-regulator restrict to the right subset.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-organism-and-taxon, statement: "Organism nodes typed under NCBITaxon:1; model taxon via in_taxon on the model (NCBITaxon:6239 for C. elegans).", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-model-required-metadata, statement: "Model: >=1 contributor, exactly 1 modification_date, >=1 provided_by, exactly 1 title, exactly 1 modelstate.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-entity-named-individual, statement: "Every entity node is an IRI / owl:NamedIndividual with >=1 contributor and exactly 1 modification_date.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-negation-via-complement, statement: "A negated MF/BP/CC/AE/ME node's type MUST be a blank node owl:complementOf the positive class.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-shapes-evidence-on-reified-edge, statement: "Evidence attaches via an owl:Axiom <AnnotatedEdge> (annotatedSource/Property/Target) to ECO-typed Evidence individuals, each with exactly one source string.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-structure-activity-unit-core, statement: "Build every model around activity units whose central node is a GO MF; attach gene product/complex via enabled_by, location via occurs_in, program via part_of.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: gocam-structure-enabled-by-required, statement: "Every MF activity node should have an enabled_by edge to an active entity; an activity with no enabler is incomplete.", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: gocam-structure-causal-linking, statement: "Link activity units with RO causal relations (not by annotating to 'regulation of MF' GO terms); model a regulator as its own activity unit.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: gocam-structure-nested-bp, statement: "Place each activity into its BP with part_of; nest BPs inside larger BPs with further part_of.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: gocam-structure-run-reasoner, statement: "Validate with the reasoner before done: domain/range on terms/entities/relations must pass (green); logical errors fail (red).", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: gocam-structure-decompose-mf-cc-bp, statement: "Decompose to standard annotations by following enabled_by (MF), occurs_in (CC), and part_of (BP, traversing nested) chains from the central MF.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: gocam-structure-decompose-reasoning-inference, statement: "Apply logical reasoning over causal edges + ontology equivalence axioms to infer additional annotations (e.g. directly_regulates a kinase => kinase regulator/activator MF), never contradicting the edge sign.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: gocam-structure-mf-bp-inference, statement: "Infer a missing BP annotation from an MF's part_of BP (same evidence/reference), unless an equally-evidenced annotation to that BP/child already exists.", applies_to: [gocam], severity: warn, status: enforced}
+
+  # --- relation usage / structural ---
+  - {id: relations-structural-enabled-by-mf-to-gp, statement: "Connect an MF to its gene/gene product with enabled_by (RO:0002333); it is THE relation for all MF-to-gene-product associations.", applies_to: [gocam, validation], severity: error, status: enforced}
+  - {id: relations-structural-part-of-mf-to-bp, statement: "Use part_of (BFO:0000050) to link an MF to the BP it is an integral step of, and a sub-BP to its parent BP.", applies_to: [gocam, standard], severity: warn, status: enforced}
+  - {id: relations-structural-occurs-in-location, statement: "Use occurs_in (BFO:0000066) for the location of an MF/BP; for a BP only when all MFs share the location.", applies_to: [gocam, standard], severity: warn, status: enforced}
+  - {id: relations-structural-happens-during-temporal, statement: "Use happens_during (RO:0002092) for a temporal phase (biological-phase GO:0044848 / life-cycle-stage UBERON:0000105); if actually part of a process use part_of.", applies_to: [gocam, standard], severity: warn, status: enforced}
+  - {id: relations-structural-core-vs-extended-set, statement: "Prefer current RO/BFO CURIEs; core set is is_a/part_of/regulates(+/-), the fuller set adds occurs_in/has_part/has_input/has_output/taxon constraints.", applies_to: [gocam, standard], severity: warn, status: enforced}
+  - {id: relations-regulation-refine-in-gocam, statement: "In GO-CAMs, refine a function-to-function causal edge to one of the four specific children (directly/indirectly positively/negatively regulates) rather than bare regulates/positively/negatively_regulates.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: relations-flow-chain-via-chebi, statement: "Chain successive activities sharing a ChEBI molecule via upstream has_output[ChEBI] -> downstream has_input[same ChEBI]; do not use provides_input_for when the molecule is in ChEBI.", applies_to: [gocam], severity: warn, status: enforced}
+  - {id: relations-flow-input-output-exclusions, statement: "Do not capture has_input/has_output for term-definition entities, currency molecules (ATP/ADP), cofactors/coenzymes/metal ions, x-dependent modifiers, analogs/assay conditions, or SO terms.", applies_to: [gocam, standard, validation], severity: warn, status: enforced}
+
+  # --- evidence / with-from (QC-grounded) ---
+  - {id: evidence-codes-required-on-every-annotation, statement: "Every annotation MUST include an evidence code from the recognized GO codes.", applies_to: [standard, gocam, validation], severity: error, status: enforced}
+  - {id: evidence-codes-ida-direct-assay, statement: "IDA for direct assays (enzyme/in-vitro/IF or fractionation for CC/binding); with/from optional.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-ipi-requires-interactor-in-with, statement: "IPI for direct physical interaction; with/from REQUIRED with the interacting partner(s).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-igi-requires-other-gene-in-with, statement: "IGI when function is inferred from perturbation of a DIFFERENT gene; with/from REQUIRED with the other gene(s).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-imp-vs-igi-discriminator, statement: "One gene perturbed -> IMP; inference drawn from a second gene -> IGI (second gene in with/from).", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-iep-bp-only-weak, statement: "IEP only for BP terms (expression timing/location); never for MF or CC; weak evidence.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-htp-for-high-throughput, statement: "Use HTP/HDA/HMP/HGI/HEP instead of the standard experimental code when the experiment is high-throughput.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-iss-requires-with-and-experimental-source, statement: "ISS requires a stable homolog identifier in with/from, and the source gene must be experimentally annotated to the same-or-more-specific term.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-iso-isa-ism-distinctions, statement: "ISO (orthology), ISA (alignment), ISM (sequence model, ncRNA); WITH required for ISO and ISA; not stated for ISM.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-not-not-transferred, statement: "Never propagate a NOT annotation by ISS or other homology transfer.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-ic-requires-goid-with, statement: "IC requires the supporting GO ID(s) in with/from (multiple for multi-source inferences, GO_REF:0000036).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-ic-no-circular-inference, statement: "An IC/homology inference is valid only when the supporting gene is/can be annotated to the term independently.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-nd-no-data, statement: "ND only after exhaustive search; assign to the aspect root and cite GO_REF:0000015; remove once real data exists.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-iea-unreviewed-with-field, statement: "IEA is non-manually-reviewed; always populate with/from with the signature/program/ortholog used.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: evidence-codes-with-field-format-namespaced-id, statement: "with/from entries MUST be namespaced stable IDs (namespace:ID); no uncontrolled free text.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-with-field-requirements-by-code, statement: "with/from REQUIRED for IPI/IGI/ISS/ISO/ISA/IEA and IC; OPTIONAL for IMP/IDA; CONDITIONAL for IKR (when curator-performed).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: evidence-codes-eco-mapping, statement: "Map each evidence code to ECO via the official GOC mapping; do not invent an ECO ID.", applies_to: [standard, gocam, validation], severity: error, status: enforced}
+
+  # --- well-formedness / identifiers / attribution ---
+  - {id: annotation-model-core-minimal-fields, statement: "A well-formed standard annotation has a gene product, a GO term, a reference, and an evidence code (plus the RO relation).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-core-subject-id, statement: "The subject must be a valid DB identifier with a recognized GO prefix; for C. elegans use WB: identifiers.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-core-evidence-ref, statement: "Every annotation cites an ECO evidence code and a reference (PMID/DOI or GO_REF).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-core-unknown-root, statement: "If an aspect is unknown, annotate to that aspect's root term; if no data at all, root + ND.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: annotation-model-core-qc, statement: "Must pass GO QC: valid identifiers, evidence code + >=1 reference, no retracted publications.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-core-not-dont, statement: "Do not use NOT to record every result, negative/inconclusive results, non-detection localizations, or specific contexts; NOT must not combine with an annotation extension.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: annotation-model-ids-global-id-format, statement: "Every identifier is a GlobalID Prefix:LocalID (CURIE) with a registered prefix and authority-controlled LocalID.", applies_to: [standard, gocam, validation], severity: error, status: enforced}
+  - {id: annotation-model-ids-registered-prefix, statement: "Prefix must be in the GO db-xrefs.yaml registry; prefix chars alphanumeric/_/-, LocalID printable ASCII without spaces.", applies_to: [standard, gocam, validation], severity: error, status: enforced}
+  - {id: annotation-model-ids-celegans-wormbase, statement: "For C. elegans use the stable WormBase (WB:) gene identifier as subject, or map to a stable UniProtKB/NCBI ID.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-ids-with-column-global, statement: "with/from uses the full GlobalID; GPAD/GPI single column, GAF splits subject across col1/col2.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: annotation-model-ids-mgi-doubling, statement: "Handle MGI prefix-doubling (MGI:MGI:nnnnn) rather than silently stripping/doubling.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: annotation-model-ids-prefix-synonyms, statement: "Normalize prefix synonyms to GO's canonical prefix (e.g. FB for FlyBase).", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: annotation-model-ids-assigned-by-mandatory, statement: "Every annotation supplies assigned_by (GAF col 15) naming the group that made the term-object decision.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: annotation-model-ids-reference-required, statement: "Each annotation cites a PMID: or GO_REF: bibliographic reference.", applies_to: [standard, validation], severity: error, status: enforced}
+
+  # --- C. elegans species ---
+  - {id: species-celegans-taxon-6239, statement: "C. elegans is NCBITaxon:6239; set as model taxon and use to disambiguate WormBase symbol lookups.", applies_to: [gocam, standard, validation], severity: error, status: enforced}
+  - {id: species-celegans-wbgene-id, statement: "Use WB:WBGene######## (8 zero-padded digits) as the canonical gene-product ID; never a bare symbol or sequence name.", applies_to: [gocam, standard, validation], severity: error, status: enforced}
+  - {id: species-celegans-global-id-prefix, statement: "Express the worm gene global ID as WB:WBGene######## with the GO-registered 'WB' prefix.", applies_to: [gocam, standard, validation], severity: error, status: enforced}
+  - {id: species-celegans-cgc-vs-sequence-name, statement: "Distinguish CGC symbol, sequence name, and WBGene ID; only the WBGene ID is stable.", applies_to: [gocam, standard, validation], severity: warn, status: enforced}
+  - {id: species-celegans-wbbt-multiplicity, statement: "WBbt terms may be used in multiple cardinality on an MF/CC/BP (unlike single-cardinality CC/CL/UBERON occurs_in).", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: species-celegans-ligand-chebi, statement: "Model small-molecule signaling ligands/neurotransmitters as ChEBI entities, not genes; resolve each to its ChEBI ID.", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: species-celegans-known-amine-chebi-ids, statement: "serotonin=CHEBI:28790, octopamine=CHEBI:17134, tyramine=CHEBI:15760; verify any other chemical against ChEBI (CHEBI:337782 is NOT octopamine).", applies_to: [gocam, validation], severity: warn, status: enforced}
+  - {id: species-celegans-enabled-by-gp, statement: "Each worm MF activity is enabled_by the WBGene gene product carrying it.", applies_to: [gocam], severity: warn, status: enforced}
+
+  # --- signaling-domain (machine-checkable subset) ---
+  - {id: domain-signaling-ligand-agonist-mf, statement: "Activating protein ligand -> receptor ligand activity (GO:0048018; current label, formerly 'receptor agonist activity'); inactivating -> receptor antagonist activity (GO:0048019).", applies_to: [gocam, standard, vision], severity: warn, status: enforced}
+  - {id: domain-signaling-ligands-no-transducer, statement: "HARD RULE: a ligand never gets 'signal transducer activity' (nor 'receptor signaling protein activity').", applies_to: [gocam, standard, vision, validation], severity: error, status: enforced}
+  - {id: domain-signaling-intracellular-relay-mf, statement: "Intracellular relay proteins -> their specific catalytic/transducer MF (e.g. protein kinase activity, protein phosphatase activity, guanyl-nucleotide exchange factor activity). NOTE: the former umbrella 'signal transducer activity, downstream of receptor' (GO:0005057) and its kinase/phosphatase children (GO:0004702/0004716/0004728/0009400) are OBSOLETE - do not use.", applies_to: [gocam, standard, vision], severity: warn, status: enforced}
+  - {id: domain-signaling-ligand-target, statement: "Name the receptor a ligand acts on via has_regulation_target [receptor UniProt AC] on the agonist/antagonist annotation.", applies_to: [standard], severity: warn, status: enforced}
+  - {id: domain-signaling-absence-of-ligand, statement: "Ligand-withdrawal (dependence receptor) / basal signaling -> signal transduction in absence of ligand (GO:0038034) or descendants.", applies_to: [gocam, standard, vision], severity: warn, status: enforced}
+  - {id: domain-signaling-ligand-withdrawal-regulation, statement: "A withdrawn ligand is annotated to 'regulation of' the pathway, NOT the pathway itself.", applies_to: [gocam, standard, vision], severity: warn, status: enforced}
+  - {id: domain-signaling-no-direct-st-annotation, statement: "Do not annotate participants to bare signal transduction (GO:0007165); use a specific ligand/receptor-named pathway term.", applies_to: [gocam, standard, vision], severity: warn, status: enforced}
+
+  # --- multi-species / apoptosis (machine-checkable, lower task relevance) ---
+  - {id: domain-other-multiorg-two-taxa, statement: "For an interspecies-interaction process, annotate to GO:0044419 'biological process involved in interspecies interaction between organisms' (or a specific descendant) and record the interacting partner via the second taxon ID (encoder first, partner second); do not add a second taxon for ISS-only annotations. The former GO:0051704 'multi-organism process' (BP) and GO:0044215 'other organism' (CC) are OBSOLETE - 'multi-organism process' was not a meaningful grouping (use GO:0044419), and 'other organism' has no replacement (a partner organism is out of GO scope; capture it via the interacting-taxon column, not a CC term).", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: domain-other-annotate-known-death-mechanism, statement: "Annotate cell death only with a known mechanism; do not fall back to the high-level GO:0008219 cell death (valid but uninformative) or the OBSOLETE GO:0070997 neuron death.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: domain-other-cell-type-apoptosis-via-extension, statement: "Prefer a CL cell-type ID as an extension on GO:0006915 apoptotic process over a pre-composed cell-type-specific apoptosis term.", applies_to: [standard], severity: warn, status: enforced}
+
+  # --- binding / redundancy / phenotype QC (machine-checkable) ---
+  - {id: quality-redundancy-binding-evidence-ipi, statement: "Direct GO:0005488/GO:0005515 binding annotations require IPI with an interactor in with/from; IEA/ISS/ISO/ISM/ISA/IBA/RCA not allowed (GORULE:0000005/0000018).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: quality-redundancy-no-not-binding, statement: "Never make a NOT annotation directly to GO:0005488 binding or GO:0005515 protein binding (GORULE:0000002); NOT only on partner-named children.", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: quality-redundancy-self-binding-with-equals-gp, statement: "For self-binding terms (homodimerization/homooligomerization/self-association etc.) with/from must equal the subject gene product (GORULE:0000046).", applies_to: [standard, validation], severity: error, status: enforced}
+  - {id: quality-redundancy-reciprocal-binding, statement: "Protein binding is reciprocal (GORULE:0000004): if A binds B, B should bind A; excludes homodimerization/self-association.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-no-substrate-cofactor-binding, statement: "Do not annotate binding to substrates/products/cofactors/transported molecules already entailed by the catalytic/transporter MF; capture them via has_input.", applies_to: [standard, gocam, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-no-uninformative-high-level-terms, statement: "Do not annotate to gocheck_do_not_annotate terms (GORULE:0000008); choose a specific descendant.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-no-duplicate-or-ancestor-terms, statement: "Do not emit a parent-term annotation subsumed by a more specific one of equal/better evidence (account for col16 extensions / col17 isoform).", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-isoform-extension-not-redundant, statement: "Annotations differing by isoform (col17) or extension (col16) are separate, non-redundant statements; do not collapse them.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-process-vs-regulation-both-only-feedback, statement: "Annotate both X and regulation-of-X only with documented feedback/cross-regulation (GORULE:0000036 soft report).", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-phenotype-regulation-needs-mf-evidence, statement: "A 'regulation of X' BP annotation needs MF-level regulatory evidence; flag regulation-from-phenotype with no MF for review.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-unknown-mf-restrict-relation, statement: "If MF is unknown, do not assert involved_in from a phenotype; at most acts_upstream_of_or_within, or no BP annotation.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-high-level-phenotype-no-annotation, statement: "Do not annotate high-level processes (lifespan, behavior, cell death/division/migration/proliferation, development, growth, locomotion, protein localization, reproduction) from a phenotype with unknown mechanism.", applies_to: [standard, validation], severity: warn, status: enforced}
+  - {id: quality-redundancy-check-term-parents, statement: "Verify the chosen term's is_a/part_of ancestors are biologically consistent before use (only the ancestor lookup is mechanizable).", applies_to: [standard, gocam], severity: warn, status: enforced}
+
+# ---------------------------------------------------------------------------
+# COMMON ERRORS — from common-error-* and quality rules: {error, fix, source}
+# ---------------------------------------------------------------------------
+common_errors:
+  - error: "Annotating a gene product directly to a downstream/indirect process that is merely a consequence of its molecular activity."
+    fix: "Annotate the direct/core activity; for indirect links request an 'X involved in Y' term or use a regulation / acts-upstream-of relation."
+    source: "Wiki: Annotating downstream processes"
+  - error: "Treating 'required for' a process as 'involved in' it."
+    fix: "Use involved_in only when the MF is genuinely part_of the BP; otherwise acts_upstream_of_or_within, or do not annotate the BP."
+    source: "Wiki: Annotating from phenotypes"
+  - error: "Asserting involved_in / part_of a BP from a phenotype when the MF is unknown."
+    fix: "At most acts_upstream_of_or_within (or its +/- children); prefer no annotation over a misleading strong one."
+    source: "Wiki: Annotating from phenotypes"
+  - error: "Annotating high-level phenotype processes (lifespan, behavior, brood size, locomotion) without a known mechanism."
+    fix: "Build a model / consult a review for the mechanistic basis first."
+    source: "Wiki: Annotating from phenotypes"
+  - error: "Mapping an experimental read-out directly to a same-sounding GO term (assay != role)."
+    fix: "Capture the biological conclusion; separate the read-out process from the gene's proximal MF (e.g. DNA fragmentation read-out != DNA catabolism involvement)."
+    source: "Wiki: Tips to Produce High Quality Annotations; Annotating from phenotypes"
+  - error: "Annotating the normal forward step of a cascade (kinase activates next kinase) as 'regulation of' the pathway."
+    fix: "Annotate the forward step as participation (the MF is part_of the process); reserve regulation for factors acting outside the ordered MFs (start/stop/feedback)."
+    source: "Wiki: Annotating regulation"
+  - error: "Inferring regulation from limiting amount/availability of a pathway member, or from chemicals altering general protein properties (folding/glycosylation/redox)."
+    fix: "Annotate such genes as participants; require evidence of a direct interaction between regulator and regulated entity before a regulates edge."
+    source: "Wiki: Annotating regulation; Tips to Produce High Quality Annotations"
+  - error: "Defaulting to a regulation term when participation-vs-regulation is ambiguous."
+    fix: "Annotate the parent (non-regulation) process with acts_upstream_of_or_within; refine later."
+    source: "Wiki: Annotating regulation; Annotating from phenotypes"
+  - error: "Annotating raw protein-protein interactions / every co-IP as a GO binding function."
+    fix: "Require functional/contextual support; prefer a descriptive child of protein binding (with the partner as has_input/with), not gene-product-specific (obsoleted) binding terms."
+    source: "Wiki: Annotating binding; Protein Binding clean up"
+  - error: "Inferring direct sequence-specific DNA binding from an in vivo ChIP enrichment."
+    fix: "Annotate ChIP as chromatin localization (GO:0000785 or child); infer DNA binding only when a direct-binding hypothesis (known motif) is tested."
+    source: "Wiki: Annotation consistency : ChIP experiments"
+  - error: "Annotating 'X protein binding' for a subunit of complex X (a subunit does not bind its own complex)."
+    fix: "Use 'protein complex assembly' where appropriate, not self-complex binding."
+    source: "Wiki: Misused terms"
+  - error: "Using biosynthetic-process / secretion terms as a read-out for production of a protein when the effect is indirect."
+    fix: "Use 'regulation of X' for indirect involvement, translation (GO:0006412) for actual production, or a 'production of...' term when synthesis-vs-release is ambiguous."
+    source: "Wiki: Misused terms; Usage of terms describing protein or chemical production"
+  - error: "Annotating karyopherins/nucleocytoplasmic carriers to 'protein transmembrane transporter activity'."
+    fix: "Nuclear-pore transport does not cross a lipid bilayer, so do NOT use 'transmembrane protein transporter activity' (GO:0008320) for karyopherins. Use the nucleocytoplasmic-carrier receptor MF: 'nuclear import signal receptor activity' (GO:0061608) for importins, 'nuclear export signal receptor activity' (GO:0005049) for exportins. NOTE: the old umbrella 'protein transporter activity' (GO:0008565) is OBSOLETE (inconsistently used)."
+    source: "Wiki: Misused terms"
+  - error: "Maximizing the number of GO terms pulled from a figure; defaulting to 'binding' / 'response to X'."
+    fix: "Favor quality over quantity — pick the few terms capturing the core/normal function; prefer a specific non-catalytic MF over 'binding'."
+    source: "Wiki: Tips to Produce High Quality Annotations; Non-catalytic Molecular Functions"
+  - error: "Re-curating a paper/figure already curated by another authoritative group, or counting one experiment cited by many reviews as independent support."
+    fix: "Check existing annotations first; do not multiply evidence weight from a single primary datum."
+    source: "Wiki: Mechanisms for reducing annotation redundancy"
+  - error: "Annotating a phenotype/mutant observation as if it were the gene's molecular role."
+    fix: "Annotate the normal (wild-type) function; interpret perturbation data as an inference about the normal role."
+    source: "Wiki: Tips to Produce High Quality Annotations; Annotating from phenotypes"
+
+# ---------------------------------------------------------------------------
+# SIGNALING PATTERNS — signaling-specific guidance (load-bearing for this task)
+# ---------------------------------------------------------------------------
+signaling_patterns:
+  mf_vocabulary:
+    statement: >-
+      Pick the signaling-specific MF for each participant role; do not default
+      ligands/receptors to 'binding' or 'signal transducer activity'.
+    rules:
+      - "Activating protein ligand -> receptor ligand activity (GO:0048018; current label, formerly 'receptor agonist activity'); inactivating/switching-off ligand -> receptor antagonist activity (GO:0048019). Reserve these for ligands that actually trigger/switch-off signaling; for non-initiating receptor modulators use the broader receptor activator activity (GO:0030546) / receptor inhibitor activity (GO:0030547)."
+      - "HARD RULE: ligands do NOT have 'signal transducer activity' (nor 'receptor signaling protein activity'). Never assign these to a ligand."
+      - "Signaling receptor -> a signaling receptor activity (GO:0038023) descendant; prefer the ligand-named 'X-activated receptor activity' (e.g. GO:0005006 EGF-activated, GO:0005007 FGF-activated) or a mechanism term (G-protein coupled receptor activity GO:0004930, transmembrane signaling receptor activity GO:0004888). When both ligand and mechanism are known, use the most granular term."
+      - "Intracellular relay proteins (e.g. IRS-1, AKT, PDK1) -> their specific catalytic/transducer MF (protein kinase activity, protein phosphatase activity, GEF activity, etc.). NOTE: 'signal transducer activity, downstream of receptor' (GO:0005057) and its kinase/phosphatase children (GO:0004702/0004716/0004728/0009400) are OBSOLETE - do not use."
+      - "Use has_part to connect a receptor activity term to its corresponding ligand-binding term where one exists."
+      - "Prefer an informative MF over binding generally: scaffold -> molecular adaptor activity (GO:0060090), carrier -> molecular carrier activity (GO:0140104), etc."
+    source: "wiki:Signaling_Curation_Manual (Signals/Ligands, Receptors); Non-catalytic Molecular Functions"
+  pathway_boundary:
+    statement: >-
+      A canonical signaling pathway BEGINS with ligand-receptor binding and ENDS
+      with regulation of a downstream cellular process. The downstream response
+      itself (transcription, lipolysis, apoptosis execution, proliferation,
+      differentiation, the actual lipid catabolism) is NOT part of the pathway.
+    rules:
+      - "Include the ligand (signal) and the signal transducers (receptor + downstream relays) in the pathway; stop the pathway at the regulation step."
+      - "Do not include the executing/effector machinery of the end process (transcription machinery, the 40S ribosome, glycogen synthase, the triacylglycerol lipase doing fat catabolism) in the signaling pathway."
+      - "The LAST effector that hands the signal to the downstream machinery is still IN the pathway, even if it is inactivating its target (e.g. S6K, GSK3); only the downstream machinery is excluded."
+      - "An extracellular ligand acting on an INTRACELLULAR signaling module is annotated to 'regulation of' that intracellular signaling process, not placed inside the module term."
+      - "Intracellular signal-transduction module terms (GO:0035556) are named after the central component and include effectors upstream and downstream of it; reserve 'cascade' (MAPK cascade GO:0000165, JAK-STAT GO:0007259) for amplifying modules."
+    source: "wiki:Signaling_Curation_Manual (What is included in a signaling pathway; The End of a Signaling Pathway; Intracellular Signal Transduction)"
+  participant_roles:
+    statement: "Assign annotations by participant role before choosing terms."
+    grid:
+      stimulus: "regulation of the signaling pathway"
+      ligand: "the signaling pathway (+ regulation of the downstream process)"
+      receptor: "the signaling pathway (+ regulation of the downstream process)"
+      intracellular_signaling_molecules: "the signaling pathway + regulation of the relevant downstream process/transcription/translation"
+      transcription_factor: "the signaling pathway + regulation of transcription (its MF part_of regulation of transcription)"
+      target_effector: "cellular response to stimulus AND the downstream process (NOT the pathway)"
+    example: "Insulin pathway: insulin, insulin receptor, IRS1/PI3K/PDK1/PKC -> insulin receptor signaling pathway + regulation of glucose transport; GLUT4 (target) -> cellular response to insulin + glucose transport."
+    source: "wiki:Annotating_ligand-receptor_pathways"
+  inter_cellular:
+    statement: >-
+      For cross-cell-type figures (e.g. neuron -> endocrine signal -> intestine),
+      distinguish cell-cell signaling from signal transduction and place the
+      inter-cellular transport step correctly.
+    rules:
+      - "cell-cell signaling (GO:0007267) — which BEGINS with signal release (GO:0023061) — when the signal-generating and/or receiving cell type is known; signal transduction (GO:0007165) is restricted to events at and within the RECEIVING cell."
+      - "Do not put the signal-release or inter-cell transport step inside signal transduction; the inter-cellular transport step is UPSTREAM of signal transduction."
+      - "When the cell-cell relationship is unambiguous, co-annotate the mode: autocrine (GO:0035425, same cell type), paracrine (GO:0038001, diffusion to a nearby cell), or endocrine (GO:0038002, via the circulatory system to a distant cell) — used concurrently with cell-cell signaling."
+      - "Model an activity in one cell that causally feeds an activity in a different cell across the cell boundary; use occurs_in a Cell (WBbt/CL) per the figure's cell outlines."
+    source: "wiki:Signaling_Curation_Manual (cell-cell signaling; Signal Transduction); Annotating_ligand-receptor_pathways"
+  tf_endpoint:
+    statement: >-
+      A sequence-specific DNA-binding transcription factor is typically the LAST
+      participant in a signaling pathway. Model its MF (e.g. GO:0003700) as
+      part_of regulation of transcription, DNA-templated (GO:0006355), and
+      annotate it both to the pathway and to the regulation-of-transcription
+      role. For the TF -> target-gene-product link use an INDIRECT relation
+      (indirectly_positively/negatively_regulates), since gene expression is the
+      intervening module, plus a part_of link to 'regulation of transcription'
+      with has_input the target gene.
+    example: "SREBP1 (downstream of EGFR via AKT) -> EGFR signaling pathway (GO:0007173) + regulation of transcription (PMID:20009104). C. elegans DAF-16 TF activity indirectly_positively_regulates the activity of its transcriptional target's product."
+    source: "wiki:Signaling_Curation_Manual (SREBP1 example); Annotating_ligand-receptor_pathways (Transcription factors)"
+  absence_of_ligand_and_withdrawal:
+    statement: >-
+      Signaling without classical ligand activation has dedicated handling.
+    rules:
+      - "Dependence-receptor / basal signaling in the absence of ligand -> signal transduction in absence of ligand (GO:0038034) or descendants."
+      - "In ligand-WITHDRAWAL signaling, the ligand is annotated to 'regulation of' the signaling pathway, NOT to the pathway itself."
+      - "Use constitutively_upstream_of (RO:0012009) for an activity that is always required upstream regardless of downstream firing (housekeeping/maturation), not a regulatory step."
+    source: "wiki:Signaling_Curation_Manual (Dependence Receptors and Basal Signaling); Constitutively_upstream_of"
+  pathway_term_selection:
+    statement: >-
+      Choose a specific pathway term, not the bare root.
+    rules:
+      - "Avoid annotating to bare signal transduction (GO:0007165); use the specific ligand/receptor-named pathway term (request a new term if none exists)."
+      - "Because ligands and receptors can be promiscuous, pathway terms may be named after the ligand, the receptor, or both — match the figure's evidence (e.g. VEGF receptor signaling pathway GO:0048010 vs VEGF signaling pathway GO:0038084)."
+      - "Tie the pathway to its biological context with an 'X signaling pathway involved in Y' term (part_of the anatomical/developmental process) when it contributes to a specific multicellular outcome (verify the specific term exists in QuickGO; do not assume one - many such pre-composed terms have been obsoleted)."
+    source: "wiki:Signaling_Curation_Manual (Promiscuous Ligands and Receptors; pathways and downstream processes)"
+
+# ---------------------------------------------------------------------------
+# SPECIES — C. elegans physical-entity & identifier conventions
+# ---------------------------------------------------------------------------
+species_celegans:
+  taxon: "NCBITaxon:6239"
+  gene_id_source:
+    statement: >-
+      Canonical gene-product identifier is the WormBase stable accession
+      WB:WBGene######## (8 zero-padded digits, GO-registered 'WB' prefix).
+      WormBase is the authoritative MOD; may alternatively map to a stable
+      UniProtKB (preferably Swiss-Prot) or NCBI ID. Never use a bare symbol or
+      sequence name as the identifier. A macromolecular complex may be the
+      subject and needs no gp2protein mapping.
+    examples:
+      - "WB:WBGene00006600 (tph-1)"
+      - "WB:WBGene00018294 (atg-18)"
+    source: "wiki:Identifiers; annotation-contributors.md; submitting-go-annotations.md; wormbase.org nomenclature"
+  symbol_resolution:
+    statement: >-
+      Resolve a CGC/public symbol (e.g. tph-1) to its WBGene ID via WormBase
+      BEFORE use — symbol-to-ID is NOT derivable from the symbol text; do not
+      guess the numeric ID. Distinguish the three labels: CGC symbol (italic
+      lowercase-hyphen-number), sequence name (clone-derived, e.g. F14D12.6),
+      and the stable WBGene ID (the only stable identifier).
+    examples:
+      - "tph-1 -> WB:WBGene00006600 (verified; NOT WBGene00006411, which is octr-1)"
+      - "sequence name F14D12.6 = octr-1 = WBGene00006411"
+    source: "wormbase.org nomenclature; gene pages"
+  cell_types:
+    statement: >-
+      Place worm activities/components in cells using cell-type/anatomy terms.
+      WBbt (WormBase cell+anatomy ontology) is accepted in MOD imports as
+      occurs_in/part_of context; CC (GO), CL (Cell Ontology), and UBERON
+      occurs_in/part_of are also valid. occurs_in/is_active_in legitimately take
+      a CL/WBbt cell, not only a GO cellular_component — required for cross-cell
+      figures (e.g. ADF neuron, intestine). WBbt terms may carry MULTIPLE
+      cardinality on one MF/CC/BP (unlike single-cardinality CC/CL/UBERON
+      occurs_in). Do not invent a WBbt/CL term for a figure-named cell without
+      resolving it.
+    examples:
+      - "MF occurs_in WBbt:<neuron term>"
+      - "is_active_in CL:<cell type>"
+    source: "wiki:Noctua_MOD_Imports; wiki:Occurs_in"
+  small_molecules:
+    statement: >-
+      Model small-molecule signaling ligands / neurotransmitters as ChEBI
+      ChemicalEntity nodes (has_input / has_output / activated_by / inhibited_by
+      targets), not as gene products. Verify any chemical against ChEBI before
+      use.
+    verified_ids:
+      serotonin: "CHEBI:28790"
+      octopamine: "CHEBI:17134"
+      tyramine: "CHEBI:15760"
+    warning: "CHEBI:337782 is NOT octopamine — do not use unverified IDs."
+    source: "wiki:Noctua_MOD_Imports; ebi.ac.uk/chebi (verified)"
