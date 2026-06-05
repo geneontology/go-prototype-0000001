@@ -1,16 +1,26 @@
 """Claude vision pass: research-paper figure → curator-intent JSON.
 
-The agent in v0 uses this to seed model construction with the genes,
-compartments, and tentative causal edges visible in the figure. Output
-is a Pydantic model so the orchestrator gets a typed, validated handle.
-We force structured output via tool-use (single tool, required choice)
-because that's more reliable than asking the model to emit free-form
-JSON.
+Research-backed two-stage (+verify) design (see
+knowledge/research/figure-to-intent.md). Pathway-figure benchmarks show that
+nodes extract well but directional causal edges are the weak point on a single
+monolithic pass ("nodes are early, edges are late"), so:
+
+  Stage A — perception: Opus 4.8 (Vertex global, high-res, adaptive thinking,
+            explicit glyph legend, image-first) transcribes the figure
+            exhaustively as free text.
+  Stage B — structure: a regional model converts that transcription into the
+            CuratorIntent schema via forced tool_use (no thinking).
+  Stage C — verify: Opus 4.8 re-checks each candidate edge against the image and
+            drops/corrects unconfirmable ones (cheap insurance vs hallucinated
+            edges, the dominant failure mode).
+
+Output is a Pydantic model so the orchestrator gets a typed, validated handle.
 """
 
 from __future__ import annotations
 
 import base64
+import io
 import os
 from pathlib import Path
 from typing import Literal
@@ -18,7 +28,7 @@ from typing import Literal
 from anthropic import AnthropicVertex
 from pydantic import BaseModel, ConfigDict, Field
 
-from gocam_prototype.llm import VertexConfig, make_client
+from gocam_prototype.llm import VertexConfig, create_message, make_client
 
 CompartmentKind = Literal[
     "cell_type",
@@ -74,23 +84,87 @@ class CuratorIntent(BaseModel):
     tentative_edges: list[TentativeEdge] = Field(default_factory=list)
 
 
-SYSTEM_PROMPT = """\
-You are an assistant biocurator helping construct a GO-CAM (Gene Ontology Causal Activity Model) from a \
-research-paper pathway figure. You will receive an image and a short context. Your job is to extract a \
-structured curator-intent JSON capturing only what the figure ACTUALLY shows: species, biological \
-processes hinted at by labels/captions, compartments (NEURONS / INTESTINE / nucleus / etc.), gene \
-symbols and which compartment each is in, and tentative causal edges.
+GLYPH_LEGEND = """Glyph conventions:
+- Solid pointed arrow (-->): ACTIVATION / positive regulation.
+- Blunt T-bar (--|): INHIBITION / negative regulation.
+- Dashed arrow: INDIRECT effect, or transport across distance (e.g. a secreted / endocrine signal between cells).
+- Box / cell outline: a compartment or cell; an arrow crossing a boundary is an inter-cellular step."""
 
-Strict rules:
-1. Only extract content visible in the image. When uncertain, lower the confidence and explain in the snippet.
-2. Use gene symbols EXACTLY as written.
-3. For edges that connect whole compartments (e.g. an endocrine signal between NEURONS and INTESTINE), use \
-   from_compartment / to_compartment instead of from_symbol / to_symbol.
-4. For edges that connect specific genes, use from_symbol / to_symbol. If the arrow passes through an \
-   intermediate molecule like a neurotransmitter, name it in `via`.
-5. Do not invent genes, compartments, or edges. If a label is illegible, skip it.
-6. Call `submit_curator_intent` exactly once with the complete result.
-"""
+PERCEPTION_SYSTEM = (
+    "You have perfect vision and pay meticulous attention to detail. You are "
+    "transcribing a research-paper pathway figure for a biocurator. Transcribe "
+    "EVERYTHING the figure shows, exhaustively and literally, BEFORE any biological "
+    "interpretation:\n"
+    "- Every gene / protein / molecule label, exactly as written (flag illegible ones).\n"
+    "- Every compartment or cell box/outline (e.g. NEURONS, INTESTINE, nucleus) and "
+    "exactly which labels sit inside each.\n"
+    "- Every arrow / connector as its own line: SOURCE -> TARGET, the arrow's END "
+    "TYPE, and any molecule written on the arrow.\n\n"
+    + GLYPH_LEGEND
+    + "\n\nOutput an itemized transcription (lists, not prose). Do not infer biology "
+    "that is not drawn. Attend to each arrow END individually — confusing a pointed "
+    "arrowhead with a T-bar flips the biological meaning."
+)
+
+STRUCTURE_SYSTEM = (
+    "You convert an exhaustive transcription of a pathway figure into a structured "
+    "curator-intent JSON for GO-CAM construction. Rules:\n"
+    "1. Use only content present in the transcription; do not invent genes, "
+    "compartments, or edges.\n"
+    "2. Use gene symbols exactly as transcribed.\n"
+    "3. Map each arrow to a natural-language relation by its END TYPE: pointed arrow "
+    "-> 'positively regulates'; T-bar -> 'negatively regulates'; dashed -> name the "
+    "indirect signal (e.g. 'endocrine signal'). Preserve any molecule on the arrow in `via`.\n"
+    "4. Edges between whole compartments use from_compartment/to_compartment; gene-gene "
+    "edges use from_symbol/to_symbol.\n"
+    "5. Call submit_curator_intent exactly once with the complete result."
+)
+
+EDGE_VERIFY_SYSTEM = (
+    "You have perfect vision. You are double-checking candidate causal edges against "
+    "the actual figure to catch hallucinated or mis-directed edges. For each candidate, "
+    "decide whether the figure VISUALLY shows that connector, whether the DIRECTION "
+    "(source->target) is correct, and whether the sign matches the arrow end.\n\n"
+    + GLYPH_LEGEND
+)
+
+
+def _image_block(image_b64: str, media_type: str) -> dict:
+    return {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_b64}}
+
+
+def _resize_for_vision(raw: bytes, *, max_long_edge: int = 2576) -> tuple[bytes, str]:
+    """Downscale to <= max_long_edge on the long edge (never upscale) and re-encode as
+    lossless PNG. Opus 4.8's native vision tops out at 2576px; resizing client-side
+    controls downsample quality (preserving thin arrows/T-bars and small labels) and
+    keeps us under Vertex's 5MB base64 cap. Falls back to raw bytes if Pillow or
+    decoding is unavailable."""
+    try:
+        from PIL import Image
+    except Exception:
+        return raw, "image/png"
+    try:
+        im = Image.open(io.BytesIO(raw))
+        if im.mode in ("RGBA", "P", "LA"):
+            im = im.convert("RGB")
+        w, h = im.size
+        if max(w, h) > max_long_edge:
+            s = max_long_edge / max(w, h)
+            im = im.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
+        buf = io.BytesIO()
+        im.save(buf, format="PNG")
+        return buf.getvalue(), "image/png"
+    except Exception:
+        return raw, "image/png"
+
+
+def _hint_text(species_hint: str | None, process_hint: str | None) -> str:
+    parts = []
+    if species_hint:
+        parts.append(f"Species hint: {species_hint}.")
+    if process_hint:
+        parts.append(f"Process hint: {process_hint}.")
+    return (" " + " ".join(parts)) if parts else ""
 
 
 def extract_curator_intent(
@@ -98,71 +172,125 @@ def extract_curator_intent(
     *,
     species_hint: str | None = None,
     process_hint: str | None = None,
-    client: AnthropicVertex | None = None,
-    model: str | None = None,
+    client: AnthropicVertex | None = None,   # regional client for Stage B (structure)
+    model: str | None = None,                # Stage B structuring model
     max_tokens: int = 4096,
+    verify_edges: bool = True,
 ) -> CuratorIntent:
-    """Run Claude vision on the given image and return a typed CuratorIntent."""
+    """Figure -> CuratorIntent via the two-stage (+verify) design (see module docstring)."""
     image_path = Path(image_path)
-    media_type = _guess_media_type(image_path)
-    image_b64 = base64.b64encode(image_path.read_bytes()).decode()
+    raw, media_type = _resize_for_vision(image_path.read_bytes())
+    image_b64 = base64.b64encode(raw).decode()
 
-    chosen_model = (
-        model
-        or os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL")
-        or "claude-sonnet-4-6@default"
+    cfg = VertexConfig.from_env()
+    opus_model = os.environ.get("ANTHROPIC_DEFAULT_OPUS_MODEL", "claude-opus-4-8")
+    opus_region = os.environ.get("ANTHROPIC_VERTEX_OPUS_REGION", "global")
+    structure_model = (
+        model or os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL") or "claude-sonnet-4-6@default"
     )
+    opus_client = make_client(cfg, region=opus_region)
+    structure_client = client or make_client(cfg)
 
-    cli = client or make_client(VertexConfig.from_env())
+    # -- Stage A: perception (image-first, high-res, adaptive thinking) --
+    perc = create_message(
+        opus_client,
+        model=opus_model,
+        max_tokens=8000,
+        effort="high",
+        adaptive_thinking=True,
+        system=PERCEPTION_SYSTEM,
+        messages=[{"role": "user", "content": [
+            _image_block(image_b64, media_type),
+            {"type": "text", "text": "Transcribe this pathway figure exhaustively per the instructions."
+             + _hint_text(species_hint, process_hint)},
+        ]}],
+    )
+    transcription = "".join(
+        getattr(b, "text", "") for b in perc.content if getattr(b, "type", None) == "text"
+    ).strip()
 
-    user_text_parts: list[str] = ["Extract a curator-intent JSON for this figure."]
-    if species_hint:
-        user_text_parts.append(f"Species hint: {species_hint}.")
-    if process_hint:
-        user_text_parts.append(f"Process hint: {process_hint}.")
-    user_text = " ".join(user_text_parts)
-
-    response = cli.messages.create(
-        model=chosen_model,
+    # -- Stage B: structure (text-only, forced tool, no thinking) --
+    resp = structure_client.messages.create(
+        model=structure_model,
         max_tokens=max_tokens,
-        system=SYSTEM_PROMPT,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": image_b64,
-                        },
-                    },
-                    {"type": "text", "text": user_text},
-                ],
-            }
-        ],
-        tools=[
-            {
-                "name": "submit_curator_intent",
+        system=STRUCTURE_SYSTEM,
+        messages=[{"role": "user", "content":
+            "Produce the curator-intent JSON from this figure transcription."
+            + _hint_text(species_hint, process_hint) + "\n\nTRANSCRIPTION:\n" + transcription}],
+        tools=[{"name": "submit_curator_intent",
                 "description": "Submit the extracted curator-intent JSON for the figure.",
-                "input_schema": CuratorIntent.model_json_schema(),
-            }
-        ],
+                "input_schema": CuratorIntent.model_json_schema()}],
         tool_choice={"type": "tool", "name": "submit_curator_intent"},
     )
-
-    for block in response.content:
+    intent: CuratorIntent | None = None
+    for block in resp.content:
         if getattr(block, "type", None) == "tool_use" and block.name == "submit_curator_intent":
-            return CuratorIntent.model_validate(block.input)
-    raise RuntimeError("Vision call did not return submit_curator_intent")
+            intent = CuratorIntent.model_validate(block.input)
+            break
+    if intent is None:
+        raise RuntimeError("Structure stage did not return submit_curator_intent")
+
+    # -- Stage C: visual edge verification (best-effort; never breaks extraction) --
+    if verify_edges and intent.tentative_edges:
+        try:
+            intent = _verify_edges_against_figure(intent, image_b64, media_type, opus_client, opus_model)
+        except Exception:
+            pass
+    return intent
 
 
-def _guess_media_type(path: Path) -> str:
-    return {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".webp": "image/webp",
-        ".gif": "image/gif",
-    }.get(path.suffix.lower(), "image/png")
+def _verify_edges_against_figure(
+    intent: CuratorIntent, image_b64: str, media_type: str, client: AnthropicVertex, model: str
+) -> CuratorIntent:
+    edges = intent.tentative_edges
+    listing = "\n".join(
+        f"{i}: {(e.from_symbol or e.from_compartment or '?')} --[{e.relation}]--> "
+        f"{(e.to_symbol or e.to_compartment or '?')}" + (f" (via {e.via})" if e.via else "")
+        for i, e in enumerate(edges)
+    )
+    tool = {
+        "name": "report_edge_checks",
+        "description": "Per candidate edge, report whether the figure visually confirms it.",
+        "input_schema": {
+            "type": "object", "additionalProperties": False,
+            "properties": {"checks": {"type": "array", "items": {
+                "type": "object", "additionalProperties": False,
+                "properties": {
+                    "index": {"type": "integer"},
+                    "confirmed": {"type": "boolean"},
+                    "corrected_relation": {"type": ["string", "null"]},
+                },
+                "required": ["index", "confirmed"],
+            }}},
+            "required": ["checks"],
+        },
+    }
+    resp = client.messages.create(
+        model=model, max_tokens=3000, system=EDGE_VERIFY_SYSTEM,
+        messages=[{"role": "user", "content": [
+            _image_block(image_b64, media_type),
+            {"type": "text", "text": "Candidate edges to check against the figure:\n" + listing
+             + "\n\nFor each index, set confirmed (is this connector actually drawn, in this "
+             "direction?) and corrected_relation if the arrow end implies a different sign (else null)."},
+        ]}],
+        tools=[tool], tool_choice={"type": "tool", "name": "report_edge_checks"},
+    )
+    checks: dict = {}
+    for block in resp.content:
+        if getattr(block, "type", None) == "tool_use" and block.name == "report_edge_checks":
+            for c in (block.input or {}).get("checks", []):
+                checks[c.get("index")] = c
+            break
+    if not checks:
+        return intent
+    kept = []
+    for i, e in enumerate(edges):
+        c = checks.get(i)
+        if c is None:
+            kept.append(e)
+            continue
+        if not c.get("confirmed", True):
+            continue
+        cr = c.get("corrected_relation")
+        kept.append(e.model_copy(update={"relation": cr}) if cr else e)
+    return intent.model_copy(update={"tentative_edges": kept})

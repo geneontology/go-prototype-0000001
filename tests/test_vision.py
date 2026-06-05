@@ -87,7 +87,7 @@ class _MockAnthropic:
         self.messages = _Messages(self)
 
 
-def test_extract_curator_intent_parses_mocked_tool_use(tmp_path) -> None:
+def test_extract_curator_intent_two_stage(tmp_path, monkeypatch) -> None:
     fake_image = tmp_path / "tiny.png"
     # 1x1 PNG (smallest valid). Anthropic doesn't see this in the mock anyway.
     fake_image.write_bytes(
@@ -110,7 +110,18 @@ def test_extract_curator_intent_parses_mocked_tool_use(tmp_path) -> None:
         ],
         "tentative_edges": [],
     }
-    client = _MockAnthropic(payload)
+    client = _MockAnthropic(payload)  # Stage B (structure) returns the forced tool_use
+
+    # Stage A (perception) goes through llm.create_message — fake it and capture its input.
+    captured: dict = {}
+
+    def fake_create_message(_client, **kwargs):
+        captured["messages"] = kwargs.get("messages")
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text="- tph-1 in NEURONS box")])
+
+    monkeypatch.setattr("gocam_prototype.vision.create_message", fake_create_message)
+    monkeypatch.setattr("gocam_prototype.vision.make_client", lambda *a, **k: client)
+    monkeypatch.setattr("gocam_prototype.vision.VertexConfig.from_env", lambda: SimpleNamespace())
 
     intent = extract_curator_intent(
         fake_image, species_hint="C. elegans", client=client, model="claude-sonnet-4-6@default"
@@ -118,14 +129,12 @@ def test_extract_curator_intent_parses_mocked_tool_use(tmp_path) -> None:
 
     assert intent.species == "Caenorhabditis elegans"
     assert intent.genes[0].symbol == "tph-1"
-    # The call carried the image as a base64 block.
-    sent = client.last_kwargs
-    assert sent is not None
-    content_blocks = sent["messages"][0]["content"]
-    assert content_blocks[0]["type"] == "image"
-    assert content_blocks[0]["source"]["media_type"] == "image/png"
-    # And we forced a single tool choice.
-    assert sent["tool_choice"] == {"type": "tool", "name": "submit_curator_intent"}
+    # Stage A carried the image as a base64 block, image-first.
+    blocks = captured["messages"][0]["content"]
+    assert blocks[0]["type"] == "image"
+    assert blocks[0]["source"]["media_type"] == "image/png"
+    # Stage B forced the single tool choice (text-only structuring).
+    assert client.last_kwargs["tool_choice"] == {"type": "tool", "name": "submit_curator_intent"}
 
 
 # ---------- optional live test against figure 1 -------------------------------
