@@ -1,0 +1,7 @@
+{
+  "results": [
+    {"symbol": "tph-1", "curie": "WB:WBGene00006600", "nameKey": "tph-1 (Cel)", "name": "tph-1", "category": "gene_search_result"},
+    {"symbol": "TPH1", "curie": "HGNC:12008", "nameKey": "TPH1 (Hsa)", "name": "TPH1", "category": "gene_search_result"},
+    {"symbol": "Tph1", "curie": "MGI:98796", "nameKey": "Tph1 (Mmu)", "name": "Tph1", "category": "gene_search_result"}
+  ]
+}

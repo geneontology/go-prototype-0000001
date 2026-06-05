@@ -573,16 +573,18 @@ class Orchestrator:
             return {"error": f"HTTP error: {e}"}
         slim: list[dict] = []
         for o in (raw.get("results") or [])[:10]:
-            gene2 = o.get("gene2") or {}
-            species = gene2.get("species") or {}
+            og = o.get("geneToGeneOrthologyGenerated") or {}
+            obj = og.get("objectGene") or {}
+            species = obj.get("taxon") or {}
+            sym = obj.get("geneSymbol")
             slim.append({
-                "ortholog_curie": gene2.get("primaryKey") or gene2.get("id"),
-                "ortholog_symbol": gene2.get("symbol"),
+                "ortholog_curie": obj.get("primaryExternalId"),
+                "ortholog_symbol": sym.get("displayText") if isinstance(sym, dict) else sym,
                 "ortholog_species": (
                     species.get("name") if isinstance(species, dict) else species
                 ),
-                "best_score": o.get("bestScore"),
-                "prediction_methods_matched": o.get("predictionMethodsMatched"),
+                "best_score": (og.get("isBestScore") or {}).get("name"),
+                "prediction_methods_matched": og.get("predictionMethodsMatched"),
             })
         return {"orthologs": slim}
 
