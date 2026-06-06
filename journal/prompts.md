@@ -342,3 +342,7 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-06 04:15:27Z
 
 > Thank you. Please proceed.
+
+### 2026-06-06 04:45:17Z
+
+> With all of this in place, can you re-run figure one as well, just to see?

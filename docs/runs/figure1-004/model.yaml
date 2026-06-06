@@ -1,0 +1,290 @@
+id: gomodel:run-figure1-004
+title: 'Agent run figure1-004: Caenorhabditis elegans'
+taxon: NCBITaxon:6239
+status: development
+activities:
+- id: gomodel:run-figure1-004/tph1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00006600
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004510
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0043005
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0042427
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002234
+    molecule: CHEBI:28790
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-004/mod1
+- id: gomodel:run-figure1-004/ser6
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00021897
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004989
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005886
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0071927
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:17134
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-004/tph1
+- id: gomodel:run-figure1-004/mod1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00003386
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0160039
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005886
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0007210
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:28790
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-004/tbh1
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1-004/nhr76
+- id: gomodel:run-figure1-004/tbh1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00006541
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004836
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0045202
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0006589
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:15760
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002234
+    molecule: CHEBI:17134
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-004/ser6
+- id: gomodel:run-figure1-004/nhr76
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00015497
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004879
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0045944
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: WB:WBGene00015484
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-004/atgl1
+- id: gomodel:run-figure1-004/atgl1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence: []
+    term: WB:WBGene00015484
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence: []
+    term: GO:0004806
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005811
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0019433
+objects:
+- id: WB:WBGene00006600
+  label: tph-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00021897
+  label: ser-6
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00003386
+  label: mod-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00006541
+  label: tbh-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015497
+  label: nhr-76
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015484
+  label: atgl-1
+  type: gocam:GeneProductTermObject
+- id: GO:0004510
+  label: tryptophan 5-monooxygenase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0042427
+  label: serotonin biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0043005
+  label: neuron projection
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0004989
+  label: octopamine receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0071927
+  label: octopamine signaling pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0005886
+  label: plasma membrane
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0160039
+  label: serotonin-gated chloride channel activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0007210
+  label: serotonin receptor signaling pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0004836
+  label: tyramine-beta hydroxylase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0006589
+  label: octopamine biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0045202
+  label: synapse
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0004879
+  label: nuclear receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0045944
+  label: positive regulation of transcription by RNA polymerase II
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0005634
+  label: nucleus
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0004806
+  label: triacylglycerol lipase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0019433
+  label: triglyceride catabolic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0005811
+  label: lipid droplet
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: CHEBI:28790
+  label: serotonin
+  type: gocam:MoleculeTermObject
+- id: RO:0002234
+  label: has output
+  type: gocam:PredicateTermObject
+- id: RO:0002233
+  label: has input
+  type: gocam:PredicateTermObject
+- id: CHEBI:15760
+  label: tyramine
+  type: gocam:MoleculeTermObject
+- id: CHEBI:17134
+  label: octopamine
+  type: gocam:MoleculeTermObject
+- id: PMID:24120942
+  label: 'Noble et al. 2013: the neuronal circuit directs release of an endocrine
+    signal to control body fat. Compartment edge URX->INTESTINE ''endocrine signal''
+    modeled as mod-1 neuronal activity causally upstream of, positive effect, the
+    intestinal nhr-76 nuclear receptor (the most upstream intestinal activity); mechanism
+    of the endocrine signal not molecularly resolved, hence causally_upstream_of.'
+  type: gocam:PublicationObject
+- id: RO:0002407
+  label: indirectly positively regulates
+  type: gocam:PredicateTermObject
+- id: RO:0002304
+  label: causally upstream of, positive effect
+  type: gocam:PredicateTermObject
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject
