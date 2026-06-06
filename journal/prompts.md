@@ -362,3 +362,11 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-06 05:58:44Z
 
 > WRT "GH Pages will pick it up on the next build.", when will that be? The glyphs are still not there...
+
+### 2026-06-06 06:06:38Z
+
+> Ah I understand why I'm confused. in figure1-004, the has_input edges are listed as "No provenance recorded for this edge in the ledger.", so there is no glyph. However, surely there is a reason they are there. Surely, they were seen in the figure and added, right? Therefore, there must be some evidence, even if it is the weakest "in the figure" evidence.
+
+### 2026-06-06 06:28:58Z
+
+> Lovely--I can see it now. Thank you!

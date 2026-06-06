@@ -109,7 +109,7 @@ Per the GO-CAM **pathway-boundary** rule, the downstream-response gene-SETS
 a TF that targets them gets `part_of` regulation-of-transcription (+ `has_input` a
 *named* target gene), not a causal edge to a compartment or gene set.
 
-## Dense figures need streaming + a big `max_tokens`, or the model comes back EMPTY
+## Dense figures need streaming + a big `max_tokens` — else EMPTY or silently incomplete
 
 The orchestrator loop (`orchestrator.py`) treats a turn with no `tool_use` block
 as "model is done" — but a dense figure (figure2: 17 genes / 29 edges) makes a
@@ -131,6 +131,21 @@ Guards now in place (don't remove): no-tool turns are *nudged* back to the tools
 (stop_reason, usage) persist to `docs/runs/<id>/orchestrator_events.json` even on
 raise — check it first when a run looks empty/short; and `cli.run_pipeline`
 prints a loud `[WARN]` if it produced 0 activities from a non-empty gene list.
+
+**Same class, second instance — a truncated FORCED-TOOL call drops its last
+schema field and still validates.** Vision Stage-B (`vision.py`, the structuring
+call) emits the whole `CuratorIntent` as one forced `submit_curator_intent`
+tool call. On a dense figure it hit `max_tokens=4096` and truncated mid-JSON —
+but because `tentative_edges` is the LAST field of `CuratorIntent`, the partial
+tool input still passed `model_validate` (edges just defaulted to `[]`), so the
+run looked like a real "0-edge figure" with no error. This is nastier than the
+orchestrator case (valid-but-incomplete, not empty). Fixes: Stage-B `max_tokens`
+→ 16000, Stage-A → 12000, and **both stages now raise on
+`stop_reason == "max_tokens"`** (`0f1e0b1`). Takeaways: any forced-tool /
+structured-output call is vulnerable — guard on `stop_reason` and raise loudly,
+never trust a truncated parse; and the *last* field of the schema vanishes
+first, so adding a field after `tentative_edges` changes which one silently
+drops (re-check the guard if you reorder `CuratorIntent`).
 
 ## Alliance API shape drifts — run the drift-canary
 
