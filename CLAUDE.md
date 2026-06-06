@@ -93,6 +93,29 @@ Gotchas, all verified 2026-06-05 (see [[reference-vertex-ai-go]] in memory):
   this is why the vision pass is two-stage (reason free-text, then a separate
   no-thinking structuring call forces the schema).
 
+## Dense figures need streaming + a big `max_tokens`, or the model comes back EMPTY
+
+The orchestrator loop (`orchestrator.py`) treats a turn with no `tool_use` block
+as "model is done" — but a dense figure (figure2: 17 genes / 29 edges) makes a
+single adaptive-thinking turn exceed the output-token budget and **truncate**
+(`stop_reason=max_tokens`) *before* it emits any tool call. The old behaviour
+silently wrote a 0-activity model and printed "Done" — a false success. Two
+coupled facts to remember when touching the loop or the LLM wrapper:
+
+- `max_tokens` must hold a planning turn's *thinking + tool calls*. figure2
+  peaked at ~19200 output tokens in one turn; the old 16000 truncated it. It's
+  now 32000 (`Orchestrator.max_tokens`).
+- The Anthropic SDK **refuses a non-streaming request** whose `max_tokens` could
+  run past the 10-minute server limit (`ValueError: Streaming is required …`).
+  So `llm.create_message` **streams** (`client.messages.stream(...).get_final_message()`).
+  If you revert to `.create()`, a large `max_tokens` will raise before any API call.
+
+Guards now in place (don't remove): no-tool turns are *nudged* back to the tools
+(bounded by `max_empty_nudges`) instead of silently ending; per-turn events
+(stop_reason, usage) persist to `docs/runs/<id>/orchestrator_events.json` even on
+raise — check it first when a run looks empty/short; and `cli.run_pipeline`
+prints a loud `[WARN]` if it produced 0 activities from a non-empty gene list.
+
 ## Alliance API shape drifts — run the drift-canary
 
 `src/gocam_prototype/alliance.py` is pinned to the Alliance REST shape as of
