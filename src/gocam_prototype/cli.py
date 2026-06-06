@@ -103,7 +103,8 @@ def run_pipeline(
 
     print(f"[1/4] Vision pass on {image_path}", flush=True)
     intent = extract_curator_intent(
-        image_path, species_hint=species, process_hint=process_hint
+        image_path, species_hint=species, process_hint=process_hint,
+        transcript_out=out_dir / "transcription.md",
     )
     (out_dir / "curator_intent.json").write_text(
         intent.model_dump_json(indent=2, exclude_none=True)

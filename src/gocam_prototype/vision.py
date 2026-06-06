@@ -188,8 +188,14 @@ def extract_curator_intent(
     model: str | None = None,                # Stage B structuring model
     max_tokens: int = 4096,
     verify_edges: bool = True,
+    transcript_out: str | Path | None = None,
 ) -> CuratorIntent:
-    """Figure -> CuratorIntent via the two-stage (+verify) design (see module docstring)."""
+    """Figure -> CuratorIntent via the two-stage (+verify) design (see module docstring).
+
+    If `transcript_out` is given, the Stage-A perception transcription is written
+    there — a citable, inspectable record of what the vision pass read off the
+    figure (so figure-derived claims are attributable; see #40).
+    """
     image_path = Path(image_path)
     raw, media_type = _resize_for_vision(image_path.read_bytes())
     image_b64 = base64.b64encode(raw).decode()
@@ -220,6 +226,15 @@ def extract_curator_intent(
     transcription = "".join(
         getattr(b, "text", "") for b in perc.content if getattr(b, "type", None) == "text"
     ).strip()
+
+    if transcript_out and transcription:
+        Path(transcript_out).write_text(
+            "# Stage-A figure transcription (vision perception pass)\n\n"
+            "Verbatim output of the Opus 4.8 perception stage — the figure-derived\n"
+            "evidence that the curator-intent and any figure-sourced assertions draw on.\n\n"
+            + transcription + "\n",
+            encoding="utf-8",
+        )
 
     # -- Stage B: structure (text-only, forced tool, no thinking) --
     resp = structure_client.messages.create(
