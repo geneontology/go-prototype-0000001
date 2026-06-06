@@ -93,6 +93,22 @@ Gotchas, all verified 2026-06-05 (see [[reference-vertex-ai-go]] in memory):
   this is why the vision pass is two-stage (reason free-text, then a separate
   no-thinking structuring call forces the schema).
 
+## `has_input`/`has_output` live in `Activity.molecular_associations`, not as direct slots
+
+gocam-py's `Activity` has **no** `has_input`/`has_output` fields. Inputs/outputs are
+`MoleculeAssociation` entries in `Activity.molecular_associations`, each with
+`predicate` = `RO:0002233` (has_input) / `RO:0002234` (has_output) and `molecule`
+= a CURIE (ChEBI for chemicals, a gene CURIE for a TF target). `builder.add_input`/
+`add_output` wrap this; the molecule term object is `MoleculeTermObject` for ChEBI
+or `GeneProductTermObject` for a gene (builder `TermKind` 'molecule' vs
+'gene_product'). The viewer (`viewer.py`) renders each as an individual + fact with
+IRI == the provenance key `<activity>/has_input|has_output/<molecule>`, so the panel
+resolves the source on click; `viewer.js` `slotOf()` maps those keys back to the slot.
+Per the GO-CAM **pathway-boundary** rule, the downstream-response gene-SETS
+("antimicrobial defence genes", "ESRE") are deliberately NOT modeled as nodes/edges —
+a TF that targets them gets `part_of` regulation-of-transcription (+ `has_input` a
+*named* target gene), not a causal edge to a compartment or gene set.
+
 ## Dense figures need streaming + a big `max_tokens`, or the model comes back EMPTY
 
 The orchestrator loop (`orchestrator.py`) treats a turn with no `tool_use` block
