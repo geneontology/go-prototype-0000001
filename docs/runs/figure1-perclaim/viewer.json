@@ -56,24 +56,6 @@
       "annotations": []
     },
     {
-      "id": "gomodel:run-figure1-perclaim/tph1/occurs_in",
-      "type": [
-        {
-          "type": "class",
-          "id": "GO:0043005",
-          "label": "neuron projection"
-        }
-      ],
-      "root-type": [
-        {
-          "type": "class",
-          "id": "GO:0005575",
-          "label": "cellular_component"
-        }
-      ],
-      "annotations": []
-    },
-    {
       "id": "gomodel:run-figure1-perclaim/tph1/causal/gomodel:run-figure1-perclaim/mod1/ev-0",
       "type": [
         {
@@ -151,22 +133,27 @@
       "annotations": []
     },
     {
-      "id": "gomodel:run-figure1-perclaim/ser6/occurs_in",
+      "id": "gomodel:run-figure1-perclaim/ser6/causal/gomodel:run-figure1-perclaim/tph1/ev-0",
       "type": [
         {
           "type": "class",
-          "id": "GO:0005886",
-          "label": "plasma membrane"
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
         }
       ],
       "root-type": [
         {
           "type": "class",
-          "id": "GO:0005575",
-          "label": "cellular_component"
+          "id": "ECO:0000000",
+          "label": "evidence"
         }
       ],
-      "annotations": []
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
     },
     {
       "id": "gomodel:run-figure1-perclaim/mod1",
@@ -223,22 +210,27 @@
       "annotations": []
     },
     {
-      "id": "gomodel:run-figure1-perclaim/mod1/occurs_in",
+      "id": "gomodel:run-figure1-perclaim/mod1/causal/gomodel:run-figure1-perclaim/tbh1/ev-0",
       "type": [
         {
           "type": "class",
-          "id": "GO:0005886",
-          "label": "plasma membrane"
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
         }
       ],
       "root-type": [
         {
           "type": "class",
-          "id": "GO:0005575",
-          "label": "cellular_component"
+          "id": "ECO:0000000",
+          "label": "evidence"
         }
       ],
-      "annotations": []
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
     },
     {
       "id": "gomodel:run-figure1-perclaim/mod1/causal/gomodel:run-figure1-perclaim/nhr76/ev-0",
@@ -318,24 +310,6 @@
       "annotations": []
     },
     {
-      "id": "gomodel:run-figure1-perclaim/tbh1/occurs_in",
-      "type": [
-        {
-          "type": "class",
-          "id": "GO:0045202",
-          "label": "synapse"
-        }
-      ],
-      "root-type": [
-        {
-          "type": "class",
-          "id": "GO:0005575",
-          "label": "cellular_component"
-        }
-      ],
-      "annotations": []
-    },
-    {
       "id": "gomodel:run-figure1-perclaim/tbh1/causal/gomodel:run-figure1-perclaim/ser6/ev-0",
       "type": [
         {
@@ -399,8 +373,8 @@
       "type": [
         {
           "type": "class",
-          "id": "GO:0045944",
-          "label": "positive regulation of transcription by RNA polymerase II"
+          "id": "GO:0006357",
+          "label": "regulation of transcription by RNA polymerase II"
         }
       ],
       "root-type": [
@@ -454,7 +428,7 @@
         {
           "type": "class",
           "id": "WB:WBGene00015484",
-          "label": "ATGL (atgl-1)"
+          "label": "atgl-1"
         }
       ],
       "root-type": [
@@ -520,15 +494,8 @@
     },
     {
       "subject": "gomodel:run-figure1-perclaim/tph1",
-      "property": "BFO:0000066",
-      "property-label": "BFO:0000066",
-      "object": "gomodel:run-figure1-perclaim/tph1/occurs_in",
-      "annotations": []
-    },
-    {
-      "subject": "gomodel:run-figure1-perclaim/tph1",
-      "property": "RO:0002304",
-      "property-label": "causally upstream of, positive effect",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
       "object": "gomodel:run-figure1-perclaim/mod1",
       "annotations": [
         {
@@ -554,17 +521,16 @@
     },
     {
       "subject": "gomodel:run-figure1-perclaim/ser6",
-      "property": "BFO:0000066",
-      "property-label": "BFO:0000066",
-      "object": "gomodel:run-figure1-perclaim/ser6/occurs_in",
-      "annotations": []
-    },
-    {
-      "subject": "gomodel:run-figure1-perclaim/ser6",
       "property": "RO:0002304",
       "property-label": "causally upstream of, positive effect",
       "object": "gomodel:run-figure1-perclaim/tph1",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-perclaim/ser6/causal/gomodel:run-figure1-perclaim/tph1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1-perclaim/mod1",
@@ -582,17 +548,16 @@
     },
     {
       "subject": "gomodel:run-figure1-perclaim/mod1",
-      "property": "BFO:0000066",
-      "property-label": "BFO:0000066",
-      "object": "gomodel:run-figure1-perclaim/mod1/occurs_in",
-      "annotations": []
-    },
-    {
-      "subject": "gomodel:run-figure1-perclaim/mod1",
       "property": "RO:0002407",
       "property-label": "indirectly positively regulates",
       "object": "gomodel:run-figure1-perclaim/tbh1",
-      "annotations": []
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-perclaim/mod1/causal/gomodel:run-figure1-perclaim/tbh1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
     },
     {
       "subject": "gomodel:run-figure1-perclaim/mod1",
@@ -623,15 +588,8 @@
     },
     {
       "subject": "gomodel:run-figure1-perclaim/tbh1",
-      "property": "BFO:0000066",
-      "property-label": "BFO:0000066",
-      "object": "gomodel:run-figure1-perclaim/tbh1/occurs_in",
-      "annotations": []
-    },
-    {
-      "subject": "gomodel:run-figure1-perclaim/tbh1",
-      "property": "RO:0002304",
-      "property-label": "causally upstream of, positive effect",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
       "object": "gomodel:run-figure1-perclaim/ser6",
       "annotations": [
         {

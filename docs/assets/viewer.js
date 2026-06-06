@@ -14,8 +14,10 @@ const SOURCE_META = {
   orthology:         { emoji: "\u{2197}\u{FE0F}",   label: "Orthology" },
   pathway_resource:  { emoji: "\u{1F6E4}\u{FE0F}",  label: "Pathway" },
   expert_review:     { emoji: "\u{2714}\u{FE0F}",   label: "Expert review" },
-  figure:            { emoji: "\u{1F5BC}\u{FE0F}",  label: "Figure" },
   instinct:          { emoji: "\u{26A0}\u{FE0F}",   label: "Instinct" },
+  // Weakest tier — a raw reading of the figure (below instinct). Flagged
+  // (🚩) like a warning so the curator treats it as "verify this".
+  figure:            { emoji: "\u{1F6A9}",          label: "Figure" },
   go_term_request:   { emoji: "\u{2753}",           label: "GO term request" },
 };
 
@@ -155,6 +157,7 @@ async function main() {
   const cy = await wireEdgeClicks(viewerEl, prov, labelIndex);
   if (cy) {
     emphasizeCausalEdges(cy);
+    keepGraphFitted(cy, viewerEl);
     installSourceChipsOverlay(cy, prov, viewerEl);
   }
 
@@ -356,9 +359,12 @@ function emphasizeCausalEdges(cy) {
 /* --------------------------------------------- evidence-chip overlay ---- */
 
 // Canonical render order matches the landing-page legend.
+// Descending evidence strength. 'figure' (a raw reading of the figure) is the
+// WEAKEST tier — below 'instinct' — so it sorts last among evidence, and
+// edgeChipEmoji shows it only when nothing stronger is attached.
 const CHIP_SOURCE_ORDER = [
   "literature", "go_annotation", "alliance", "amigo",
-  "orthology", "pathway_resource", "expert_review", "figure", "instinct", "go_term_request",
+  "orthology", "pathway_resource", "expert_review", "instinct", "figure", "go_term_request",
 ];
 // The four slots a GoCamBuilder activity may carry provenance for.
 const CHIP_SLOTS = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
@@ -479,8 +485,19 @@ function hideBuiltinSidebar(viewerEl) {
   if (!viewerEl?.shadowRoot) return;
   const css = `
     go-gocam-viewer-sidebar { display: none !important; }
-    /* Take the freed real estate. */
-    .gocam-graph, .gocam-viz, [class*="graph"] { width: 100% !important; }
+    /* The viewer splits its area into an 8/12 graph panel + a 4/12 activities
+       panel, and sizes the graph panel to its CONTENT height — so the graph
+       underfills the column width (a ~1/3 dead strip on the right, next to our
+       provenance panel) and overflows vertically. We render our OWN provenance
+       panel, so hand the full width+height to the graph. The whole ancestor
+       chain needs an explicit height or the inner height:100% collapses the
+       canvas to 0. Class names per @geneontology/web-components 1.0.0, verified
+       against the live shadow DOM. */
+    :host { display: block; width: 100%; height: 100%; }
+    .gocam-graph-and-activities-container { width: 100% !important; height: 100% !important; }
+    .panel.w-4 { display: none !important; }   /* built-in activities list — superseded by our panel */
+    .panel.w-8 { width: 100% !important; }     /* graph panel → full column width */
+    .panel, .panel-body, .gocam-graph { height: 100% !important; }
   `;
   const sheet = document.createElement("style");
   sheet.setAttribute("data-injected-by", "go-prototype-viewer-wrapper");
@@ -559,6 +576,47 @@ function attachEdgeHandlers(cy, prov, labelIndex) {
   if (cy._gocamProtoWired) return;
   cy._gocamProtoWired = true;
   cy.edges().on("tap", (evt) => handleEdgeClick(evt.target, prov, labelIndex));
+}
+
+// The cytoscape canvas inside <go-gocam-viewer> ends up zoomed so the nodes
+// overflow vertically yet only fill the left part of the column — a big gap on
+// the right, next to the provenance panel (see issue feedback). Force cytoscape
+// to fill its column and stay fitted: resize() picks up the real pixel
+// dimensions, fit() re-centers/zooms the graph to the pane.
+//
+// CRITICAL: only fit once the component's layout has positioned the nodes. A
+// fit() against an empty / degenerate bounding box (pre-layout, all nodes at
+// 0,0) throws the view off-screen and the component never recovers it — so we
+// guard on a finite bounding box and (re)fit on cytoscape's `layoutstop`.
+function keepGraphFitted(cy, viewerEl) {
+  const pane = (viewerEl.closest && viewerEl.closest(".viewer-pane")) || viewerEl.parentElement;
+  const refit = () => {
+    try {
+      if (!cy || (cy.destroyed && cy.destroyed())) return;
+      const els = cy.elements();
+      if (els.length === 0) return;
+      const bb = els.boundingBox();
+      if (!bb || !isFinite(bb.w) || bb.w <= 0 || bb.h <= 0) return;
+      cy.resize();
+      cy.fit(els, 28); // 28px padding around the graph
+    } catch { /* cy detached / not ready — ignore */ }
+  };
+  // Re-fit whenever the component finishes (re)laying out the graph; our handler
+  // is registered after the component's, so our fit has the last word.
+  cy.on("layoutstop", refit);
+  cy.ready(refit);
+  // Fallback passes in case layout finished before we reached cy, or for late
+  // web-font / container settles. The bounding-box guard makes early calls no-op.
+  [200, 600, 1200].forEach((ms) => setTimeout(refit, ms));
+  if (pane && typeof ResizeObserver === "function") {
+    let raf = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(refit);
+    }).observe(pane);
+  } else {
+    window.addEventListener("resize", refit);
+  }
 }
 
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }

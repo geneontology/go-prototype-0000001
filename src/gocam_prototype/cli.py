@@ -227,8 +227,8 @@ _LANDING_HEAD = """<!DOCTYPE html>
             <span class="badge orthology">↗️ orthology</span>
             <span class="badge pathway_resource">🛤️ pathway</span>
             <span class="badge expert_review">✔️ expert review</span>
-            <span class="badge figure">🖼️ figure</span>
             <span class="badge instinct">⚠️ instinct</span>
+            <span class="badge figure">🚩 figure</span>
             <span class="badge go_term_request">❓ GO term request</span>
           </p>
         </header>
@@ -259,8 +259,10 @@ _BADGE_META: dict[str, tuple[str, str]] = {
     "orthology":        ("↗️", "orthology"),
     "pathway_resource": ("🛤️", "pathway"),
     "expert_review":    ("✔️", "expert review"),
-    "figure":           ("🖼️", "figure"),
     "instinct":         ("⚠️", "instinct"),
+    # Weakest tier — a raw reading of the figure (below instinct). Flagged so a
+    # curator treats it as "verify this".
+    "figure":           ("🚩", "figure"),
     "go_term_request":  ("❓", "GO term request"),
 }
 

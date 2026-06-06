@@ -12,10 +12,6 @@ activities:
     type: MolecularFunctionAssociation
     evidence: []
     term: GO:0004510
-  occurs_in:
-    type: CellularAnatomicalEntityAssociation
-    evidence: []
-    term: GO:0043005
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
@@ -28,8 +24,8 @@ activities:
       provenances:
       - date: '2026-06-06'
         provided_by:
-        - europepmc_search
-    predicate: RO:0002304
+        - europepmc.search
+    predicate: RO:0002629
     downstream_activity: gomodel:run-figure1-perclaim/mod1
 - id: gomodel:run-figure1-perclaim/ser6
   enabled_by:
@@ -40,17 +36,19 @@ activities:
     type: MolecularFunctionAssociation
     evidence: []
     term: GO:0004989
-  occurs_in:
-    type: CellularAnatomicalEntityAssociation
-    evidence: []
-    term: GO:0005886
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
     term: GO:0071927
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
     predicate: RO:0002304
     downstream_activity: gomodel:run-figure1-perclaim/tph1
 - id: gomodel:run-figure1-perclaim/mod1
@@ -62,17 +60,19 @@ activities:
     type: MolecularFunctionAssociation
     evidence: []
     term: GO:0160039
-  occurs_in:
-    type: CellularAnatomicalEntityAssociation
-    evidence: []
-    term: GO:0005886
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
     term: GO:0007210
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-06'
+        provided_by:
+        - europepmc.search
     predicate: RO:0002407
     downstream_activity: gomodel:run-figure1-perclaim/tbh1
   - type: CausalAssociation
@@ -82,7 +82,7 @@ activities:
       provenances:
       - date: '2026-06-06'
         provided_by:
-        - europepmc_search
+        - europepmc.search
     predicate: RO:0002407
     downstream_activity: gomodel:run-figure1-perclaim/nhr76
 - id: gomodel:run-figure1-perclaim/tbh1
@@ -94,10 +94,6 @@ activities:
     type: MolecularFunctionAssociation
     evidence: []
     term: GO:0004836
-  occurs_in:
-    type: CellularAnatomicalEntityAssociation
-    evidence: []
-    term: GO:0045202
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
@@ -110,8 +106,8 @@ activities:
       provenances:
       - date: '2026-06-06'
         provided_by:
-        - europepmc_search
-    predicate: RO:0002304
+        - europepmc.search
+    predicate: RO:0002629
     downstream_activity: gomodel:run-figure1-perclaim/ser6
 - id: gomodel:run-figure1-perclaim/nhr76
   enabled_by:
@@ -129,7 +125,7 @@ activities:
   part_of:
     type: BiologicalProcessAssociation
     evidence: []
-    term: GO:0045944
+    term: GO:0006357
   causal_associations:
   - type: CausalAssociation
     evidence: []
@@ -169,7 +165,7 @@ objects:
   label: nhr-76
   type: gocam:GeneProductTermObject
 - id: WB:WBGene00015484
-  label: ATGL (atgl-1)
+  label: atgl-1
   type: gocam:GeneProductTermObject
 - id: GO:0004510
   label: tryptophan 5-monooxygenase activity
@@ -177,18 +173,12 @@ objects:
 - id: GO:0042427
   label: serotonin biosynthetic process
   type: gocam:BiologicalProcessTermObject
-- id: GO:0043005
-  label: neuron projection
-  type: gocam:CellularAnatomicalEntityTermObject
 - id: GO:0004989
   label: octopamine receptor activity
   type: gocam:MolecularFunctionTermObject
 - id: GO:0071927
   label: octopamine signaling pathway
   type: gocam:BiologicalProcessTermObject
-- id: GO:0005886
-  label: plasma membrane
-  type: gocam:CellularAnatomicalEntityTermObject
 - id: GO:0160039
   label: serotonin-gated chloride channel activity
   type: gocam:MolecularFunctionTermObject
@@ -201,14 +191,11 @@ objects:
 - id: GO:0006589
   label: octopamine biosynthetic process
   type: gocam:BiologicalProcessTermObject
-- id: GO:0045202
-  label: synapse
-  type: gocam:CellularAnatomicalEntityTermObject
 - id: GO:0004879
   label: nuclear receptor activity
   type: gocam:MolecularFunctionTermObject
-- id: GO:0045944
-  label: positive regulation of transcription by RNA polymerase II
+- id: GO:0006357
+  label: regulation of transcription by RNA polymerase II
   type: gocam:BiologicalProcessTermObject
 - id: GO:0005634
   label: nucleus
@@ -223,13 +210,17 @@ objects:
   label: lipid droplet
   type: gocam:CellularAnatomicalEntityTermObject
 - id: PMID:24120942
-  label: 'Noble, Stieglitz & Srinivasan 2013 show the neuronal circuit triggers release
-    of a long-range endocrine signal that acts on the intestine to control body fat.
-    Panel E: dashed arrow labelled ''endocrine signal'' from URX to INTESTINE. Modeled
-    as the most upstream intestinal activity: mod-1 (URX) indirectly positively regulates
-    nhr-76 (intestine) via a circulating endocrine signal (long-range, mechanism/identity
-    not specified).'
+  label: 'Endocrine-signal edge: the URX neuron circuit releases an endocrine signal
+    that travels to the INTESTINE. Modeled as mod-1 activity (URX, most downstream
+    neuronal node) indirectly positively regulating the nhr-76 nuclear-receptor activity
+    (intestine, first intestinal node). Dashed arrow labeled ''endocrine signal''
+    (URX->INTESTINE) in Panel E; endocrine transport across cells is upstream of intestinal
+    signal transduction, hence indirect. Noble et al. 2013 title: ''...directs the
+    release of an endocrine signal to control C. elegans body fat.'''
   type: gocam:PublicationObject
+- id: RO:0002629
+  label: directly positively regulates
+  type: gocam:PredicateTermObject
 - id: RO:0002304
   label: causally upstream of, positive effect
   type: gocam:PredicateTermObject

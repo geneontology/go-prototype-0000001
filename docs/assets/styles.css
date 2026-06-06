@@ -7,7 +7,7 @@
   --c-pathway:   #5d4037;
   --c-expert:    #455a64;
   --c-inst:      #d32f2f;
-  --c-figure:    #d81b60;
+  --c-figure:    #f9a825;   /* amber caution — weakest tier, a raw figure read */
   --c-fg:        #1a1a1a;
   --c-bg:        #fafafa;
   --c-card:      #ffffff;
@@ -180,7 +180,7 @@ code, .assertion-id {
 .tag-cloud .tag.orthology        { background: var(--c-ortho); }
 .tag-cloud .tag.pathway_resource { background: var(--c-pathway); }
 .tag-cloud .tag.expert_review    { background: var(--c-expert); }
-.tag-cloud .tag.figure           { background: var(--c-figure); }
+.tag-cloud .tag.figure           { background: var(--c-figure); color: #3d2c00; }
 .tag-cloud .tag.instinct         { background: var(--c-inst); }
 .tag-cloud .tag.go_term_request  { background: var(--c-req, #7e57c2); }
 
@@ -552,7 +552,7 @@ code, .assertion-id {
 .badge.orthology        { background: var(--c-ortho); }
 .badge.pathway_resource { background: var(--c-pathway); }
 .badge.expert_review    { background: var(--c-expert); }
-.badge.figure          { background: var(--c-figure); }
+.badge.figure          { background: var(--c-figure); color: #3d2c00; }
 .badge.instinct         { background: var(--c-inst); }
 .badge.go_term_request  { background: var(--c-req, #7e57c2); }
 
