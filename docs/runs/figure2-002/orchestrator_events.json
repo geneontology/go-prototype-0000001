@@ -1,0 +1,74 @@
+[
+  {
+    "turn": 0,
+    "stop_reason": "tool_use",
+    "input_tokens": 6310,
+    "output_tokens": 2249
+  },
+  {
+    "turn": 1,
+    "stop_reason": "tool_use",
+    "input_tokens": 9690,
+    "output_tokens": 837
+  },
+  {
+    "turn": 2,
+    "stop_reason": "tool_use",
+    "input_tokens": 26236,
+    "output_tokens": 862
+  },
+  {
+    "turn": 3,
+    "stop_reason": "tool_use",
+    "input_tokens": 40101,
+    "output_tokens": 16656
+  },
+  {
+    "turn": 4,
+    "stop_reason": "tool_use",
+    "input_tokens": 61714,
+    "output_tokens": 1098
+  },
+  {
+    "turn": 5,
+    "stop_reason": "tool_use",
+    "input_tokens": 65771,
+    "output_tokens": 1149
+  },
+  {
+    "turn": 6,
+    "stop_reason": "tool_use",
+    "input_tokens": 70262,
+    "output_tokens": 9526
+  },
+  {
+    "turn": 7,
+    "stop_reason": "tool_use",
+    "input_tokens": 80739,
+    "output_tokens": 5153
+  },
+  {
+    "turn": 8,
+    "stop_reason": "tool_use",
+    "input_tokens": 86546,
+    "output_tokens": 6316
+  },
+  {
+    "turn": 9,
+    "stop_reason": "tool_use",
+    "input_tokens": 93480,
+    "output_tokens": 2920
+  },
+  {
+    "turn": 10,
+    "stop_reason": "tool_use",
+    "input_tokens": 96802,
+    "output_tokens": 3947
+  },
+  {
+    "turn": 11,
+    "stop_reason": "tool_use",
+    "input_tokens": 100986,
+    "output_tokens": 2739
+  }
+]

@@ -330,3 +330,11 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-06 03:09:41Z
 
 > Lovely--thank you for all of this. Can you go ahead run figure2 with this new setup?
+
+### 2026-06-06 03:50:55Z
+
+> Well, following up on your observation, one reason that it's linear is that there are no relations between the majority of nodes. Given the source image, that seems like a problem, as all nodes are connected in the orginal image. Where in the pipeline did something go wrong?
+
+### 2026-06-06 03:51:29Z
+
+> Well, following up on your observation, one reason that it's linear is that there are no relations between the majority of nodes. Given the source image, that seems like a problem, as all nodes are connected in the orginal image. Where in the pipeline did something go wrong? Also, when we do re-runs, can we file new attempts, so we can keep the last one around for comparison? We can clean up later on.
