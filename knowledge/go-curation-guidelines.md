@@ -329,6 +329,42 @@ object). (Flagged rule #1 — see §9.) `[gocam-shapes-no-self-causal-edge ⚠]`
 
 ---
 
+## 4b. MF-class activity-unit patterns (GO MF annotation guide)
+
+The GO "Guide for MF annotation in GO-CAM" gives the canonical activity-unit
+shape per MF class — the MF term, what it takes as `has_input`, and the causal
+relation to its target. Match each gene's role to one of these (full table in
+`go-curation-rules.yaml` → `mf_activity_unit_patterns`):
+
+- **Protein ligand** → receptor ligand activity (`GO:0048018`); the **ligand
+  `has_input` the receptor** (keeps causal flow ligand→receptor); **directly
+  positively regulates** the receptor.
+- **Signaling receptor** → signaling receptor activity (`GO:0038023`); the
+  **receptor `has_input` its downstream effector — NOT its ligand**; directly
+  positively regulates its target.
+- **Small-molecule ligand** → has no MF; link it to the receptor with **`is
+  small molecule activator/inhibitor`** (RO:0012005/0012006).
+- **Molecular adaptor** (`GO:0060090`) → `has_input` the molecules it joins;
+  directly-positively-regulates / constitutively-upstream-of / provides-input-for.
+- **Sequestering** (`GO:0140311` protein sequestering) → `has_input` the
+  sequestered protein; **directly negatively regulates** it; `part_of` negative
+  regulation of its BP.
+- **DNA-binding TF** → activator `GO:0001228` / repressor `GO:0001227`; **`has_input`
+  the regulated gene**; `occurs_in` nucleus; **TF → target = `indirectly
+  positively/negatively regulates`** (RO:0002407/0002409) — the #39 rule. One
+  activity unit per transcriptional target.
+- **Nuclear receptor** (`GO:0004879`) → small molecule `is small molecule
+  activator of`; `has_input` the gene; **indirect** to the target.
+- **Transcription coregulator** (`GO:0003713`/`GO:0003714`) → directly regulates
+  the TF; **indirect** to the target gene.
+- **Molecular carrier** (`GO:0140104`) → `has_input` the cargo; `has_output` it
+  for the next step.
+- **Transmembrane transporter** (`GO:0022857` child) → substrate `has_output`
+  with `located_in` the end location; `occurs_in` a membrane.
+- **Ubiquitin ligase** (`GO:0061630`) → `has_input` the substrate; `part_of`
+  protein ubiquitination; **indirectly negatively regulates** the substrate when
+  it drives degradation. `[mf_activity_unit_patterns; GO MF annotation guide]`
+
 ## 5. Modeling signaling pathways (most relevant to our figures)
 
 ### Signaling MF vocabulary

@@ -135,10 +135,17 @@ WORKFLOW
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
      - RO:0002630  directly negatively regulates
+     - RO:0002407  indirectly positively regulates
+     - RO:0002409  indirectly negatively regulates
      - RO:0002411  causally upstream of
      - RO:0002413  directly provides input for
      - RO:0002304  causally upstream of, positive effect
      - RO:0002305  causally upstream of, negative effect
+   Use a DIRECT relation only when the two activities act in immediate succession with no \
+   intervening activity. Use an INDIRECT relation when a reusable module sits between them — in \
+   particular a transcription factor / nuclear receptor relates to its TARGET gene's activity via \
+   `indirectly positively/negatively regulates` (transcription + translation are the intervening \
+   steps), NOT a direct relation. See mf_activity_unit_patterns in the injected curation guidelines.
    Then call `add_causal` with the predicate and a source.
 6. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
    causal edge (or you have recorded a figure-based reason an element cannot be mapped). Do NOT \

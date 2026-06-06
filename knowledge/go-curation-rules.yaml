@@ -23,6 +23,7 @@ meta:
     - "go-shapes go-cam-shapes.shex / .shapeMap (ShEx shape constraints)"
     - "GO QC rules (GORULE:0000002/0000004/0000005/0000008/0000017/0000018/0000036/0000046)"
     - "Primary literature: PMC3706743 (evidence codes), PMID:31548717 / PMC7012280 (GO-CAM paper)"
+    - "GO 'Guide for MF annotation in GO-CAM' (Gaudet/Van Auken et al., Google Doc 186PR8Ml...; ingested 2026-06-05 per issue #39) -> mf_activity_unit_patterns"
     - "ChEBI / NCBITaxon / WormBase canonical IDs (verified)"
   counts:
     rules: 191
@@ -1043,3 +1044,80 @@ species_celegans:
       tyramine: "CHEBI:15760"
     warning: "CHEBI:337782 is NOT octopamine — do not use unverified IDs."
     source: "wiki:Noctua_MOD_Imports; ebi.ac.uk/chebi (verified)"
+
+# Per-MF-class activity-unit patterns from the GO "Guide for MF annotation in
+# GO-CAM" (Gaudet / Van Auken et al.; ingested 2026-06-05, issue #39). For each
+# MF class: the MF term, its has_input/part_of/occurs_in context, and the causal
+# relation it takes to its target. This is the authoritative source for the
+# transcription-factor -> target = INDIRECT rule.
+mf_activity_unit_patterns:
+  - mf_class: protein-ligand
+    mf_term: "receptor ligand activity (GO:0048018) or child"
+    has_input: "its target receptor (ligand acts ON the receptor)"
+    part_of: "signal transduction (GO:0007165) child"
+    occurs_in: "extracellular region (GO:0005576) or plasma membrane (GO:0005886)"
+    causal_to_target: "directly positively regulates (RO:0002629) the receptor activity"
+    source: "MF guide: Signaling receptor activity"
+  - mf_class: signaling-receptor
+    mf_term: "signaling receptor activity (GO:0038023) or child"
+    has_input: "the EFFECTOR protein it regulates — NOT its ligand"
+    part_of: "same signal-transduction pathway as the ligand"
+    occurs_in: "plasma membrane (GO:0005886) for transmembrane receptors"
+    causal_to_target: "directly positively regulates (RO:0002629) its target MF"
+    source: "MF guide: Signaling receptor activity"
+  - mf_class: small-molecule-activated-receptor
+    mf_term: "signaling receptor activity (GO:0038023) or child"
+    note: "small molecules have no MF; link ligand to receptor with 'is small molecule activator' (RO:0012005) or 'is small molecule inhibitor' (RO:0012006)"
+    source: "MF guide: small molecule-activated signaling receptor"
+  - mf_class: coreceptor
+    mf_term: "coreceptor activity (GO:0015026)"
+    has_input: "the downstream protein it acts on"
+    causal_to_target: "receptor directly positively regulates (RO:0002629) coreceptor"
+    source: "MF guide: Receptor acting with a coreceptor"
+  - mf_class: molecular-adaptor
+    mf_term: "molecular adaptor activity (GO:0060090) or child"
+    has_input: "the 2+ molecules it brings together"
+    causal_to_target: "directly positively regulates (RO:0002629) OR constitutively upstream of (RO:0012009) if non-regulatory; provides input for (RO:0002413) when adapting an enzyme to its substrate"
+    source: "MF guide: Molecular adaptor activity"
+  - mf_class: sequestering
+    mf_term: "molecular sequestering activity (GO:0140313); commonly protein sequestering activity (GO:0140311)"
+    has_input: "the molecule it sequesters"
+    part_of: "negative regulation of the target's BP"
+    causal_to_target: "directly negatively regulates (RO:0002630) the sequestered protein's activity"
+    source: "MF guide: Sequestering activity"
+  - mf_class: dna-binding-transcription-factor
+    mf_term: "child of DNA-binding TF activity, RNA Pol II-specific (GO:0000981): activator GO:0001228 / repressor GO:0001227"
+    has_input: "the gene whose expression it regulates"
+    part_of: "positive or negative regulation of the target's BP"
+    occurs_in: "nucleus (GO:0005634)"
+    causal_to_target: "INDIRECTLY positively regulates (RO:0002407) or INDIRECTLY negatively regulates (RO:0002409) — transcription + translation are intervening steps; the TF does not directly interact with the target protein. One activity unit per transcriptional target."
+    source: "MF guide: DNA-binding transcription factor activity (the issue-#39 rule)"
+  - mf_class: nuclear-receptor
+    mf_term: "nuclear receptor activity (GO:0004879)"
+    has_input: "the gene whose expression it regulates"
+    occurs_in: "nucleus (GO:0005634)"
+    note: "small molecule 'is small molecule activator of' (RO:0012005) the nuclear receptor"
+    causal_to_target: "INDIRECTLY positively/negatively regulates (RO:0002407 / RO:0002409) the target — same reasoning as DNA-binding TF"
+    source: "MF guide: nuclear receptors and ligand-activated TFs"
+  - mf_class: transcription-coregulator
+    mf_term: "transcription coregulator activity (GO:0003712): coactivator GO:0003713 / corepressor GO:0003714"
+    has_input: "the transcription factor it regulates"
+    occurs_in: "nucleus (GO:0005634)"
+    causal_to_target: "directly positively/negatively regulates (RO:0002629 / RO:0002630) the TF activity; but INDIRECTLY (RO:0002407 / RO:0002409) to the downstream target GENE"
+    source: "MF guide: transcription coregulator"
+  - mf_class: molecular-carrier
+    mf_term: "molecular carrier activity (GO:0140104) or child"
+    has_input: "the molecule it binds and moves"
+    note: "has_output the cargo so it can be the input for the next reaction"
+    source: "MF guide: Molecular carrier activity"
+  - mf_class: transmembrane-transporter
+    mf_term: "child of transmembrane transporter activity (GO:0022857)"
+    occurs_in: "a membrane (GO:0016020) child"
+    note: "substrate small molecule located_in start location; transporter has_output the small molecule located_in end location"
+    source: "MF guide: transmembrane transporter activity"
+  - mf_class: ubiquitin-ligase
+    mf_term: "ubiquitin protein ligase activity (GO:0061630); adaptor GO:1990756; complex scaffold GO:0160072"
+    has_input: "the substrate protein"
+    part_of: "protein ubiquitination (GO:0016567) or a specific type"
+    causal_to_target: "E3 ligase INDIRECTLY negatively regulates (RO:0002409) the substrate when it leads to degradation; complex members linked by direct / provides-input-for relations"
+    source: "MF guide: ubiquitin-like protein ligase activity"

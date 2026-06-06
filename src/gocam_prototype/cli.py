@@ -26,6 +26,7 @@ import yaml
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
 from gocam_prototype.orchestrator import orchestrate
+from gocam_prototype.validate import validate_model
 from gocam_prototype.viewer import linkml_to_viewer_json
 from gocam_prototype.vision import extract_curator_intent
 
@@ -122,6 +123,13 @@ def run_pipeline(
     viewer_json = linkml_to_viewer_json(model)
     (out_dir / "viewer.json").write_text(json.dumps(viewer_json, indent=2))
 
+    # Lint the model against the machine-checkable GO-CAM rules (rules.yaml -> code).
+    findings = validate_model(model, ledger)
+    (out_dir / "validation.json").write_text(json.dumps(findings, indent=2))
+    n_err = sum(1 for f in findings if f.get("severity") == "error")
+    n_warn = sum(1 for f in findings if f.get("severity") == "warn")
+    print(f"[validate] {n_err} error(s), {n_warn} warning(s) -> {out_dir / 'validation.json'}", flush=True)
+
     if RUN_TEMPLATE.is_file():
         shutil.copy(RUN_TEMPLATE, out_dir / "index.html")
 
@@ -136,6 +144,7 @@ def run_pipeline(
         "source_mix": ledger.count_by_source_type(),
         "viewer_individuals": len(viewer_json["individuals"]),
         "viewer_facts": len(viewer_json["facts"]),
+        "validation": {"errors": n_err, "warnings": n_warn},
     }
     return summary
 
