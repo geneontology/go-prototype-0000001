@@ -398,8 +398,16 @@ function edgeChipEmoji(prov, edge) {
   // sources off the object. (Slot edges to gene-product/BP/CC are left to the
   // aggregated node chip, so we only fall back for has_input/has_output.)
   let sources = srcList(prov.assertions?.[`${src}/causal/${tgt}`]);
-  if (!sources.length && (tgt.includes("/has_input/") || tgt.includes("/has_output/"))) {
-    sources = srcList(prov.assertions?.[tgt]);
+  if (!sources.length) {
+    // has_input/has_output: the molecule individual (whose IRI is the key) may
+    // be on either end depending on edge orientation (has_input is drawn
+    // molecule→activity, so the key is the source there).
+    for (const end of [tgt, src]) {
+      if (end && (end.includes("/has_input/") || end.includes("/has_output/"))) {
+        const s = srcList(prov.assertions?.[end]);
+        if (s.length) { sources = s; break; }
+      }
+    }
   }
   // A causal edge may carry several sources; show the highest-priority type's
   // emoji (CHIP_SOURCE_ORDER is the canonical legend order).
@@ -725,15 +733,22 @@ function handleEdgeClick(edge, prov, labelIndex) {
     });
     return;
   }
-  if (srcList(prov.assertions[obj]).length) {
-    const slot = slotOf(obj);
+  // Slot / has_input / has_output edge: one endpoint IS the assertion key (a
+  // slot sub-individual or a has_input/has_output molecule). The molecule can
+  // sit on EITHER end depending on how the viewer orients the edge (has_input
+  // is drawn molecule→activity), so check the object first, then the subject.
+  const slotKey = srcList(prov.assertions[obj]).length ? obj
+                : srcList(prov.assertions[subj]).length ? subj
+                : null;
+  if (slotKey) {
+    const slot = slotOf(slotKey);
     renderPanel({
       kind: "slot-edge",
       header: prettySlotHeader(slot),
-      assertionId: obj,
+      assertionId: slotKey,
       edgeFacts: { property, propertyLabel: edge.data("property-label") || property,
                    subj, subjLabel, obj, objLabel },
-      entries: [{ slot, srcs: srcList(prov.assertions[obj]), assertionId: obj }],
+      entries: [{ slot, srcs: srcList(prov.assertions[slotKey]), assertionId: slotKey }],
     });
     return;
   }
