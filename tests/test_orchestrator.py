@@ -303,6 +303,38 @@ def test_request_go_term_appends_ledger_entry() -> None:
     assert not (builder._ledger.assertions and builder.build()[0].activities)  # noqa: SLF001
 
 
+def test_add_source_tool_layers_extra_claim() -> None:
+    """_t_add_source wires the agent's extra claim onto an existing slot (#40)."""
+    builder = GoCamBuilder(model_id="gomodel:test-src", title="src test")
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient([]),
+        model_name="claude-sonnet-4-6@default", max_turns=1,
+    )
+    aid = builder.add_activity(
+        "A", enabled_by_gene="WB:WBGene00006600",
+        enabled_by_source=orch._make_source(  # noqa: SLF001
+            {"source_type": "figure", "snippet": "box labelled tph-1"}),
+        gene_label="tph-1",
+    )
+    # 'add_source' must be a registered tool.
+    assert "add_source" in {t["name"] for t in orch._tools}  # noqa: SLF001
+    result = orch._t_add_source({  # noqa: SLF001
+        "activity_id": aid, "slot": "enabled_by",
+        "source": {"source_type": "alliance", "source_id": "WB:WBGene00006600",
+                   "tool_name": "alliance.resolve_symbol_to_curie"},
+    })
+    assert result["ok"] is True
+    srcs = builder._ledger.assertions[f"{aid}/enabled_by"]  # noqa: SLF001
+    assert [s.source_type for s in srcs] == ["figure", "alliance"]
+
+    # A bad source (alliance without source_id) surfaces as an error, not a raise.
+    bad = orch._t_add_source({  # noqa: SLF001
+        "activity_id": aid, "slot": "enabled_by",
+        "source": {"source_type": "alliance"},
+    })
+    assert "error" in bad
+
+
 def test_orchestrator_raises_on_runaway() -> None:
     builder = GoCamBuilder(model_id="gomodel:test-003", title="runaway test")
     # The mock keeps emitting tool_use indefinitely (well, we only stock 3 responses).

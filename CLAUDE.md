@@ -46,6 +46,35 @@ model. So adding or changing a rule only in the YAML will *not* change agent
 behavior; mirror anything meant to steer the agent into the markdown. (This bit
 us on #39: the MF-class patterns had to go into both.)
 
+## A new `SourceType` must be mirrored into the agent-facing tool schema
+
+`provenance.SourceType` (the Literal) is the *storage* vocabulary. The agent can
+only ever emit a source type that is ALSO in `SOURCE_OBJECT_SCHEMA["properties"]
+["source_type"]["enum"]` in `orchestrator.py` — that enum is what the tool-use
+API validates the model's arguments against. The two lists are maintained by
+hand and drift silently: a type present in the Literal but missing from the enum
+is un-emittable, and the agent will fall back to the nearest allowed type with
+no error. This bit us adding `figure` (#40): the storage type, validator, and
+viewer all supported it, but the enum omitted it, so a full figure1 re-run
+produced zero `figure` sources (the agent used `instinct` instead). When you add
+a source type, update: the Literal (`provenance.py`), the enum + the SOURCE
+TYPES prose + any when-to-use guidance (`orchestrator.py`), the viewer
+(`SOURCE_META`, `CHIP_SOURCE_ORDER`, badge/legend in `cli.py`), and the CSS
+swatch. Grep the old type name to find every site.
+
+## Provenance is per-claim: each assertion key holds a LIST of sources
+
+`ProvenanceLedger.assertions` maps each key to a `list[SourceObject]` (v2). One
+statement can carry separately-attributed claims — e.g. an `enabled_by` slot
+holds the `figure` source (the figure draws this gene box) AND the `alliance`
+source (its CURIE resolution). `builder.add_activity` / `set_*` / `add_causal`
+take the *primary* source; layer further claims with `builder.add_source(...)`
+(agent tool: `add_source`). Readers must dual-read both shapes — v1 runs stored a
+single object per key — so `cli.summarize_provenance`, `validate.py`, and
+`viewer.js` (`srcList()`) all normalize list-or-object. The pydantic
+`ProvenanceLedger` model itself is v2-only; v1 `provenance.json` files are read as
+raw JSON by the summarizer and the JS viewer, never re-validated through the model.
+
 ## Opus 4.8 on Vertex: global endpoint, effort/thinking via `extra_body`
 
 The orchestrator and the vision perception pass run `claude-opus-4-8`. For this

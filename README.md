@@ -23,9 +23,13 @@ End-to-end:
    order of authority. Existing GO-CAMs and standard annotations first;
    Alliance phenotypes / interactions / expression second.
 4. **Construction.** Agent assembles a `gocam-py` `Model`. Every assertion
-   carries a `source object` (`literature` / `database` / `amigo` / `instinct`).
-   The agent never fabricates citations — if it has no evidence, it tags
-   the source as `instinct` with a justification.
+   carries one or more `source object`s (`literature` / `go_annotation` /
+   `alliance` / `amigo` / `orthology` / `pathway_resource` / `expert_review` /
+   `figure` / `instinct`). A single statement can hold several
+   separately-attributed claims — e.g. the gene box read off the figure
+   (`figure`) plus the Alliance CURIE resolution (`alliance`). The agent never
+   fabricates citations: a claim read directly off the figure is `figure`; a
+   genuine LLM inference with no source is `instinct` with a justification.
 5. **Rendering.** Static page in `docs/` wraps the published
    `<go-gocam-viewer>` web component, injects the model via
    `setModelData(...)`, exposes both node and edge clicks, and renders a
@@ -47,7 +51,7 @@ project journal: each commit references and closes the issue it implements.
                         ▼
    docs/runs/<run-id>/  (committed; published via GH Pages)
      model.yaml         (gocam-py LinkML YAML)
-     provenance.json    (sidecar: per-assertion source object)
+     provenance.json    (sidecar: per-assertion list of source objects)
      viewer.json        (bbop-graph "active model" the viewer injects)
      validation.json    (GO-CAM lint findings)
      figure.<ext>       (the source figure)

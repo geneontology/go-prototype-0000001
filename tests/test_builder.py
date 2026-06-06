@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import json
 
+import pytest
 import yaml
 from gocam.datamodel import Model
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
-from gocam_prototype.provenance import alliance, go_annotation, instinct, literature
+from gocam_prototype.provenance import alliance, figure, go_annotation, instinct, literature
 
 
 def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
@@ -117,6 +118,57 @@ def test_evidence_only_attached_for_literature() -> None:
     # molecular_function used literature -> has gocam evidence.
     assert act_a.molecular_function.evidence
     assert act_a.molecular_function.evidence[0].reference == "PMID:111"
+
+
+def test_add_source_layers_extra_claim_on_a_slot() -> None:
+    """add_source attaches a second, separately-attributed claim to an existing
+    assertion — e.g. figure-shown gene box + Alliance id resolution (#40)."""
+    b, aid_a, aid_b = _build_two_activity_model()
+    key = b.add_source(
+        aid_a, "enabled_by",
+        figure(snippet="box labelled tph-1 in the 5-HT neuron"),
+    )
+    assert key == f"{aid_a}/enabled_by"
+    srcs = b._ledger.assertions[key]  # noqa: SLF001
+    assert [s.source_type for s in srcs] == ["alliance", "figure"]
+
+
+def test_add_source_literature_appends_evidence_item() -> None:
+    """A literature extra source also lands in the gocam association's evidence
+    list (associations may carry several EvidenceItems)."""
+    b, aid_a, _ = _build_two_activity_model()
+    # part_of's primary source was a go_annotation -> no evidence yet.
+    b.add_source(
+        aid_a, "part_of",
+        literature(pmid="PMID:999", snippet="serotonin biosynthesis shown directly"),
+    )
+    model, _ = b.build()
+    act_a = next(a for a in model.activities if a.id == aid_a)
+    refs = [e.reference for e in (act_a.part_of.evidence or [])]
+    assert refs == ["PMID:999"]
+
+
+def test_add_source_causal_requires_existing_edge() -> None:
+    b, aid_a, aid_b = _build_two_activity_model()
+    # Valid: the A->B edge exists.
+    key = b.add_source(
+        aid_a, "causal",
+        instinct(justification="figure arrow corroborates the regulation"),
+        target_activity_id=aid_b,
+    )
+    assert key == f"{aid_a}/causal/{aid_b}"
+    # Invalid: no edge B->A.
+    with pytest.raises(ValueError):
+        b.add_source(aid_b, "causal", instinct(justification="x"), target_activity_id=aid_a)
+
+
+def test_add_source_rejects_unset_slot_and_bad_slot() -> None:
+    b, _, aid_b = _build_two_activity_model()
+    # act-B never had occurs_in set.
+    with pytest.raises(ValueError):
+        b.add_source(aid_b, "occurs_in", figure(snippet="x"))
+    with pytest.raises(ValueError):
+        b.add_source(aid_b, "not_a_slot", figure(snippet="x"))
 
 
 def test_write_model_and_ledger(tmp_path) -> None:

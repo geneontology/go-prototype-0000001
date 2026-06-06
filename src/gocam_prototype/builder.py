@@ -210,6 +210,72 @@ class GoCamBuilder:
         )
         self.remember(predicate, predicate_label or predicate, "predicate")
 
+    _SLOT_ATTRS = {
+        "enabled_by": "enabled_by",
+        "molecular_function": "molecular_function",
+        "part_of": "part_of",
+        "occurs_in": "occurs_in",
+    }
+
+    def add_source(
+        self,
+        activity_id: str,
+        slot: str,
+        source: SourceObject,
+        *,
+        target_activity_id: str | None = None,
+        eco: str = "ECO:0000314",
+    ) -> str:
+        """Attach an ADDITIONAL source to an assertion that already exists.
+
+        One statement may rest on separately-attributed claims — e.g. the
+        figure shows the gene box (source_type='figure') while Alliance
+        resolved its CURIE (source_type='alliance'). The primary source is
+        passed to add_activity / set_* / add_causal; layer further claims on
+        with this. Returns the assertion key. (#40)
+
+        The slot/edge must already exist (set it first) so the ledger never
+        points at an assertion absent from the model. If the extra source is a
+        real citation, it is also appended to the gocam association's evidence
+        list, keeping the canonical model faithful (associations may carry
+        several EvidenceItems).
+        """
+        act = self._require_activity(activity_id)
+        if slot == "causal":
+            if not target_activity_id:
+                raise ValueError("slot='causal' requires target_activity_id")
+            key = f"{activity_id}/causal/{target_activity_id}"
+            assoc = next(
+                (a for a in (act.causal_associations or [])
+                 if a.downstream_activity == target_activity_id),
+                None,
+            )
+            if assoc is None:
+                raise ValueError(
+                    f"no causal edge {activity_id} -> {target_activity_id}; "
+                    "call add_causal first"
+                )
+        elif slot in self._SLOT_ATTRS:
+            key = f"{activity_id}/{slot}"
+            assoc = getattr(act, self._SLOT_ATTRS[slot])
+            if assoc is None:
+                raise ValueError(
+                    f"slot {slot!r} is not set on {activity_id}; set it first"
+                )
+        else:
+            raise ValueError(
+                f"unknown slot {slot!r}; expected one of "
+                "enabled_by/molecular_function/part_of/occurs_in/causal"
+            )
+
+        ev = self._evidence(eco, source)
+        if ev:
+            if assoc.evidence is None:
+                assoc.evidence = []
+            assoc.evidence.extend(ev)
+        self._ledger.attach(key, source)
+        return key
+
     # --------------------------------------------------------------- build
 
     def build(self) -> tuple[Model, ProvenanceLedger]:

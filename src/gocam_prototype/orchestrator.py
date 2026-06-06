@@ -61,20 +61,28 @@ SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
                 "orthology",
                 "pathway_resource",
                 "expert_review",
+                "figure",
                 "instinct",
                 "go_term_request",
             ],
         },
         "source_id": {
             "type": "string",
-            "description": "PMID/GO_REF/CURIE/URL. Required unless source_type='instinct'. "
-                           "For orthology: the ortholog's CURIE. "
+            "description": "PMID/GO_REF/CURIE/URL. Required unless source_type is 'instinct' or "
+                           "'figure'. For orthology: the ortholog's CURIE. "
                            "For pathway_resource: the Reactome/WikiPathways pathway id.",
         },
-        "snippet": {"type": "string"},
+        "snippet": {
+            "type": "string",
+            "description": "Quoted text / short summary of what the source says. REQUIRED for "
+                           "source_type='figure' — describe exactly what the figure shows "
+                           "(e.g. 'box labelled tph-1 in the 5-HT neuron, arrow to intestine').",
+        },
         "justification": {
             "type": "string",
-            "description": "Required when source_type='instinct'. Explain why no real evidence was found.",
+            "description": "Required when source_type='instinct'. Explain why no real evidence was "
+                           "found AND why the figure does not directly show this (if it does, use "
+                           "source_type='figure' instead).",
         },
         "tool_name": {"type": "string"},
         "extra": {
@@ -104,10 +112,18 @@ the uncertain parts clearly flagged for them to dig into. Two SEPARATE standards
   as a causal edge. Inclusion is NOT gated by how strong the evidence is. Never drop a node or edge \
   because you could not find a citation — only omit an element the figure genuinely does not support.
 * EVIDENCE SCRUTINY (be strict HERE): back each assertion with the strongest REAL evidence you can \
-  find (literature / go_annotation / alliance / pathway_resource / orthology). Where no real source \
-  can be found but the figure shows it, STILL INCLUDE the element tagged source_type='instinct' with \
-  a figure-referencing justification — never fabricate a citation, never silently drop it. The \
-  instinct tag (and low confidence) is exactly how the curator sees "verify this one."
+  find (literature / go_annotation / alliance / pathway_resource / orthology). Distinguish two \
+  fallbacks when no database/citation source exists:
+    - source_type='figure' — the claim is read DIRECTLY off the figure: something literally drawn or \
+      labelled (a gene box, a compartment label, an arrow between two boxes). This is faithful figure \
+      transcription, NOT a guess. snippet = exactly what the figure shows. USE THIS for the "the \
+      figure draws X" claim of every gene box and every figure-shown edge.
+    - source_type='instinct' — an LLM INFERENCE that goes BEYOND what is drawn (e.g. choosing a \
+      specific GO CURIE the figure does not name, or a mechanism the figure only implies). \
+      justification must say why no real source was found and why the figure does not directly show it.
+  Either way STILL INCLUDE the element — never fabricate a citation, never silently drop it. figure \
+  and instinct (and low confidence) are exactly how the curator sees "verify this one"; figure says \
+  "this is what the picture shows", instinct says "this is my best guess".
 
 Read the injected GO/GO-CAM guidelines accordingly: "incomplete models are valid" and "quality over \
 quantity" mean do NOT invent unknown aspects (use root terms) and do NOT pad one gene with junk \
@@ -127,10 +143,19 @@ WORKFLOW
      - `alliance_gene_orthologs` — if you transfer an annotation by orthology, tag as \
        source_type='orthology'. Set source_id to the ortholog's CURIE and put ortholog_species \
        (e.g. 'Homo sapiens') in `extra`. Put the originating annotation's id in extra.from_annotation.
-4. Create one Activity for EVERY gene mention in the intent via `add_activity` (source from the \
-   resolver/lookup), then call `set_molecular_function`, `set_part_of`, `set_occurs_in` as \
-   appropriate. Each call requires a source. Do not skip a gene because its evidence looks thin — \
-   model it and let the source tier (instinct/low-confidence) carry the uncertainty.
+4. Create one Activity for EVERY gene mention in the intent via `add_activity`, then call \
+   `set_molecular_function`, `set_part_of`, `set_occurs_in` as appropriate. Each call requires a \
+   source. Do not skip a gene because its evidence looks thin — model it and let the source tier \
+   (instinct/low-confidence) carry the uncertainty.
+   SEPARATE THE TWO CLAIMS behind enabling a gene product: (a) the BIOLOGY — the figure draws this \
+   box as this gene — is a source_type='figure' source (snippet = what the figure shows, e.g. \
+   "box labelled tph-1 in the 5-HT neuron"); (b) the ID RESOLUTION — that symbol maps to a stable \
+   CURIE — is the source_type='alliance' source from step 1. Pass the figure source as the \
+   `add_activity` source, then call `add_source(activity_id, slot='enabled_by', source=<alliance \
+   resolution>)`. This way the curator sees both "where the gene came from" and "how its identity was \
+   resolved" as distinct, separately-checkable claims. Apply the same split anywhere one assertion \
+   rests on more than one source (e.g. a figure-shown localization later confirmed by a go_annotation): \
+   primary source on the set_* call, extra claim(s) via add_source.
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -165,8 +190,14 @@ SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 * `pathway_resource`  — Reactome / WikiPathways cross-reference. source_id = pathway id;
                         extra.resource = 'Reactome' or 'WikiPathways'; extra.pathway_url optional.
 * `expert_review`     — curator-asserted or expert-vetted. Use sparingly; not common in v0.
-* `instinct`          — LLM-only. REQUIRES a non-empty justification. The weakest tier — use ONLY \
-                        when no real evidence is available, and write down WHY in justification.
+* `figure`            — read DIRECTLY off the uploaded figure (a drawn box/label/arrow). NOT a \
+                        database lookup and NOT a guess. REQUIRES snippet = what the figure shows; \
+                        no source_id needed. This is the right tag for "the figure draws this gene \
+                        box / this arrow", and is stronger/more specific than instinct.
+* `instinct`          — LLM INFERENCE beyond what the figure draws, with no external source. \
+                        REQUIRES a non-empty justification. The weakest tier — use ONLY when no real \
+                        evidence is available AND the figure does not directly show it (else use \
+                        'figure'). Write down WHY in justification.
 * `go_term_request`   — NOT a source for an assertion. A separate record that no existing GO term \
                         fits a slot. Created via `request_go_term`, not by passing this as a slot's \
                         source. Use when go_term_lookup turns up nothing usable AND the closest \
@@ -189,8 +220,9 @@ BEFORE every add_causal call you SHOULD attempt:
      If a pathway contains this exact regulatory step, cite it as source_type='pathway_resource'
      with source_id=<stId> and extra={resource: 'Reactome', pathway_url: <detail URL>}.
 
-If any of these returns relevant evidence, use it. Only fall back to instinct (with a
-figure-referencing justification) when none yield useful evidence.
+If any of these returns relevant evidence, use it. When none yield useful evidence, fall back to
+source_type='figure' if the edge is an arrow actually drawn in the figure (snippet = what the figure
+shows), or to source_type='instinct' only if the edge is your inference beyond what is drawn.
 
 Concrete rules for `add_causal` source objects:
 
@@ -208,10 +240,13 @@ Concrete rules for `add_causal` source objects:
        `source_id` is the ortholog CURIE in the source organism; `extra.ortholog_species` +
        `extra.from_annotation` carry the rest.
     - `expert_review`: a curator has personally vetted this edge.
-    - `instinct`: ONLY when the figure clearly shows the arrow but no external source can be
-       located. The `justification` must point at the figure ("Panel E shows a dashed arrow
-       labelled 'endocrine signal' from NEURONS to INTESTINE…") and explain why no real source
-       applies. Always prefer a more authoritative type over instinct if one is reachable.
+    - `figure`: the arrow is actually DRAWN in the figure but no external source can be located.
+       `snippet` describes the drawn arrow ("Panel E shows a dashed arrow labelled 'endocrine
+       signal' from NEURONS to INTESTINE…"). This is the right fallback for figure-shown edges —
+       it is more honest than instinct, which is for inferred edges.
+    - `instinct`: ONLY when the edge is your INFERENCE and is NOT directly drawn in the figure and
+       no external source can be located. The `justification` must explain the inference and why no
+       real source applies. Always prefer a more authoritative type (or 'figure') over instinct.
 * Always include the predicate's natural-language form in the `snippet` (e.g. "tph-1 product
   is causally upstream, positive effect, of mod-1 in serotonin signalling"), so the panel reader
   doesn't have to translate the RO CURIE in their head.
@@ -460,6 +495,38 @@ class Orchestrator:
                 ],
             },
             self._t_add_causal,
+        )
+        self._register(
+            "add_source",
+            "Attach an ADDITIONAL source to an assertion that already exists "
+            "(slot or causal edge). Use this to split a single statement into "
+            "its separately-attributed claims — e.g. after add_activity records "
+            "the figure showing a gene box (source_type='figure'), call add_source "
+            "to record that Alliance resolved that gene's CURIE "
+            "(source_type='alliance'). The slot/edge must already be set. "
+            "Slot is one of enabled_by/molecular_function/part_of/occurs_in/causal; "
+            "for 'causal' also pass target_activity_id.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "activity_id": {"type": "string"},
+                    "slot": {
+                        "type": "string",
+                        "enum": [
+                            "enabled_by", "molecular_function",
+                            "part_of", "occurs_in", "causal",
+                        ],
+                    },
+                    "target_activity_id": {
+                        "type": "string",
+                        "description": "Required only when slot='causal'.",
+                    },
+                    "source": SOURCE_OBJECT_SCHEMA,
+                },
+                "required": ["activity_id", "slot", "source"],
+            },
+            self._t_add_source,
         )
         self._register(
             "request_go_term",
@@ -777,9 +844,9 @@ class Orchestrator:
                     "regulatory relationship, then cite it), 'alliance' (call "
                     "alliance_gene_interactions for a documented genetic / physical interaction "
                     "with a PMID), 'pathway_resource' (Reactome / WikiPathways pathway "
-                    "containing this step), 'orthology' (annotated ortholog pair), or "
-                    "'instinct' (figure-supported, no external source — justification must "
-                    "reference the figure)."
+                    "containing this step), 'orthology' (annotated ortholog pair), "
+                    "'figure' (the arrow is drawn in the figure — snippet describes it), or "
+                    "'instinct' (your inference, not drawn in the figure — justification required)."
                 )
             }
         try:
@@ -793,6 +860,19 @@ class Orchestrator:
         except Exception as e:
             return {"error": str(e)}
         return {"ok": True}
+
+    def _t_add_source(self, inp: dict) -> dict:
+        try:
+            src = self._make_source(inp["source"])
+            key = self.builder.add_source(
+                inp["activity_id"],
+                inp["slot"],
+                src,
+                target_activity_id=inp.get("target_activity_id"),
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        return {"ok": True, "assertion": key}
 
     def _t_request_go_term(self, inp: dict) -> dict:
         import re
