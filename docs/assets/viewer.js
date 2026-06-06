@@ -392,13 +392,18 @@ function edgeChipEmoji(prov, edge) {
   const src = data.source || data.subject;
   const tgt = data.target || data.object;
   if (!src || !tgt) return null;
-  // A causal edge may now carry several sources; show the highest-priority
-  // type's emoji (CHIP_SOURCE_ORDER is the canonical legend order).
-  const types = new Set(
-    srcList(prov.assertions?.[`${src}/causal/${tgt}`])
-      .map((a) => a?.source_type)
-      .filter(Boolean),
-  );
+  // A causal edge carries its sources under <src>/causal/<tgt>. A has_input /
+  // has_output edge points at a molecule individual whose IRI *is* the
+  // assertion key (<activity>/has_input|has_output/<molecule>), so read the
+  // sources off the object. (Slot edges to gene-product/BP/CC are left to the
+  // aggregated node chip, so we only fall back for has_input/has_output.)
+  let sources = srcList(prov.assertions?.[`${src}/causal/${tgt}`]);
+  if (!sources.length && (tgt.includes("/has_input/") || tgt.includes("/has_output/"))) {
+    sources = srcList(prov.assertions?.[tgt]);
+  }
+  // A causal edge may carry several sources; show the highest-priority type's
+  // emoji (CHIP_SOURCE_ORDER is the canonical legend order).
+  const types = new Set(sources.map((a) => a?.source_type).filter(Boolean));
   if (!types.size) return null;
   const t = CHIP_SOURCE_ORDER.find((x) => types.has(x));
   return t ? (SOURCE_META[t]?.emoji || null) : null;
