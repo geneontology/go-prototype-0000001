@@ -186,7 +186,12 @@ def extract_curator_intent(
     process_hint: str | None = None,
     client: AnthropicVertex | None = None,   # regional client for Stage B (structure)
     model: str | None = None,                # Stage B structuring model
-    max_tokens: int = 4096,
+    # Stage-B output is the FULL curator-intent JSON. A dense figure (figure2:
+    # 18 genes + ~30 edges, each with a snippet) blows the old 4096 budget, and
+    # because `tentative_edges` is the LAST field in the schema the output
+    # truncates right at the edges — genes survive, edges silently vanish (looked
+    # like a 0-edge figure). See the truncation guard below.
+    max_tokens: int = 16000,
     verify_edges: bool = True,
     transcript_out: str | Path | None = None,
 ) -> CuratorIntent:
@@ -213,7 +218,7 @@ def extract_curator_intent(
     perc = create_message(
         opus_client,
         model=opus_model,
-        max_tokens=8000,
+        max_tokens=12000,
         effort="high",
         adaptive_thinking=True,
         system=PERCEPTION_SYSTEM,
@@ -223,6 +228,11 @@ def extract_curator_intent(
              + _hint_text(species_hint, process_hint)},
         ]}],
     )
+    if getattr(perc, "stop_reason", None) == "max_tokens":
+        raise RuntimeError(
+            "Stage-A perception hit max_tokens — the figure transcription was truncated "
+            "(arrows are listed late, so connectivity is lost first). Raise the Stage-A budget."
+        )
     transcription = "".join(
         getattr(b, "text", "") for b in perc.content if getattr(b, "type", None) == "text"
     ).strip()
@@ -249,6 +259,14 @@ def extract_curator_intent(
                 "input_schema": CuratorIntent.model_json_schema()}],
         tool_choice={"type": "tool", "name": "submit_curator_intent"},
     )
+    if getattr(resp, "stop_reason", None) == "max_tokens":
+        # The forced-tool JSON was cut off. `tentative_edges` is the last schema
+        # field, so a truncated parse yields genes-but-no-edges that still
+        # validates — exactly the silent edge-loss this guard prevents.
+        raise RuntimeError(
+            "Stage-B structuring hit max_tokens — the curator-intent JSON was truncated "
+            "(tentative_edges is the last field, so edges are dropped first). Raise max_tokens."
+        )
     intent: CuratorIntent | None = None
     for block in resp.content:
         if getattr(block, "type", None) == "tool_use" and block.name == "submit_curator_intent":
