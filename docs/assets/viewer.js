@@ -576,7 +576,7 @@ function handleNodeClick(detail, prov, labelIndex) {
       kind: "slot",
       header: prettySlotHeader(slot),
       assertionId: id,
-      entries: [{ slot, src: prov.assertions[id] }],
+      entries: [{ slot, src: prov.assertions[id], assertionId: id }],
     });
     return;
   }
@@ -584,7 +584,7 @@ function handleNodeClick(detail, prov, labelIndex) {
   // Case 2: clicked id is an activity IRI. Aggregate per-slot assertions.
   const slots = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
   const entries = slots
-    .map((slot) => ({ slot, src: prov.assertions[`${id}/${slot}`] }))
+    .map((slot) => ({ slot, src: prov.assertions[`${id}/${slot}`], assertionId: `${id}/${slot}` }))
     .filter((x) => x.src);
   if (entries.length > 0) {
     renderPanel({
@@ -628,7 +628,7 @@ function handleEdgeClick(edge, prov, labelIndex) {
         subj, subjLabel,
         obj,  objLabel,
       },
-      entries: [{ slot: "causal", src: prov.assertions[causalKey] }],
+      entries: [{ slot: "causal", src: prov.assertions[causalKey], assertionId: causalKey }],
     });
     return;
   }
@@ -640,7 +640,7 @@ function handleEdgeClick(edge, prov, labelIndex) {
       assertionId: obj,
       edgeFacts: { property, propertyLabel: edge.data("property-label") || property,
                    subj, subjLabel, obj, objLabel },
-      entries: [{ slot, src: prov.assertions[obj] }],
+      entries: [{ slot, src: prov.assertions[obj], assertionId: obj }],
     });
     return;
   }
@@ -729,7 +729,7 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
   }
 
   for (const entry of (entries || [])) {
-    panel.appendChild(renderSource(entry.slot, entry.src, assertionId));
+    panel.appendChild(renderSource(entry.slot, entry.src, entry.assertionId ?? assertionId));
   }
 }
 
