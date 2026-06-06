@@ -1,0 +1,742 @@
+{
+  "id": "gomodel:run-figure1-opus48",
+  "individuals": [
+    {
+      "id": "gomodel:run-figure1-opus48/tph1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004510",
+          "label": "tryptophan 5-monooxygenase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tph1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00006600",
+          "label": "tph-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tph1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0042427",
+          "label": "serotonin biosynthetic process"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tph1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0043005",
+          "label": "neuron projection"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tph1/causal/gomodel:run-figure1-opus48/mod1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/mod1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0160039",
+          "label": "serotonin-gated chloride channel activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/mod1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00003386",
+          "label": "mod-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/mod1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0007210",
+          "label": "serotonin receptor signaling pathway"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/mod1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005886",
+          "label": "plasma membrane"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/mod1/causal/gomodel:run-figure1-opus48/nhr76/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/ser6",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004989",
+          "label": "octopamine receptor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/ser6/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00021897",
+          "label": "ser-6"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/ser6/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0071927",
+          "label": "octopamine signaling pathway"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/ser6/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005886",
+          "label": "plasma membrane"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004836",
+          "label": "tyramine-beta hydroxylase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00006541",
+          "label": "tbh-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0006589",
+          "label": "octopamine biosynthetic process"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045202",
+          "label": "synapse"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1/causal/gomodel:run-figure1-opus48/ser6/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/tbh1/causal/gomodel:run-figure1-opus48/mod1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "ECO:0000314"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:24120942"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/nhr76",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004879",
+          "label": "nuclear receptor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/nhr76/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00015497",
+          "label": "nhr-76"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/nhr76/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045944",
+          "label": "positive regulation of transcription by RNA polymerase II"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/nhr76/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/atgl1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004806",
+          "label": "triacylglycerol lipase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/atgl1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00015484",
+          "label": "atgl-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/atgl1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0019433",
+          "label": "triglyceride catabolic process"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure1-opus48/atgl1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005811",
+          "label": "lipid droplet"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    }
+  ],
+  "facts": [
+    {
+      "subject": "gomodel:run-figure1-opus48/tph1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/tph1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tph1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/tph1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tph1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/tph1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tph1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure1-opus48/mod1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-opus48/tph1/causal/gomodel:run-figure1-opus48/mod1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/mod1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/mod1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/mod1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/mod1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/mod1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/mod1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/mod1",
+      "property": "RO:0002407",
+      "property-label": "indirectly positively regulates",
+      "object": "gomodel:run-figure1-opus48/nhr76",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-opus48/mod1/causal/gomodel:run-figure1-opus48/nhr76/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/ser6",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/ser6/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/ser6",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/ser6/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/ser6",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/ser6/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/ser6",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure1-opus48/tph1",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tbh1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/tbh1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tbh1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/tbh1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tbh1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/tbh1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tbh1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure1-opus48/ser6",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-opus48/tbh1/causal/gomodel:run-figure1-opus48/ser6/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/tbh1",
+      "property": "RO:0002407",
+      "property-label": "indirectly positively regulates",
+      "object": "gomodel:run-figure1-opus48/mod1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure1-opus48/tbh1/causal/gomodel:run-figure1-opus48/mod1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/nhr76",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/nhr76/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/nhr76",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/nhr76/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/nhr76",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/nhr76/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/nhr76",
+      "property": "RO:0002407",
+      "property-label": "indirectly positively regulates",
+      "object": "gomodel:run-figure1-opus48/atgl1",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/atgl1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure1-opus48/atgl1/enabled_by",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/atgl1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure1-opus48/atgl1/part_of",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure1-opus48/atgl1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure1-opus48/atgl1/occurs_in",
+      "annotations": []
+    }
+  ],
+  "annotations": [
+    {
+      "key": "title",
+      "value": "Agent run figure1-opus48: Caenorhabditis elegans \u2014 Serotonin and octopamine signaling from neurons triggers an endocrine signal that drives nhr-76-mediated transcription of atgl-1 in the intestine, resulting in fat loss"
+    },
+    {
+      "key": "http://www.geneontology.org/formats/oboInOwl#id",
+      "value": "gomodel:run-figure1-opus48"
+    },
+    {
+      "key": "https://w3id.org/biolink/vocab/in_taxon",
+      "value": "NCBITaxon:6239",
+      "value-type": "IRI"
+    },
+    {
+      "key": "state",
+      "value": "development"
+    }
+  ]
+}
