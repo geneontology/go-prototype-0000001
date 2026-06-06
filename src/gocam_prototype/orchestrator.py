@@ -172,10 +172,40 @@ WORKFLOW
    `indirectly positively/negatively regulates` (transcription + translation are the intervening \
    steps), NOT a direct relation. See mf_activity_unit_patterns in the injected curation guidelines.
    Then call `add_causal` with the predicate and a source.
-6. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
-   causal edge (or you have recorded a figure-based reason an element cannot be mapped). Do NOT \
-   finalize a partial model just because the well-evidenced core is done — fidelity to the figure \
-   comes first; uncertain elements stay in, marked as instinct/low-confidence.
+   A causal edge connects TWO gene-product ACTIVITIES. If a tentative_edge's endpoint is NOT another \
+   gene's activity, it is NOT a causal edge — route it per INPUTS/OUTPUTS & PATHWAY BOUNDARY below \
+   (a stimulus MOLECULE source -> add_input; a compartment like Nucleus -> occurs_in; a process or a \
+   transcriptional-output GENE SET -> the TF's part_of regulation-of-transcription + add_input the \
+   named target gene). NEVER create a causal edge whose target is a compartment, a process, or a gene set.
+6. Add the figure's INPUTS and OUTPUTS (see that section): stimulus/ligand molecules as add_input \
+   (ChEBI) on the receiving activity, TF target genes as add_input (gene_product), biosynthetic \
+   products as add_output. This is how molecules and target genes enter the model.
+7. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
+   causal edge OR correctly routed (input/output/occurs_in/part_of) OR recorded as figure-unmappable. \
+   Do NOT finalize a partial model just because the well-evidenced core is done — fidelity to the \
+   figure comes first; uncertain elements stay in, marked as instinct/low-confidence.
+
+INPUTS / OUTPUTS & THE PATHWAY BOUNDARY (participant-role grid — from the GO-CAM guidelines)
+
+A signaling pathway BEGINS at ligand–receptor and ENDS at "regulation of" a downstream process. The \
+downstream RESPONSE itself — transcription and the SETS of genes it produces ("antimicrobial defence \
+genes", "cellular stress response genes", "ESRE", "Translation") — is OUTSIDE the pathway. Do NOT \
+create activity nodes for those gene sets and do NOT wire causal edges to them. Route each figure \
+participant by role:
+* stimulus / ligand / input small molecule (e.g. a bacterial toxin entering the cell): `add_input` it \
+  on the RECEIVING activity (the receptor / first transducer), molecule_kind='molecule', source_id = \
+  a ChEBI CURIE (resolve the chemical; tag the resolution source_type='alliance'/'amigo' or, if only \
+  the figure shows it, 'figure'). It is NOT a causal edge and its source is NOT another activity.
+* transcription factor: `set_molecular_function` to its DNA-binding TF MF AND `set_part_of` \
+  regulation of transcription, DNA-templated (GO:0006355); then for each NAMED target gene the figure \
+  shows it regulating, `add_input` that gene (molecule_kind='gene_product'). If the figure also draws \
+  the target gene as its own activity, additionally `add_causal` TF -> target with an INDIRECT \
+  relation. A TF pointing only at a gene SET (not a named gene) gets the part_of + a process BP, no edge.
+* biosynthetic / enzymatic activity that produces a signal (e.g. an amine): `add_output` the product \
+  (ChEBI). Downstream, a receptor for that product `add_input`s it — chaining the two activities.
+* a figure arrow into a COMPARTMENT box (Nucleus, Mitochondria) is `occurs_in`, never a causal edge.
+Connectivity comes from causal edges between the signaling RELAYS plus shared inputs/outputs — not \
+from node-ifying the excluded downstream gene sets.
 
 SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 
@@ -504,6 +534,47 @@ class Orchestrator:
                 ],
             },
             self._t_add_causal,
+        )
+        self._register(
+            "add_input",
+            "Add has_input (RO:0002233) to an existing activity: the entity it acts on — a "
+            "ChEBI small molecule (stimulus ligand / substrate) OR, for a transcription "
+            "factor, its TARGET gene. Use molecule_kind='molecule' for a ChEBI CURIE, "
+            "'gene_product' for a target-gene CURIE. This is how a stimulus molecule "
+            "(e.g. a bacterial toxin entering the cell) and a TF's target gene enter the "
+            "model — NOT as a causal edge to a compartment.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "activity_id": {"type": "string"},
+                    "molecule": {"type": "string", "description": "ChEBI CURIE (chemical) or gene CURIE (TF target)."},
+                    "molecule_kind": {"type": "string", "enum": ["molecule", "gene_product"]},
+                    "label": {"type": "string"},
+                    "source": SOURCE_OBJECT_SCHEMA,
+                },
+                "required": ["activity_id", "molecule", "source"],
+            },
+            self._t_add_input,
+        )
+        self._register(
+            "add_output",
+            "Add has_output (RO:0002234) to an existing activity: the product it makes — a "
+            "ChEBI small molecule (molecule_kind='molecule') or a gene product "
+            "(molecule_kind='gene_product'). E.g. a biosynthetic activity's product amine.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "activity_id": {"type": "string"},
+                    "molecule": {"type": "string", "description": "ChEBI CURIE (chemical) or gene CURIE."},
+                    "molecule_kind": {"type": "string", "enum": ["molecule", "gene_product"]},
+                    "label": {"type": "string"},
+                    "source": SOURCE_OBJECT_SCHEMA,
+                },
+                "required": ["activity_id", "molecule", "source"],
+            },
+            self._t_add_output,
         )
         self._register(
             "add_source",
@@ -870,6 +941,28 @@ class Orchestrator:
         except Exception as e:
             return {"error": str(e)}
         return {"ok": True}
+
+    def _t_add_input(self, inp: dict) -> dict:
+        try:
+            src = self._make_source(inp["source"])
+            key = self.builder.add_input(
+                inp["activity_id"], inp["molecule"], source=src,
+                label=inp.get("label"), molecule_kind=inp.get("molecule_kind", "molecule"),
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        return {"ok": True, "assertion": key}
+
+    def _t_add_output(self, inp: dict) -> dict:
+        try:
+            src = self._make_source(inp["source"])
+            key = self.builder.add_output(
+                inp["activity_id"], inp["molecule"], source=src,
+                label=inp.get("label"), molecule_kind=inp.get("molecule_kind", "molecule"),
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        return {"ok": True, "assertion": key}
 
     def _t_add_source(self, inp: dict) -> dict:
         try:

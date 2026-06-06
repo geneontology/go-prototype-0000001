@@ -38,6 +38,8 @@ from gocam.datamodel import (
     Model,
     MolecularFunctionAssociation,
     MolecularFunctionTermObject,
+    MoleculeAssociation,
+    MoleculeTermObject,
     PredicateTermObject,
     ProvenanceInfo,
     PublicationObject,
@@ -51,6 +53,7 @@ TermKind = Literal[
     "molecular_function",
     "biological_process",
     "cellular_component",
+    "molecule",
     "predicate",
     "publication",
     "evidence",
@@ -62,6 +65,7 @@ _KIND_TO_CLS: dict[str, type] = {
     "molecular_function": MolecularFunctionTermObject,
     "biological_process": BiologicalProcessTermObject,
     "cellular_component": CellularAnatomicalEntityTermObject,
+    "molecule": MoleculeTermObject,
     "predicate": PredicateTermObject,
     "publication": PublicationObject,
     "evidence": EvidenceTermObject,
@@ -209,6 +213,67 @@ class GoCamBuilder:
             f"{source_activity_id}/causal/{target_activity_id}", source
         )
         self.remember(predicate, predicate_label or predicate, "predicate")
+
+    # has_input / has_output (RO:0002233 / RO:0002234). Stored in the activity's
+    # molecular_associations list. `molecule_kind` is 'molecule' for a ChEBI
+    # chemical (e.g. a stimulus ligand) or 'gene_product' for a TF-target gene.
+    def add_input(
+        self,
+        activity_id: str,
+        molecule: str,
+        *,
+        source: SourceObject,
+        eco: str = "ECO:0000314",
+        label: str | None = None,
+        molecule_kind: TermKind = "molecule",
+    ) -> str:
+        """has_input (RO:0002233): substrate / binding partner / TF-target gene.
+        Returns the assertion key."""
+        return self._add_molecule(
+            activity_id, molecule, "RO:0002233", "has_input",
+            source=source, eco=eco, label=label, molecule_kind=molecule_kind,
+        )
+
+    def add_output(
+        self,
+        activity_id: str,
+        molecule: str,
+        *,
+        source: SourceObject,
+        eco: str = "ECO:0000314",
+        label: str | None = None,
+        molecule_kind: TermKind = "molecule",
+    ) -> str:
+        """has_output (RO:0002234): product (incl. a modified protein form).
+        Returns the assertion key."""
+        return self._add_molecule(
+            activity_id, molecule, "RO:0002234", "has_output",
+            source=source, eco=eco, label=label, molecule_kind=molecule_kind,
+        )
+
+    def _add_molecule(
+        self, activity_id: str, molecule: str, predicate: str, slot: str,
+        *, source: SourceObject, eco: str, label: str | None, molecule_kind: TermKind,
+    ) -> str:
+        act = self._require_activity(activity_id)
+        if molecule_kind not in ("molecule", "gene_product"):
+            raise ValueError(
+                f"molecule_kind must be 'molecule' or 'gene_product', got {molecule_kind!r}"
+            )
+        if act.molecular_associations is None:
+            act.molecular_associations = []
+        act.molecular_associations.append(
+            MoleculeAssociation(
+                predicate=predicate, molecule=molecule,
+                evidence=self._evidence(eco, source),
+            )
+        )
+        # Per-molecule key (an activity may carry several inputs/outputs).
+        key = f"{activity_id}/{slot}/{molecule}"
+        self._ledger.attach(key, source)
+        self.remember(molecule, label or molecule, molecule_kind)
+        self.remember(predicate, "has input" if slot == "has_input" else "has output", "predicate")
+        return key
 
     _SLOT_ATTRS = {
         "enabled_by": "enabled_by",

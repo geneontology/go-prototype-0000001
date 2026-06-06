@@ -171,6 +171,46 @@ def test_add_source_rejects_unset_slot_and_bad_slot() -> None:
         b.add_source(aid_b, "not_a_slot", figure(snippet="x"))
 
 
+def test_add_input_output_molecular_associations() -> None:
+    """has_input/has_output land in molecular_associations with the right RO
+    predicate, ChEBI vs gene-product term kind, and per-molecule ledger keys."""
+    from gocam.datamodel import Model
+
+    b, aid_a, _ = _build_two_activity_model()
+    k_in = b.add_input(aid_a, "CHEBI:28815",
+                       source=figure(snippet="pyocyanin drawn entering the cell"),
+                       label="pyocyanin")
+    k_tgt = b.add_input(aid_a, "WB:WBGene00000001",
+                        source=literature(pmid="PMID:1"), molecule_kind="gene_product",
+                        label="target gene")
+    k_out = b.add_output(aid_a, "CHEBI:350546",
+                         source=literature(pmid="PMID:2"), label="serotonin")
+    assert k_in == f"{aid_a}/has_input/CHEBI:28815"
+    assert k_out == f"{aid_a}/has_output/CHEBI:350546"
+
+    model, ledger = b.build()
+    act = next(a for a in model.activities if a.id == aid_a)
+    ma = [(m.predicate, m.molecule) for m in (act.molecular_associations or [])]
+    assert ("RO:0002233", "CHEBI:28815") in ma
+    assert ("RO:0002233", "WB:WBGene00000001") in ma
+    assert ("RO:0002234", "CHEBI:350546") in ma
+    # All three keys recorded in the sidecar.
+    assert {k_in, k_tgt, k_out} <= set(ledger.assertions.keys())
+    # The ChEBI molecule is typed as a molecule term object; the model validates.
+    Model.model_validate(model.model_dump(exclude_none=True, mode="json"))
+    obj_kinds = {o.id: type(o).__name__ for o in model.objects}
+    assert obj_kinds["CHEBI:28815"] == "MoleculeTermObject"
+    assert obj_kinds["WB:WBGene00000001"] == "GeneProductTermObject"
+
+
+def test_add_input_rejects_bad_kind_and_missing_activity() -> None:
+    b, aid_a, _ = _build_two_activity_model()
+    with pytest.raises(ValueError):
+        b.add_input(aid_a, "CHEBI:1", source=figure(snippet="x"), molecule_kind="chemical")
+    with pytest.raises(ValueError):
+        b.add_input("gomodel:test/none", "CHEBI:1", source=figure(snippet="x"))
+
+
 def test_write_model_and_ledger(tmp_path) -> None:
     b, _, _ = _build_two_activity_model()
     model, ledger = b.build()

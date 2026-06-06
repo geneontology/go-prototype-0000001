@@ -1,0 +1,339 @@
+{
+  "species": "Caenorhabditis elegans",
+  "species_taxon": "NCBITaxon:6239",
+  "processes_hinted": [
+    "mitochondrial unfolded protein response (UPRmt)",
+    "p38 MAPK signaling cascade",
+    "innate immune response / antimicrobial defence",
+    "cellular stress response",
+    "iron chelation by pyoverdine",
+    "reactive oxygen species (ROS) signaling",
+    "HIF-1 hypoxia signaling",
+    "translational inhibition by ExoA",
+    "ZIP-2-mediated transcriptional response",
+    "FSHR-1 receptor signaling",
+    "DAF-16/FOXO stress response",
+    "SKN-1/Nrf2 oxidative stress response",
+    "HSF-1 heat shock response",
+    "ESRE (ethanol and stress response element) regulation",
+    "LRO (lysosome-related organelle) stress / pH increase"
+  ],
+  "compartments": [
+    {
+      "label": "Lumen",
+      "kind": "other",
+      "confidence": 0.95,
+      "snippet": "Open space label top-left above intestinal cell brush border; contains green rod bacteria and P. aeruginosa."
+    },
+    {
+      "label": "Intestinal cell",
+      "kind": "cell_type",
+      "confidence": 0.99,
+      "snippet": "Large outlined cell box with brush-border microvilli at top; contains Mitochondria and Nucleus sub-compartments."
+    },
+    {
+      "label": "Mitochondria",
+      "kind": "organelle",
+      "confidence": 0.99,
+      "snippet": "Organelle in center of intestinal cell; contains labels UPRᴹᵀ and mtROS."
+    },
+    {
+      "label": "Nucleus",
+      "kind": "organelle",
+      "confidence": 0.99,
+      "snippet": "Large oval inside intestinal cell, lower portion; contains ESRE, cellular stress response genes, antimicrobial defence genes."
+    }
+  ],
+  "genes": [
+    {
+      "symbol": "FSHR-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Blue membrane receptor on brush border, right side."
+    },
+    {
+      "symbol": "TIR-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Intracellular node label TIR-1/SARM1; SARM1 is human ortholog notation."
+    },
+    {
+      "symbol": "NSY-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow oval labeled NSY-1 / MAPKKK in p38 cascade."
+    },
+    {
+      "symbol": "SEK-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow oval labeled SEK-1 / MAPKK in p38 cascade."
+    },
+    {
+      "symbol": "PMK-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow-pink oval labeled PMK-1 / p38 MAPK."
+    },
+    {
+      "symbol": "HSP-60",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Blue oval labeled HSP-60; connector to/from Mitochondria, direction uncertain."
+    },
+    {
+      "symbol": "ATFS-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box labeled ATFS-1 / ATF-4; sends solid arrow downward to ESRE/nucleus."
+    },
+    {
+      "symbol": "HIF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box; receives signal from +Fe³⁺ and sends arrow downward to ESRE/nucleus."
+    },
+    {
+      "symbol": "AMPK",
+      "in_compartment": "Mitochondria",
+      "confidence": 0.7,
+      "snippet": "Purple oval; receives signal from mtROS (faint/uncertain); target of downward connector also uncertain."
+    },
+    {
+      "symbol": "DAF-16",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box labeled DAF-16 / FOXO; sends solid arrow to cellular stress response genes."
+    },
+    {
+      "symbol": "SKN-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box labeled SKN-1 / Nrf2; sends solid arrow to cellular stress response genes."
+    },
+    {
+      "symbol": "HSF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box; sends solid arrow to antimicrobial defence genes; adjacent to ROS box."
+    },
+    {
+      "symbol": "ATF-7",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box; receives downward arrow from PMK-1 and sends solid arrow into nucleus (antimicrobial defence genes)."
+    },
+    {
+      "symbol": "ZIP-4",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Purple box on right side; receives signal from Translation pathway; sends solid arrow to ZIP-2."
+    },
+    {
+      "symbol": "CEBP-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.9,
+      "snippet": "Purple box labeled CEBP-1/2; sends solid arrow to ZIP-2."
+    },
+    {
+      "symbol": "CEBP-2",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.9,
+      "snippet": "Purple box labeled CEBP-1/2; sends solid arrow to ZIP-2."
+    },
+    {
+      "symbol": "ZIP-2",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box; receives arrows from ZIP-4 and CEBP-1/2; sends arrows to ESRE (arrowhead type ambiguous) and antimicrobial defence genes."
+    },
+    {
+      "symbol": "NHR-86",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Purple box labeled NHR-86 / HNF-4, far right; sends solid leftward arrow into nucleus (antimicrobial defence genes)."
+    }
+  ],
+  "tentative_edges": [
+    {
+      "from_symbol": "TIR-1",
+      "to_symbol": "NSY-1",
+      "relation": "positively regulates",
+      "via": "LRO stress / pH increase",
+      "confidence": 0.9,
+      "snippet": "Pyocyanin --> TIR-1/SARM1 --> LRO stress/pH increase --> NSY-1; solid activation arrows; LRO stress is intermediate step, NSY-1 is downstream."
+    },
+    {
+      "from_symbol": "NSY-1",
+      "to_symbol": "SEK-1",
+      "relation": "positively regulates",
+      "confidence": 0.97,
+      "snippet": "Solid arrow from NSY-1 (MAPKKK) to SEK-1 (MAPKK) in canonical p38 cascade."
+    },
+    {
+      "from_symbol": "SEK-1",
+      "to_symbol": "PMK-1",
+      "relation": "positively regulates",
+      "confidence": 0.97,
+      "snippet": "Solid arrow from SEK-1 (MAPKK) to PMK-1 (p38 MAPK)."
+    },
+    {
+      "from_symbol": "PMK-1",
+      "to_symbol": "ATF-7",
+      "relation": "positively regulates",
+      "confidence": 0.97,
+      "snippet": "Solid downward arrow from PMK-1 to ATF-7."
+    },
+    {
+      "from_symbol": "PMK-1",
+      "to_symbol": "DAF-16",
+      "relation": "positively regulates",
+      "confidence": 0.5,
+      "snippet": "Upward connector from PMK-1 toward DAF-16/SKN-1/HSF-1 cluster; exact target uncertain as transcription notes ambiguity."
+    },
+    {
+      "from_symbol": "ATF-7",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "antimicrobial defence genes",
+      "confidence": 0.9,
+      "snippet": "Solid arrow from ATF-7 into nucleus activating antimicrobial defence genes."
+    },
+    {
+      "from_symbol": "HSP-60",
+      "to_symbol": "NSY-1",
+      "relation": "positively regulates",
+      "confidence": 0.4,
+      "snippet": "Faint/uncertain connector from HSP-60 toward NSY-1 region; direction uncertain (possibly Mitochondria->HSP-60->NSY-1)."
+    },
+    {
+      "to_symbol": "HSP-60",
+      "from_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "confidence": 0.4,
+      "snippet": "Solid connector between Mitochondria and HSP-60; direction uncertain, noted as faint/ambiguous."
+    },
+    {
+      "from_symbol": "ATFS-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "ESRE",
+      "confidence": 0.95,
+      "snippet": "Solid downward arrow from ATFS-1/ATF-4 to ESRE/nucleus."
+    },
+    {
+      "from_symbol": "HIF-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "ESRE",
+      "confidence": 0.95,
+      "snippet": "Solid downward arrow from HIF-1 to ESRE/nucleus."
+    },
+    {
+      "from_symbol": "AMPK",
+      "to_symbol": "HIF-1",
+      "relation": "positively regulates",
+      "confidence": 0.35,
+      "snippet": "Faint/uncertain downward connector from AMPK toward nucleus/HIF-1 area; exact target ambiguous."
+    },
+    {
+      "from_symbol": "DAF-16",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "cellular stress response genes",
+      "confidence": 0.95,
+      "snippet": "Solid arrow from DAF-16/FOXO to cellular stress response genes in nucleus."
+    },
+    {
+      "from_symbol": "SKN-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "cellular stress response genes",
+      "confidence": 0.95,
+      "snippet": "Solid arrow from SKN-1/Nrf2 to cellular stress response genes in nucleus."
+    },
+    {
+      "from_symbol": "HSF-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "antimicrobial defence genes",
+      "confidence": 0.95,
+      "snippet": "Solid arrow from HSF-1 to antimicrobial defence genes in nucleus."
+    },
+    {
+      "from_symbol": "NHR-86",
+      "to_compartment": "Nucleus",
+      "relation": "negatively regulates",
+      "via": "antimicrobial defence genes",
+      "confidence": 0.3,
+      "snippet": "Solid leftward arrow from NHR-86/HNF-4 into nucleus toward antimicrobial defence genes; direction/sign partially inferred. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "ZIP-4",
+      "to_symbol": "ZIP-2",
+      "relation": "negatively regulates",
+      "confidence": 0.9,
+      "snippet": "Solid arrow from ZIP-4 to ZIP-2."
+    },
+    {
+      "from_symbol": "CEBP-1",
+      "to_symbol": "ZIP-2",
+      "relation": "positively regulates",
+      "confidence": 0.9,
+      "snippet": "Solid arrow from CEBP-1/2 to ZIP-2."
+    },
+    {
+      "from_symbol": "ZIP-2",
+      "to_compartment": "Nucleus",
+      "relation": "negatively regulates",
+      "via": "ESRE",
+      "confidence": 0.3,
+      "snippet": "Arrow from ZIP-2 to ESRE; arrowhead type (activation vs inhibition) ambiguous — confidence lowered. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "ZIP-2",
+      "to_compartment": "Nucleus",
+      "relation": "negatively regulates",
+      "via": "antimicrobial defence genes",
+      "confidence": 0.3,
+      "snippet": "Solid downward arrow from ZIP-2 to antimicrobial defence genes in nucleus. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "FSHR-1",
+      "to_compartment": "Nucleus",
+      "relation": "iron chelation signal",
+      "confidence": 0.3,
+      "snippet": "Downward connector from FSHR-1; exact target uncertain, noted as ambiguous. [unconfirmed against figure in verification]"
+    },
+    {
+      "to_symbol": "AMPK",
+      "from_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "via": "mtROS",
+      "confidence": 0.35,
+      "snippet": "mtROS --> AMPK connector; faint/uncertain as flagged in transcription."
+    },
+    {
+      "from_symbol": "HIF-1",
+      "to_symbol": "HIF-1",
+      "relation": "iron chelation / depletion",
+      "via": "+Fe³⁺",
+      "confidence": 0.3,
+      "snippet": "Pyoverdine --> +Fe³⁺ --> HIF-1; Pyoverdine chelates iron (+Fe³⁺) which activates HIF-1. Modeled as Pyoverdine signal via +Fe³⁺ to HIF-1. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "NHR-86",
+      "to_symbol": "ZIP-2",
+      "relation": "negatively regulates",
+      "confidence": 0.3,
+      "snippet": "PCN --> NHR-86 connector uncertain; transcription notes PCN connects downward toward NHR-86/nucleus with uncertain sign. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "ZIP-4",
+      "to_symbol": "ZIP-2",
+      "relation": "negatively regulates",
+      "confidence": 0.35,
+      "snippet": "Translation --> ZIP-4/CEBP-1/2 region connector has '?' mark noted; relationship uncertain."
+    }
+  ]
+}

@@ -39,6 +39,9 @@ _ROOT_TYPE = {
     "cellular_component": [
         {"type": "class", "id": "GO:0005575", "label": "cellular_component"}
     ],
+    "molecule": [
+        {"type": "class", "id": "CHEBI:24431", "label": "chemical entity"}
+    ],
     "evidence": [
         {"type": "class", "id": "ECO:0000000", "label": "evidence"}
     ],
@@ -119,6 +122,23 @@ def linkml_to_viewer_json(model: Model) -> dict:
             add_fact(
                 mf_iri, ca.predicate, ca.downstream_activity,
                 materialize_evidence(edge_iri, ca.evidence),
+            )
+
+        # has_input / has_output (molecular_associations): render the molecule /
+        # target gene as its own individual + a fact, so the stimulus chemicals
+        # and TF targets are visible and clickable. IRI == the provenance ledger
+        # key so the panel resolves the source on click.
+        for ma in (act.molecular_associations or []):
+            mol = ma.molecule
+            if not mol:
+                continue
+            slot = "has_input" if ma.predicate == "RO:0002233" else "has_output"
+            mol_iri = f"{act.id}/{slot}/{mol}"
+            kind = "molecule" if mol.startswith("CHEBI:") else "gene_product"
+            add_individual(mol_iri, mol, kind)
+            add_fact(
+                mf_iri, ma.predicate, mol_iri,
+                materialize_evidence(mol_iri, ma.evidence),
             )
 
     annotations: list[dict] = [

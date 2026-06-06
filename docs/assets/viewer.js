@@ -26,6 +26,8 @@ const SLOT_PRETTY = {
   molecular_function:  "molecular function",
   part_of:             "part of (BP)",
   occurs_in:           "occurs in (CC)",
+  has_input:           "has input",
+  has_output:          "has output",
   causal:              "causal edge",
 };
 
@@ -648,9 +650,10 @@ function handleNodeClick(detail, prov, labelIndex) {
     return;
   }
 
-  // Case 1: clicked id is itself an assertion key (a slot sub-individual).
+  // Case 1: clicked id is itself an assertion key (a slot sub-individual,
+  // including a has_input/has_output molecule node).
   if (srcList(prov.assertions[id]).length) {
-    const slot = lastSegment(id);
+    const slot = slotOf(id);
     renderPanel({
       kind: "slot",
       header: prettySlotHeader(slot),
@@ -660,11 +663,17 @@ function handleNodeClick(detail, prov, labelIndex) {
     return;
   }
 
-  // Case 2: clicked id is an activity IRI. Aggregate per-slot assertions.
+  // Case 2: clicked id is an activity IRI. Aggregate the fixed per-slot
+  // assertions plus any has_input/has_output molecule keys for this activity.
   const slots = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
   const entries = slots
     .map((slot) => ({ slot, srcs: srcList(prov.assertions[`${id}/${slot}`]), assertionId: `${id}/${slot}` }))
     .filter((x) => x.srcs.length);
+  for (const k of Object.keys(prov.assertions || {})) {
+    if (k.startsWith(`${id}/has_input/`) || k.startsWith(`${id}/has_output/`)) {
+      entries.push({ slot: slotOf(k), srcs: srcList(prov.assertions[k]), assertionId: k });
+    }
+  }
   if (entries.length > 0) {
     renderPanel({
       kind: "activity",
@@ -712,7 +721,7 @@ function handleEdgeClick(edge, prov, labelIndex) {
     return;
   }
   if (srcList(prov.assertions[obj]).length) {
-    const slot = lastSegment(obj);
+    const slot = slotOf(obj);
     renderPanel({
       kind: "slot-edge",
       header: prettySlotHeader(slot),
@@ -743,12 +752,23 @@ function lastSegment(iri) {
   return i >= 0 ? iri.slice(i + 1) : iri;
 }
 
+// The slot an assertion key belongs to. has_input/has_output keys carry a
+// trailing molecule CURIE (`<act>/has_input/<mol>`), so lastSegment() would
+// return the molecule — special-case them to the real slot name.
+function slotOf(key) {
+  if (key.includes("/has_input/")) return "has_input";
+  if (key.includes("/has_output/")) return "has_output";
+  return lastSegment(key);
+}
+
 function prettySlotHeader(slot) {
   return {
     enabled_by: "Enabled by (gene product)",
     molecular_function: "Molecular function",
     part_of: "Biological process",
     occurs_in: "Cellular component",
+    has_input: "Has input",
+    has_output: "Has output",
     causal: "Causal edge",
   }[slot] || "Node";
 }
