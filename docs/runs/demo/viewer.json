@@ -173,7 +173,7 @@
       "type": [
         {
           "type": "class",
-          "id": "WB:WBGene00003640",
+          "id": "WB:WBGene00015497",
           "label": "nhr-76"
         }
       ],
@@ -374,8 +374,8 @@
     },
     {
       "subject": "gomodel:demo-celegans-fat-loss/nhr76",
-      "property": "RO:0002629",
-      "property-label": "directly positively regulates",
+      "property": "RO:0002407",
+      "property-label": "indirectly positively regulates",
       "object": "gomodel:demo-celegans-fat-loss/atgl1",
       "annotations": []
     },

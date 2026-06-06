@@ -104,9 +104,9 @@ def build_demo(out_dir: Path) -> dict:
     # nhr-76: nuclear hormone receptor in intestine.
     nhr76 = b.add_activity(
         "nhr76",
-        enabled_by_gene="WB:WBGene00003640",
+        enabled_by_gene="WB:WBGene00015497",
         enabled_by_source=alliance(
-            source_id="WB:WBGene00003640",
+            source_id="WB:WBGene00015497",
             tool_name="alliance.resolve_symbol_to_curie",
         ),
         gene_label="nhr-76",
@@ -202,15 +202,20 @@ def build_demo(out_dir: Path) -> dict:
     )
     b.add_causal(
         nhr76, atgl1,
-        predicate="RO:0002629",
+        # nhr-76 is a transcription factor and atgl-1 is its target gene product, so this is an
+        # INDIRECT relation (gene expression is the intervening module) — the #39 rule. See
+        # knowledge/go-curation-guidelines.md and validate.py's tf-target-must-be-indirect check.
+        predicate="RO:0002407",
         source=expert_review(
             source_id="curator-note-2026-05-12-001",
             orcid="0000-0001-0000-0000",
             contributor_name="GO biocurator (placeholder)",
-            snippet="Confirmed during curator review: nhr-76 → atgl-1 transcriptional link in C. elegans "
-                    "is consistent with both the figure and published expression data.",
+            snippet="Confirmed during curator review: nhr-76 (TF) indirectly positively regulates "
+                    "atgl-1 in C. elegans via transcriptional control — consistent with the figure "
+                    "and published expression data. Indirect because transcription/translation sit "
+                    "between the TF activity and the target's lipase activity.",
         ),
-        predicate_label="directly positively regulates",
+        predicate_label="indirectly positively regulates",
     )
 
     model, ledger = b.build()

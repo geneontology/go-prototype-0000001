@@ -26,7 +26,7 @@ activities:
     - term: ECO:0000314
       reference: PMID:11099056
       provenances:
-      - date: '2026-05-13'
+      - date: '2026-06-06'
     predicate: RO:0002304
     downstream_activity: gomodel:demo-celegans-fat-loss/mod1
 - id: gomodel:demo-celegans-fat-loss/mod1
@@ -40,7 +40,7 @@ activities:
     - term: ECO:0000314
       reference: PMID:11099056
       provenances:
-      - date: '2026-05-13'
+      - date: '2026-06-06'
         provided_by:
         - europepmc.search
     term: GO:0022824
@@ -57,7 +57,7 @@ activities:
   enabled_by:
     type: EnabledByGeneProductAssociation
     evidence: []
-    term: WB:WBGene00003640
+    term: WB:WBGene00015497
   molecular_function:
     type: MolecularFunctionAssociation
     evidence: []
@@ -73,7 +73,7 @@ activities:
   causal_associations:
   - type: CausalAssociation
     evidence: []
-    predicate: RO:0002629
+    predicate: RO:0002407
     downstream_activity: gomodel:demo-celegans-fat-loss/atgl1
 - id: gomodel:demo-celegans-fat-loss/atgl1
   enabled_by:
@@ -115,7 +115,7 @@ objects:
 - id: GO:0022824
   label: transmitter-gated monoatomic ion channel activity
   type: gocam:MolecularFunctionTermObject
-- id: WB:WBGene00003640
+- id: WB:WBGene00015497
   label: nhr-76
   type: gocam:GeneProductTermObject
 - id: GO:0004879
@@ -139,8 +139,8 @@ objects:
 - id: RO:0002304
   label: causally upstream of, positive effect
   type: gocam:PredicateTermObject
-- id: RO:0002629
-  label: directly positively regulates
+- id: RO:0002407
+  label: indirectly positively regulates
   type: gocam:PredicateTermObject
 - id: NCBITaxon:6239
   label: NCBITaxon:6239
