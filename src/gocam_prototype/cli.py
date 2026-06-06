@@ -227,6 +227,7 @@ _LANDING_HEAD = """<!DOCTYPE html>
             <span class="badge orthology">↗️ orthology</span>
             <span class="badge pathway_resource">🛤️ pathway</span>
             <span class="badge expert_review">✔️ expert review</span>
+            <span class="badge figure">🖼️ figure</span>
             <span class="badge instinct">⚠️ instinct</span>
             <span class="badge go_term_request">❓ GO term request</span>
           </p>
@@ -258,21 +259,28 @@ _BADGE_META: dict[str, tuple[str, str]] = {
     "orthology":        ("↗️", "orthology"),
     "pathway_resource": ("🛤️", "pathway"),
     "expert_review":    ("✔️", "expert review"),
+    "figure":           ("🖼️", "figure"),
     "instinct":         ("⚠️", "instinct"),
     "go_term_request":  ("❓", "GO term request"),
 }
 
 
 def summarize_provenance(provenance_path: Path) -> dict[str, int]:
-    """Return source-type → count from a provenance.json file."""
+    """Return source-type → count from a provenance.json file.
+
+    Dual-reads both shapes: v2 (each key → list of sources) and v1 (each key →
+    a single source object), so existing committed runs still summarize.
+    """
     try:
         prov = json.loads(provenance_path.read_text())
     except (OSError, json.JSONDecodeError):
         return {}
     counts: dict[str, int] = {}
-    for src in (prov.get("assertions") or {}).values():
-        t = src.get("source_type", "unknown")
-        counts[t] = counts.get(t, 0) + 1
+    for val in (prov.get("assertions") or {}).values():
+        sources = val if isinstance(val, list) else [val]
+        for src in sources:
+            t = (src or {}).get("source_type", "unknown")
+            counts[t] = counts.get(t, 0) + 1
     return counts
 
 

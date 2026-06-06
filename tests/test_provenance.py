@@ -12,6 +12,7 @@ from gocam_prototype.provenance import (
     alliance,
     amigo,
     expert_review,
+    figure,
     go_annotation,
     instinct,
     literature,
@@ -111,3 +112,40 @@ def test_ledger_serializes() -> None:
     # Round-trip back through the model.
     reloaded = ProvenanceLedger.model_validate(blob)
     assert reloaded.count_by_source_type() == {"literature": 1, "instinct": 1}
+
+
+def test_figure_source_requires_snippet() -> None:
+    s = figure(snippet="Arrow from 5-HT neuron to intestine", source_id="transcription.md")
+    assert s.source_type == "figure"
+    assert s.snippet.startswith("Arrow")
+    # No source_id is fine — the figure itself is the source.
+    assert figure(snippet="bare arrow, no label").source_id is None
+    # …but an empty snippet is not.
+    with pytest.raises(Exception):
+        SourceObject(source_type="figure", snippet="   ")
+    with pytest.raises(Exception):
+        SourceObject(source_type="figure")
+
+
+def test_attach_appends_multiple_sources_per_key() -> None:
+    """v2: one assertion key can carry several distinct claims (#40)."""
+    ledger = ProvenanceLedger(model_id="gomodel:test-0002")
+    key = "gomodel:test-0002/A/enabled_by"
+    ledger.attach(key, figure(snippet="gene box labelled tph-1"))
+    ledger.attach(key, alliance(source_id="WB:WBGene00006600", tool_name="resolve_symbol"))
+    assert len(ledger.assertions[key]) == 2
+    assert [s.source_type for s in ledger.assertions[key]] == ["figure", "alliance"]
+    assert ledger.count_by_source_type() == {"figure": 1, "alliance": 1}
+
+
+def test_attach_dedups_exact_duplicates() -> None:
+    ledger = ProvenanceLedger(model_id="gomodel:test-0003")
+    key = "gomodel:test-0003/A/molecular_function"
+    ledger.attach(key, go_annotation(source_id="GO:0004871"))
+    ledger.attach(key, go_annotation(source_id="GO:0004871"))  # exact dup → skipped
+    ledger.attach(key, go_annotation(source_id="GO:0004871", snippet="differs"))  # kept
+    assert len(ledger.assertions[key]) == 2
+
+
+def test_ledger_version_is_two() -> None:
+    assert ProvenanceLedger(model_id="gomodel:x").version == 2

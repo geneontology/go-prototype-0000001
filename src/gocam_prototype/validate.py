@@ -80,8 +80,13 @@ def validate_model(model, ledger=None) -> list[dict]:
                 })
 
     if ledger is not None:
-        for key, src in (getattr(ledger, "assertions", None) or {}).items():
-            if "/causal/" in key and getattr(src, "source_type", None) == "go_annotation":
+        for key, value in (getattr(ledger, "assertions", None) or {}).items():
+            if "/causal/" not in key:
+                continue
+            # v2 maps each key to a LIST of sources; v1 stored a single object.
+            # Normalize so the rule fires regardless of shape (#40).
+            sources = value if isinstance(value, list) else [value]
+            if any(getattr(s, "source_type", None) == "go_annotation" for s in sources):
                 findings.append({
                     "rule": "no-go-annotation-on-causal-edge", "severity": "error", "assertion": key,
                     "message": "causal edge tagged source_type=go_annotation (not valid for edges)",

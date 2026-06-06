@@ -290,7 +290,9 @@ def test_request_go_term_appends_ledger_entry() -> None:
         "related_terms": ["GO:1904123", "GO:0016042"],
     })
     assert result["ok"] is True
-    [(key, src)] = builder._ledger.assertions.items()  # noqa: SLF001
+    # v2 ledger: each key maps to a LIST of sources (#40).
+    [(key, srcs)] = builder._ledger.assertions.items()  # noqa: SLF001
+    [src] = srcs
     assert key == result["request_id"]
     assert "/needs/" in key
     assert src.source_type == "go_term_request"
@@ -340,8 +342,10 @@ def test_live_end_to_end_on_figure_1() -> None:
     model, ledger = orchestrate(intent, builder, max_turns=80)
     assert (model.activities or []), "agent did not create any activities"
     # No fabricated PMIDs: every literature source_id must look like a real PMID.
-    for src in ledger.assertions.values():
-        if src.source_type == "literature":
-            assert src.source_id and src.source_id.startswith(("PMID:", "DOI:", "GO_REF:"))
-        if src.source_type == "instinct":
-            assert src.justification and src.justification.strip()
+    # v2 ledger maps each key to a LIST of sources (#40).
+    for srcs in ledger.assertions.values():
+        for src in srcs:
+            if src.source_type == "literature":
+                assert src.source_id and src.source_id.startswith(("PMID:", "DOI:", "GO_REF:"))
+            if src.source_type == "instinct":
+                assert src.justification and src.justification.strip()

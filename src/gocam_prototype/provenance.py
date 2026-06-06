@@ -46,6 +46,12 @@ SourceType = Literal[
     "pathway_resource",
     "expert_review",
     "instinct",
+    # Figure-derived: a claim read directly off the uploaded figure by the
+    # vision pass — not a database lookup or a citation. Requires a snippet
+    # describing what the figure shows; cite the saved transcription.md /
+    # figure region. Keeps figure-gleaned claims visually distinct from DB
+    # lookups so curators know exactly where each statement came from (#40).
+    "figure",
     # Not actually a source for an assertion — a curator-visible record
     # that the agent wanted a GO term that does not exist yet. Lives in
     # the sidecar so the dream-workflow step "file an upstream GO ticket"
@@ -73,6 +79,11 @@ class SourceObject(BaseModel):
         if self.source_type == "instinct":
             if not (self.justification and self.justification.strip()):
                 raise ValueError("source_type='instinct' requires a non-empty justification")
+        elif self.source_type == "figure":
+            # Figure-derived: the "source" is the figure itself, so no source_id is
+            # required; the snippet must describe what the figure shows.
+            if not (self.snippet and self.snippet.strip()):
+                raise ValueError("source_type='figure' requires a non-empty snippet (what the figure shows)")
         elif self.source_type == "go_term_request":
             # The "source" is a request, not a citation. Justification carries the
             # rationale; snippet carries the suggested label/definition; extra may
@@ -179,20 +190,39 @@ def instinct(*, justification: str, tool_name: str | None = None) -> SourceObjec
     return SourceObject(source_type="instinct", justification=justification, tool_name=tool_name)
 
 
+def figure(*, snippet: str, source_id: str | None = None, tool_name: str | None = None) -> SourceObject:
+    """A claim read directly off the uploaded figure by the vision pass. `snippet`
+    describes what the figure shows; `source_id` may point at the saved
+    transcription / figure region. Keeps figure-derived claims distinct from DB
+    lookups (#40)."""
+    return SourceObject(source_type="figure", snippet=snippet, source_id=source_id, tool_name=tool_name)
+
+
 class ProvenanceLedger(BaseModel):
     """The full sidecar object that lives next to model.yaml."""
 
     model_config = ConfigDict(extra="forbid")
 
     model_id: str
-    version: int = 1
-    assertions: dict[str, SourceObject] = Field(default_factory=dict)
+    # v2: each assertion key maps to a LIST of sources so a single statement can
+    # carry separately-attributed claims (id-resolution vs the biological fact);
+    # see #40. v1 files (single object per key) are read back-compat by the viewer
+    # and by cli.summarize_provenance.
+    version: int = 2
+    assertions: dict[str, list[SourceObject]] = Field(default_factory=dict)
 
     def attach(self, assertion_id: str, source: SourceObject) -> None:
-        self.assertions[assertion_id] = source
+        """Append a source for an assertion (each slot/edge may carry multiple
+        distinct claims; #40). Exact-duplicate sources are skipped."""
+        existing = self.assertions.setdefault(assertion_id, [])
+        sig = (source.source_type, source.source_id, source.justification, source.snippet)
+        if any((s.source_type, s.source_id, s.justification, s.snippet) == sig for s in existing):
+            return
+        existing.append(source)
 
     def count_by_source_type(self) -> dict[str, int]:
         counts: dict[str, int] = {}
-        for src in self.assertions.values():
-            counts[src.source_type] = counts.get(src.source_type, 0) + 1
+        for sources in self.assertions.values():
+            for src in sources:
+                counts[src.source_type] = counts.get(src.source_type, 0) + 1
         return counts

@@ -87,5 +87,24 @@ def test_summarize_provenance_counts(tmp_path: Path) -> None:
     assert counts == {"literature": 2, "instinct": 1, "go_annotation": 3}
 
 
+def test_summarize_provenance_counts_v2_lists(tmp_path: Path) -> None:
+    """v2 provenance maps each key to a LIST of sources; counts span the list (#40)."""
+    p = tmp_path / "provenance.json"
+    p.write_text(json.dumps({
+        "model_id": "gomodel:test",
+        "version": 2,
+        "assertions": {
+            "gomodel:test/A/enabled_by": [
+                {"source_type": "figure", "snippet": "box labelled tph-1"},
+                {"source_type": "alliance", "source_id": "WB:WBGene00006600"},
+            ],
+            "gomodel:test/A/molecular_function": [
+                {"source_type": "go_annotation", "source_id": "GO:0004871"},
+            ],
+        },
+    }))
+    assert summarize_provenance(p) == {"figure": 1, "alliance": 1, "go_annotation": 1}
+
+
 def test_summarize_provenance_missing_file(tmp_path: Path) -> None:
     assert summarize_provenance(tmp_path / "does-not-exist.json") == {}

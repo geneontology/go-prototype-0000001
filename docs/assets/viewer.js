@@ -14,6 +14,7 @@ const SOURCE_META = {
   orthology:         { emoji: "\u{2197}\u{FE0F}",   label: "Orthology" },
   pathway_resource:  { emoji: "\u{1F6E4}\u{FE0F}",  label: "Pathway" },
   expert_review:     { emoji: "\u{2714}\u{FE0F}",   label: "Expert review" },
+  figure:            { emoji: "\u{1F5BC}\u{FE0F}",  label: "Figure" },
   instinct:          { emoji: "\u{26A0}\u{FE0F}",   label: "Instinct" },
   go_term_request:   { emoji: "\u{2753}",           label: "GO term request" },
 };
@@ -61,8 +62,19 @@ function curatorActionIssueUrl({ actionKind, assertionId, slot, srcSummary, note
   return `https://github.com/${REPO}/issues/new?${params.toString()}`;
 }
 
+// v2 provenance stores a LIST of sources per assertion key so one statement
+// can carry separately-attributed claims (id-resolution vs the biological
+// fact; #40). v1 files stored a single object. Normalize either shape to an
+// array so the rest of the viewer is version-agnostic.
+function srcList(v) {
+  return Array.isArray(v) ? v : (v ? [v] : []);
+}
+
 function summarizeSource(src) {
   if (!src) return "";
+  if (Array.isArray(src)) {
+    return src.map(summarizeSource).filter(Boolean).join("\n---\n");
+  }
   const lines = [];
   if (src.source_type)   lines.push(`source_type: ${src.source_type}`);
   if (src.source_id)     lines.push(`source_id:   ${src.source_id}`);
@@ -346,7 +358,7 @@ function emphasizeCausalEdges(cy) {
 // Canonical render order matches the landing-page legend.
 const CHIP_SOURCE_ORDER = [
   "literature", "go_annotation", "alliance", "amigo",
-  "orthology", "pathway_resource", "expert_review", "instinct", "go_term_request",
+  "orthology", "pathway_resource", "expert_review", "figure", "instinct", "go_term_request",
 ];
 // The four slots a GoCamBuilder activity may carry provenance for.
 const CHIP_SLOTS = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
@@ -354,11 +366,13 @@ const CHIP_SLOTS = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
 function nodeChipEmojis(prov, nodeId) {
   const seen = new Set();
   for (const slot of CHIP_SLOTS) {
-    const a = prov.assertions?.[`${nodeId}/${slot}`];
+    for (const a of srcList(prov.assertions?.[`${nodeId}/${slot}`])) {
+      if (a?.source_type) seen.add(a.source_type);
+    }
+  }
+  for (const a of srcList(prov.assertions?.[nodeId])) {
     if (a?.source_type) seen.add(a.source_type);
   }
-  const direct = prov.assertions?.[nodeId];
-  if (direct?.source_type) seen.add(direct.source_type);
   return CHIP_SOURCE_ORDER
     .filter((t) => seen.has(t))
     .map((t) => SOURCE_META[t]?.emoji)
@@ -370,9 +384,16 @@ function edgeChipEmoji(prov, edge) {
   const src = data.source || data.subject;
   const tgt = data.target || data.object;
   if (!src || !tgt) return null;
-  const a = prov.assertions?.[`${src}/causal/${tgt}`];
-  if (!a?.source_type) return null;
-  return SOURCE_META[a.source_type]?.emoji || null;
+  // A causal edge may now carry several sources; show the highest-priority
+  // type's emoji (CHIP_SOURCE_ORDER is the canonical legend order).
+  const types = new Set(
+    srcList(prov.assertions?.[`${src}/causal/${tgt}`])
+      .map((a) => a?.source_type)
+      .filter(Boolean),
+  );
+  if (!types.size) return null;
+  const t = CHIP_SOURCE_ORDER.find((x) => types.has(x));
+  return t ? (SOURCE_META[t]?.emoji || null) : null;
 }
 
 // Paint per-node and per-edge evidence-type emoji onto an HTML overlay
@@ -570,13 +591,13 @@ function handleNodeClick(detail, prov, labelIndex) {
   }
 
   // Case 1: clicked id is itself an assertion key (a slot sub-individual).
-  if (prov.assertions[id]) {
+  if (srcList(prov.assertions[id]).length) {
     const slot = lastSegment(id);
     renderPanel({
       kind: "slot",
       header: prettySlotHeader(slot),
       assertionId: id,
-      entries: [{ slot, src: prov.assertions[id], assertionId: id }],
+      entries: [{ slot, srcs: srcList(prov.assertions[id]), assertionId: id }],
     });
     return;
   }
@@ -584,8 +605,8 @@ function handleNodeClick(detail, prov, labelIndex) {
   // Case 2: clicked id is an activity IRI. Aggregate per-slot assertions.
   const slots = ["enabled_by", "molecular_function", "part_of", "occurs_in"];
   const entries = slots
-    .map((slot) => ({ slot, src: prov.assertions[`${id}/${slot}`], assertionId: `${id}/${slot}` }))
-    .filter((x) => x.src);
+    .map((slot) => ({ slot, srcs: srcList(prov.assertions[`${id}/${slot}`]), assertionId: `${id}/${slot}` }))
+    .filter((x) => x.srcs.length);
   if (entries.length > 0) {
     renderPanel({
       kind: "activity",
@@ -617,7 +638,7 @@ function handleEdgeClick(edge, prov, labelIndex) {
   const subjLabel = labelOf(subj, labelIndex);
   const objLabel  = labelOf(obj,  labelIndex);
 
-  if (prov.assertions[causalKey]) {
+  if (srcList(prov.assertions[causalKey]).length) {
     renderPanel({
       kind: "causal",
       header: "Causal edge",
@@ -628,11 +649,11 @@ function handleEdgeClick(edge, prov, labelIndex) {
         subj, subjLabel,
         obj,  objLabel,
       },
-      entries: [{ slot: "causal", src: prov.assertions[causalKey], assertionId: causalKey }],
+      entries: [{ slot: "causal", srcs: srcList(prov.assertions[causalKey]), assertionId: causalKey }],
     });
     return;
   }
-  if (prov.assertions[obj]) {
+  if (srcList(prov.assertions[obj]).length) {
     const slot = lastSegment(obj);
     renderPanel({
       kind: "slot-edge",
@@ -640,7 +661,7 @@ function handleEdgeClick(edge, prov, labelIndex) {
       assertionId: obj,
       edgeFacts: { property, propertyLabel: edge.data("property-label") || property,
                    subj, subjLabel, obj, objLabel },
-      entries: [{ slot, src: prov.assertions[obj], assertionId: obj }],
+      entries: [{ slot, srcs: srcList(prov.assertions[obj]), assertionId: obj }],
     });
     return;
   }
@@ -729,7 +750,18 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
   }
 
   for (const entry of (entries || [])) {
-    panel.appendChild(renderSource(entry.slot, entry.src, entry.assertionId ?? assertionId));
+    const eid = entry.assertionId ?? assertionId;
+    // v2: each slot/edge may carry several sources (id-resolution vs the
+    // biological fact); render one card per source. `src` (singular) is the
+    // v1 back-compat shape.
+    const srcs = entry.srcs ?? srcList(entry.src);
+    for (const src of srcs) {
+      panel.appendChild(renderSource(entry.slot, src, eid));
+    }
+    // One curator-action block per assertion, regardless of source count —
+    // the curator acts on the statement, not on each individual citation.
+    SRC_BY_ASSERTION.set(eid, srcs);
+    panel.appendChild(renderCuratorActions(eid, entry.slot));
   }
 }
 
@@ -738,8 +770,10 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
 // curator-action handler reads it back when building the GH issue body.
 const SRC_BY_ASSERTION = new Map();
 
+// Renders a single source card. The curator-action block and the
+// SRC_BY_ASSERTION bookkeeping live in renderPanel now, so one slot with
+// several sources gets several cards but a single action block (#40).
 function renderSource(slot, src, assertionId) {
-  SRC_BY_ASSERTION.set(assertionId, src);
   const card = document.createElement("div");
   card.className = `source-card ${src.source_type}`;
 
@@ -808,11 +842,6 @@ function renderSource(slot, src, assertionId) {
     d.textContent = `retrieved ${src.retrieved_at}`;
     card.appendChild(d);
   }
-
-  // Curator-action affordances. These don't yet round-trip to a backend;
-  // they stash to localStorage so the buttons feel alive and the model
-  // can show 'X pending actions' at the page level.
-  card.appendChild(renderCuratorActions(assertionId, slot));
 
   return card;
 }
