@@ -9,6 +9,17 @@ literature, database lookup, AmiGO lookup, or explicitly flagged LLM
 This is an experimental prototype; it doesn't aim to replace any existing
 GO Consortium tooling.
 
+## Live site
+
+**https://geneontology.github.io/go-prototype-0000001/**
+
+The app is a static GitHub Pages site published from this repo's `docs/`
+directory (`main` branch). The landing page lists the draft models, each with
+a source-type tag cloud, and offers a "Submit a figure" form; per-run pages
+(`docs/runs/<run-id>/`) embed the `<go-gocam-viewer>` web component with a
+click-anywhere provenance panel. There is no separate server — `docs/` *is*
+the deployed app, so every committed run is immediately live.
+
 ## v0 thin slice
 
 End-to-end:
