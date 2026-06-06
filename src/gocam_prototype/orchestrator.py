@@ -306,11 +306,18 @@ class Orchestrator:
     max_turns: int = 60
     effort: str = "xhigh"            # Opus 4.8 effort for the agentic build loop
     adaptive_thinking: bool = True   # let the model reason about ambiguous edges
-    max_tokens: int = 16000          # room for thinking + tool calls (was 4096)
+    # Room for a turn's adaptive thinking PLUS its tool calls. Dense figures
+    # (figure2: 17 genes / 29 edges) blew the old 16000 budget mid-thinking, so
+    # the turn truncated before any tool_use and the loop silently produced an
+    # empty model — see _empty_streak recovery below. 32000 gives planning turns
+    # headroom.
+    max_tokens: int = 32000
+    max_empty_nudges: int = 3        # consecutive no-tool turns tolerated before giving up
 
     _tools: list[dict] = field(default_factory=list, init=False)
     _handlers: dict[str, Callable[[dict], dict]] = field(default_factory=dict, init=False)
     _finalized: bool = field(default=False, init=False)
+    _empty_streak: int = field(default=0, init=False)
     events: list[dict] = field(default_factory=list, init=False)
 
     def __post_init__(self) -> None:
@@ -944,25 +951,30 @@ class Orchestrator:
                 "output_tokens": getattr(usage, "output_tokens", 0),
             })
 
-            # Mirror the assistant's blocks back into messages, in the
-            # shape the Anthropic API expects on the next turn.
+            tool_uses = [b for b in response.content if getattr(b, "type", None) == "tool_use"]
+            stop_reason = getattr(response, "stop_reason", None)
+
+            # Mirror the assistant's blocks back into messages, in the shape the
+            # Anthropic API expects on the next turn. Adaptive-thinking blocks MUST
+            # be echoed (with signature) ahead of tool_use within a turn — but ONLY
+            # when this turn has a tool_use. A turn that produced NO tool call
+            # (plain narration, or a max_tokens truncation mid-thinking) carries
+            # thinking that may be incomplete/unsigned; echoing it back 400s and we
+            # don't need it, so drop thinking from no-tool turns and keep any text.
             assistant_content: list[dict] = []
             for block in response.content:
                 btype = getattr(block, "type", None)
-                if btype == "thinking":
-                    # When adaptive thinking returns thinking blocks, they MUST be
-                    # echoed back (with signature) ahead of tool_use or the next
-                    # turn 400s. Preserve order as returned.
-                    assistant_content.append({
-                        "type": "thinking",
-                        "thinking": block.thinking,
-                        "signature": getattr(block, "signature", ""),
-                    })
-                elif btype == "redacted_thinking":
-                    assistant_content.append({
-                        "type": "redacted_thinking",
-                        "data": block.data,
-                    })
+                if btype in ("thinking", "redacted_thinking"):
+                    if not tool_uses:
+                        continue
+                    if btype == "thinking":
+                        assistant_content.append({
+                            "type": "thinking",
+                            "thinking": block.thinking,
+                            "signature": getattr(block, "signature", ""),
+                        })
+                    else:
+                        assistant_content.append({"type": "redacted_thinking", "data": block.data})
                 elif btype == "text":
                     assistant_content.append({"type": "text", "text": block.text})
                 elif btype == "tool_use":
@@ -972,11 +984,32 @@ class Orchestrator:
                         "name": block.name,
                         "input": block.input,
                     })
+            if not assistant_content:
+                assistant_content = [{"type": "text", "text": "(no content)"}]
             messages.append({"role": "assistant", "content": assistant_content})
 
-            tool_uses = [b for b in response.content if getattr(b, "type", None) == "tool_use"]
             if not tool_uses:
-                break  # model is done speaking
+                if self._finalized:
+                    break
+                # No tool call this turn. Don't silently end with an empty / half-
+                # built model — nudge the model back to the tools. Bounded so a model
+                # that won't act can't loop forever; the post-loop / pipeline guard
+                # surfaces a still-empty model rather than reporting false success.
+                if self._empty_streak >= self.max_empty_nudges:
+                    break
+                self._empty_streak += 1
+                nudge = (
+                    "Your previous turn was cut off (hit the output-token limit) before "
+                    "any tool call. Do NOT write long plans — make ONE tool call now and "
+                    "build the model incrementally (a few tool calls per turn)."
+                    if stop_reason == "max_tokens" else
+                    "You returned no tool call. Keep building the model with the tools "
+                    "(add_activity / set_* / add_causal); call finalize_model only once "
+                    "every gene and edge is modeled."
+                )
+                messages.append({"role": "user", "content": nudge})
+                continue
+            self._empty_streak = 0
 
             tool_results: list[dict] = []
             for tu in tool_uses:
@@ -1030,8 +1063,14 @@ def orchestrate(
     client: AnthropicVertex | None = None,
     model_name: str | None = None,
     max_turns: int = 60,
+    events_out: str | Path | None = None,
 ) -> tuple[Model, ProvenanceLedger]:
-    """Convenience entry point. Pulls Vertex config from env if no client given."""
+    """Convenience entry point. Pulls Vertex config from env if no client given.
+
+    If `events_out` is given, the per-turn event log (turn, stop_reason, token
+    usage) is written there — persisted even if the run raises, so a failed /
+    empty run is diagnosable after the fact.
+    """
     cfg = VertexConfig.from_env()
     # Opus 4.8 is only provisioned on the Vertex *global* endpoint for this
     # project; regional endpoints (us-east5, ...) return 429/404.
@@ -1043,4 +1082,11 @@ def orchestrate(
         or "claude-opus-4-8"
     )
     orch = Orchestrator(builder=builder, client=cli, model_name=mdl, max_turns=max_turns)
-    return orch.run(intent)
+    try:
+        return orch.run(intent)
+    finally:
+        if events_out is not None:
+            try:
+                Path(events_out).write_text(json.dumps(orch.events, indent=2))
+            except OSError:
+                pass

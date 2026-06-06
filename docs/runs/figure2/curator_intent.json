@@ -1,307 +1,148 @@
 {
   "species": "Caenorhabditis elegans",
   "species_taxon": "NCBITaxon:6239",
-  "processes_hinted": [
-    "intestinal innate immunity",
-    "p38 MAPK signaling",
-    "mitochondrial unfolded protein response (UPRmt)",
-    "antimicrobial defense gene expression",
-    "cellular stress response",
-    "reactive oxygen species (ROS) signaling",
-    "AMPK signaling",
-    "lysosome-related organelle (LRO) stress response",
-    "zinc homeostasis",
-    "transcriptional regulation of immune genes"
-  ],
+  "processes_hinted": [],
   "compartments": [
+    {
+      "label": "Lumen",
+      "kind": "other",
+      "confidence": 0.95,
+      "snippet": "Labeled top-left, region above the microvilli/brush border; contains bacteria and extracellular toxins."
+    },
     {
       "label": "Intestinal cell",
       "kind": "cell_type",
-      "confidence": 0.99,
-      "snippet": "Large pink cell labeled 'Intestinal cell' at the bottom of the figure, containing all signaling components."
+      "confidence": 0.98,
+      "snippet": "Large box enclosing most nodes, labeled bottom-left; represents the C. elegans intestinal epithelial cell."
     },
     {
       "label": "Nucleus",
       "kind": "organelle",
-      "confidence": 0.99,
-      "snippet": "Large oval labeled 'Nucleus' within the intestinal cell, containing transcription factors and target gene labels."
+      "confidence": 0.97,
+      "snippet": "Large reddish oval inside the intestinal cell, labeled bottom-center; contains ESRE, cellular stress response genes, antimicrobial defence genes."
     },
     {
       "label": "Mitochondria",
       "kind": "organelle",
-      "confidence": 0.99,
-      "snippet": "Organelle labeled 'Mitochondria' within the intestinal cell, associated with UPRmt and mtROS."
+      "confidence": 0.97,
+      "snippet": "Teal organelle, center-top inside intestinal cell; labeled; source of UPRmt, mtROS, and iron-status signals."
     },
     {
-      "label": "Lumen",
-      "kind": "subcellular_region",
-      "confidence": 0.95,
-      "snippet": "Space labeled 'Lumen' at the top-left, where P. aeruginosa and Pyocyanin are depicted."
-    },
-    {
-      "label": "LRO",
+      "label": "LRO stress / pH increase",
       "kind": "organelle",
-      "confidence": 0.9,
-      "snippet": "Organelle labeled 'LRO' (lysosome-related organelle) in the intestinal cell, associated with stress and pH increase."
+      "confidence": 0.85,
+      "snippet": "Circular organelle on left side inside intestinal cell; represents lysosome-related organelle stress with pH increase; intermediate in Pyocyanin→p38 cascade."
     }
   ],
   "genes": [
     {
       "symbol": "TIR-1",
       "in_compartment": "Intestinal cell",
-      "confidence": 0.95,
-      "snippet": "Labeled at the apical membrane of the intestinal cell, upstream of the p38 MAPK cascade."
-    },
-    {
-      "symbol": "SARM1",
-      "in_compartment": "Intestinal cell",
-      "confidence": 0.95,
-      "snippet": "Labeled alongside TIR-1 at the membrane; TIR-1/SARM1 shown together."
+      "confidence": 0.93,
+      "snippet": "Left side of intestinal cell membrane, membrane protein glyph; also annotated as SARM1."
     },
     {
       "symbol": "NSY-1",
       "in_compartment": "Intestinal cell",
-      "confidence": 0.97,
-      "snippet": "Yellow hexagon labeled 'NSY-1 MAPKKK', part of the p38 MAPK cascade."
+      "confidence": 0.95,
+      "snippet": "Yellow oval, annotated as MAPKKK; part of p38 MAPK cascade."
     },
     {
       "symbol": "SEK-1",
       "in_compartment": "Intestinal cell",
-      "confidence": 0.97,
-      "snippet": "Yellow hexagon labeled 'SEK-1 MAPKK', downstream of NSY-1 in the cascade."
+      "confidence": 0.95,
+      "snippet": "Yellow oval, annotated as MAPKK; downstream of NSY-1."
     },
     {
       "symbol": "PMK-1",
       "in_compartment": "Intestinal cell",
-      "confidence": 0.97,
-      "snippet": "Yellow hexagon labeled 'PMK-1 p38 MAPK', downstream of SEK-1."
-    },
-    {
-      "symbol": "ATF-7",
-      "in_compartment": "Nucleus",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'ATF-7' in the nucleus, downstream of PMK-1, activates defense genes."
-    },
-    {
-      "symbol": "DAF-16",
-      "in_compartment": "Nucleus",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'DAF-16 FOXO' in the nucleus."
-    },
-    {
-      "symbol": "SKN-1",
-      "in_compartment": "Nucleus",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'SKN-1 Nrf2' in the nucleus."
-    },
-    {
-      "symbol": "HSF-1",
-      "in_compartment": "Nucleus",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'HSF-1' in the nucleus."
-    },
-    {
-      "symbol": "ATFS-1",
-      "in_compartment": "Intestinal cell",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'ATFS-1 ATF-4', associated with UPRmt pathway, shown near mitochondria and nucleus."
-    },
-    {
-      "symbol": "HIF-1",
-      "in_compartment": "Nucleus",
-      "confidence": 0.97,
-      "snippet": "Purple rectangle labeled 'HIF-1' in the nucleus area, downstream of mitochondrial ROS signaling."
-    },
-    {
-      "symbol": "AMPK",
-      "in_compartment": "Intestinal cell",
       "confidence": 0.95,
-      "snippet": "Purple rectangle labeled 'AMPK', shown in the cytoplasm linking mitochondrial signals to downstream effectors."
-    },
-    {
-      "symbol": "HSP-60",
-      "in_compartment": "Intestinal cell",
-      "confidence": 0.9,
-      "snippet": "Purple hexagon labeled 'HSP-60', associated with mitochondria/UPRmt pathway."
-    },
-    {
-      "symbol": "ZIP-4",
-      "in_compartment": "Nucleus",
-      "confidence": 0.9,
-      "snippet": "Purple rectangle labeled 'ZIP-4', shown in the nucleus area downstream of AMPK/ESRE pathway."
-    },
-    {
-      "symbol": "ZIP-2",
-      "in_compartment": "Nucleus",
-      "confidence": 0.9,
-      "snippet": "Purple rectangle labeled 'ZIP-2', shown in the nucleus area downstream of ESRE."
-    },
-    {
-      "symbol": "CEBP-1",
-      "in_compartment": "Nucleus",
-      "confidence": 0.9,
-      "snippet": "Purple rectangle labeled 'CEBP-1/2', shown alongside ZIP-4."
-    },
-    {
-      "symbol": "NHR-86",
-      "in_compartment": "Nucleus",
-      "confidence": 0.88,
-      "snippet": "Purple rectangle labeled 'NHR-86 HNF-4', in the nucleus at the right side of the figure."
+      "snippet": "Yellow oval, annotated as p38 MAPK; downstream of SEK-1."
     },
     {
       "symbol": "FSHR-1",
       "in_compartment": "Intestinal cell",
-      "confidence": 0.9,
-      "snippet": "Teal hexagon labeled 'FSHR-1' at the apical right membrane of the intestinal cell."
+      "confidence": 0.93,
+      "snippet": "Blue membrane receptor, upper right of intestinal cell membrane; responds to extracellular signals."
     },
     {
-      "symbol": "PCN",
+      "symbol": "HSP-60",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Blue oval, top-center of intestinal cell near mitochondria; part of UPRmt branch."
+    },
+    {
+      "symbol": "ATFS-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.92,
+      "snippet": "Purple box, annotated as ATF-4; downstream of UPRmt/mitochondria and HSP-60."
+    },
+    {
+      "symbol": "HIF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box, near mitochondria/iron region; regulates antimicrobial defence genes."
+    },
+    {
+      "symbol": "AMPK",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.92,
+      "snippet": "Purple oval; activated by mtROS; regulates nuclear gene expression."
+    },
+    {
+      "symbol": "DAF-16",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box, annotated as FOXO; transcription factor stack; target of PMK-1 and regulates cellular stress response genes."
+    },
+    {
+      "symbol": "SKN-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box, annotated as Nrf2; transcription factor stack; regulates cellular stress response genes."
+    },
+    {
+      "symbol": "HSF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box; transcription factor stack; regulates cellular stress response genes; adjacent to ROS input."
+    },
+    {
+      "symbol": "ATF-7",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box, lower left; activated by PMK-1; drives antimicrobial defence genes."
+    },
+    {
+      "symbol": "ZIP-4",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.92,
+      "snippet": "Purple box, right side; activates ESRE in nucleus."
+    },
+    {
+      "symbol": "CEBP-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.88,
+      "snippet": "Purple box labeled CEBP-1/2, right side; activates ESRE."
+    },
+    {
+      "symbol": "CEBP-2",
       "in_compartment": "Intestinal cell",
       "confidence": 0.85,
-      "snippet": "Teal hexagon labeled 'PCN' at the apical right, near FSHR-1."
+      "snippet": "Purple box labeled CEBP-1/2, right side; activates ESRE; listed together with CEBP-1."
+    },
+    {
+      "symbol": "ZIP-2",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box, right side; activated downstream of ExoA/Translation inhibition; activates ESRE and antimicrobial defence genes; one connector may be a T-bar (flagged as uncertain)."
+    },
+    {
+      "symbol": "NHR-86",
+      "in_compartment": "Nucleus",
+      "confidence": 0.9,
+      "snippet": "Purple box, annotated as HNF-4, far right inside nucleus edge; activated by PCN; drives antimicrobial defence genes."
     }
   ],
-  "tentative_edges": [
-    {
-      "from_symbol": "TIR-1",
-      "to_symbol": "NSY-1",
-      "relation": "activates",
-      "confidence": 0.9,
-      "snippet": "Arrow from TIR-1/SARM1 complex to NSY-1 MAPKKK."
-    },
-    {
-      "from_symbol": "NSY-1",
-      "to_symbol": "SEK-1",
-      "relation": "activates (phosphorylates)",
-      "confidence": 0.97,
-      "snippet": "Arrow from NSY-1 to SEK-1 in the p38 MAPK cascade."
-    },
-    {
-      "from_symbol": "SEK-1",
-      "to_symbol": "PMK-1",
-      "relation": "activates (phosphorylates)",
-      "confidence": 0.97,
-      "snippet": "Arrow from SEK-1 to PMK-1 in the p38 MAPK cascade."
-    },
-    {
-      "from_symbol": "PMK-1",
-      "to_symbol": "ATF-7",
-      "relation": "activates",
-      "confidence": 0.97,
-      "snippet": "Arrow from PMK-1 to ATF-7 leading to transcription of defense genes in nucleus."
-    },
-    {
-      "from_symbol": "ATF-7",
-      "to_symbol": "DAF-16",
-      "relation": "co-activates antimicrobial defense genes",
-      "confidence": 0.75,
-      "snippet": "ATF-7, DAF-16, SKN-1, HSF-1 all shown in nucleus driving cellular stress response and antimicrobial defense genes."
-    },
-    {
-      "from_symbol": "ATFS-1",
-      "to_symbol": "HSP-60",
-      "relation": "upregulates",
-      "confidence": 0.85,
-      "snippet": "ATFS-1 (ATF-4) shown upstream of HSP-60 in UPRmt pathway."
-    },
-    {
-      "from_symbol": "HSP-60",
-      "to_symbol": "ATFS-1",
-      "relation": "signals to (UPRmt feedback)",
-      "confidence": 0.8,
-      "snippet": "HSP-60 and ATFS-1 connected in UPRmt arm near mitochondria."
-    },
-    {
-      "to_symbol": "ATFS-1",
-      "from_compartment": "Mitochondria",
-      "relation": "activates via UPRmt",
-      "confidence": 0.92,
-      "snippet": "UPRmt label on mitochondria with arrow to ATFS-1/ATF-4."
-    },
-    {
-      "to_symbol": "HIF-1",
-      "from_compartment": "Mitochondria",
-      "relation": "activates via mtROS",
-      "confidence": 0.9,
-      "snippet": "mtROS arrow from mitochondria toward HIF-1 in nucleus."
-    },
-    {
-      "to_symbol": "AMPK",
-      "from_compartment": "Mitochondria",
-      "relation": "activates",
-      "confidence": 0.88,
-      "snippet": "Arrow from mitochondria/mtROS to AMPK."
-    },
-    {
-      "from_symbol": "AMPK",
-      "to_symbol": "ZIP-4",
-      "relation": "activates",
-      "confidence": 0.85,
-      "snippet": "Arrow from AMPK toward ZIP-4/CEBP-1 in the ESRE pathway."
-    },
-    {
-      "from_symbol": "AMPK",
-      "to_symbol": "HIF-1",
-      "relation": "activates",
-      "confidence": 0.83,
-      "snippet": "Arrow from AMPK to HIF-1 shown in figure."
-    },
-    {
-      "from_symbol": "ZIP-4",
-      "to_symbol": "ZIP-2",
-      "relation": "co-regulates ESRE target genes",
-      "confidence": 0.8,
-      "snippet": "ZIP-4, CEBP-1/2 and ZIP-2 shown together in ESRE-driven transcription."
-    },
-    {
-      "from_symbol": "FSHR-1",
-      "to_symbol": "NHR-86",
-      "relation": "activates (via translation regulation)",
-      "confidence": 0.75,
-      "snippet": "FSHR-1 connected via 'Translation' label and arrow toward NHR-86/HNF-4."
-    },
-    {
-      "from_symbol": "PCN",
-      "to_symbol": "NHR-86",
-      "relation": "interacts with (uncertain)",
-      "confidence": 0.6,
-      "snippet": "PCN shown near FSHR-1 with a '?' arrow toward NHR-86 pathway."
-    },
-    {
-      "from_compartment": "Lumen",
-      "to_compartment": "Intestinal cell",
-      "relation": "colonizes intestine and delivers toxic effectors",
-      "via": "P. aeruginosa (Pyocyanin, Pyoverdine, ExoA)",
-      "confidence": 0.95,
-      "snippet": "P. aeruginosa shown in lumen releasing Pyocyanin, Pyoverdine, ExoA into intestinal cell, triggering signaling."
-    },
-    {
-      "from_symbol": "LRO",
-      "to_symbol": "TIR-1",
-      "relation": "activates via LRO stress/pH increase",
-      "confidence": 0.82,
-      "snippet": "LRO stress/pH increase arrow leading to TIR-1/SARM1 activation."
-    },
-    {
-      "from_compartment": "Nucleus",
-      "to_compartment": "Nucleus",
-      "relation": "drives transcription of cellular stress response genes and antimicrobial defense genes",
-      "confidence": 0.95,
-      "snippet": "Multiple transcription factors (ATF-7, DAF-16, SKN-1, HSF-1, HIF-1, ZIP-4, ZIP-2, CEBP-1, NHR-86) in nucleus labeled as driving cellular stress response genes and antimicrobial defence genes."
-    },
-    {
-      "from_symbol": "ATFS-1",
-      "to_symbol": "SKN-1",
-      "relation": "activates",
-      "confidence": 0.75,
-      "snippet": "ATFS-1 shown with arrow connecting to SKN-1 in nucleus via UPRmt branch."
-    },
-    {
-      "from_symbol": "PMK-1",
-      "to_symbol": "SKN-1",
-      "relation": "activates",
-      "confidence": 0.75,
-      "snippet": "PMK-1 arrows converge on multiple transcription factors including SKN-1 in the nucleus."
-    }
-  ]
+  "tentative_edges": []
 }

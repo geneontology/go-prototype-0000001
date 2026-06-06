@@ -48,8 +48,27 @@ def _response(*blocks, stop_reason: str = "tool_use") -> SimpleNamespace:
     )
 
 
+class _StreamCtx:
+    """Mimics the SDK's MessageStreamManager: a context manager whose
+    get_final_message() returns the accumulated Message."""
+
+    def __init__(self, message: SimpleNamespace) -> None:
+        self._message = message
+
+    def __enter__(self) -> "_StreamCtx":
+        return self
+
+    def __exit__(self, *exc) -> bool:
+        return False
+
+    def get_final_message(self) -> SimpleNamespace:
+        return self._message
+
+
 class _ScriptedClient:
-    """Returns the next pre-baked response each time messages.create is called."""
+    """Returns the next pre-baked response each time messages.stream (or
+    .create) is called. The orchestrator streams via llm.create_message ->
+    client.messages.stream(...).get_final_message()."""
 
     def __init__(self, script: list[SimpleNamespace]) -> None:
         self._script = list(script)
@@ -59,7 +78,7 @@ class _ScriptedClient:
             def __init__(_self, parent: "_ScriptedClient") -> None:
                 _self._parent = parent
 
-            def create(_self, **kwargs):
+            def _next(_self, **kwargs):
                 # Snapshot — the orchestrator mutates the messages list after
                 # every turn, so capturing the live reference would lose
                 # per-turn state.
@@ -68,6 +87,12 @@ class _ScriptedClient:
                 if not _self._parent._script:
                     raise AssertionError("scripted client ran out of responses")
                 return _self._parent._script.pop(0)
+
+            def create(_self, **kwargs):
+                return _self._next(**kwargs)
+
+            def stream(_self, **kwargs):
+                return _StreamCtx(_self._next(**kwargs))
 
         self.messages = _Messages(self)
 
@@ -333,6 +358,58 @@ def test_add_source_tool_layers_extra_claim() -> None:
         "source": {"source_type": "alliance"},
     })
     assert "error" in bad
+
+
+def test_orchestrator_recovers_from_no_tool_turn() -> None:
+    """A turn with no tool_use (narration, or a max_tokens truncation) must NOT
+    silently end with an empty model — the loop nudges and keeps building. This
+    is the figure2 failure mode: the agent thought/narrated without committing a
+    build call and the run produced 0 activities."""
+    builder = GoCamBuilder(model_id="gomodel:test-recover", title="recovery test")
+    script = [
+        # Turn 1: truncated mid-thinking — no tool_use, stop_reason=max_tokens.
+        _response(_text(""), stop_reason="max_tokens"),
+        # Turn 2: plain narration, still no tool_use.
+        _response(_text("Here is my plan: I will model tph-1…"), stop_reason="end_turn"),
+        # Turn 3: after the nudges, it actually builds.
+        _response(
+            _tool_use("tu1", "add_activity",
+                      local_part="tph1",
+                      enabled_by_gene="WB:WBGene00006600",
+                      gene_label="tph-1",
+                      source={"source_type": "alliance",
+                              "source_id": "WB:WBGene00006600",
+                              "tool_name": "alliance.resolve_symbol_to_curie"}),
+        ),
+        _response(_tool_use("tu2", "finalize_model")),
+    ]
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient(script),
+        model_name="claude-sonnet-4-6@default", max_turns=10,
+    )
+    model, ledger = orch.run(_make_intent())
+    assert {a.id for a in (model.activities or [])} == {"gomodel:test-recover/tph1"}
+    assert orch._finalized  # noqa: SLF001
+    # Two no-tool turns were nudged before the build turn.
+    assert sum(1 for c in orch.client.calls) >= 3
+
+
+def test_orchestrator_gives_up_after_repeated_no_tool_turns() -> None:
+    """Bounded: a model that never calls a tool can't loop forever — it breaks
+    after max_empty_nudges consecutive no-tool turns (model stays empty)."""
+    builder = GoCamBuilder(model_id="gomodel:test-giveup", title="giveup test")
+    # More text-only responses than the nudge budget; loop must stop before
+    # exhausting the script (which would raise 'ran out of responses').
+    script = [_response(_text("still thinking…"), stop_reason="end_turn") for _ in range(10)]
+    orch = Orchestrator(
+        builder=builder, client=_ScriptedClient(script),
+        model_name="claude-sonnet-4-6@default", max_turns=20, max_empty_nudges=2,
+    )
+    model, _ = orch.run(_make_intent())
+    assert (model.activities or []) == []
+    assert not orch._finalized  # noqa: SLF001
+    # 1 initial + max_empty_nudges nudged turns, then break — not all 10.
+    assert len(orch.client.calls) == 3
 
 
 def test_orchestrator_raises_on_runaway() -> None:

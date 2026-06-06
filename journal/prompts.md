@@ -326,3 +326,7 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 > - the graph viewport in the app is too small and seems to scale strangely; the right side of the graph viewport should basically be flush with the right info column
 > - what is the nature of the "figure" evidence? As it is the weakest evidence (basically not even at the level of "instinct", as it is just an attempt to read the figure), I think that it should have a similar glyph to the warning style of the "instinct" evidence
 > - and as far as evidence goes, would things get marked as "instinct" or "figure" only afer they had been a failure to provide evidence otherwise?
+
+### 2026-06-06 03:09:41Z
+
+> Lovely--thank you for all of this. Can you go ahead run figure2 with this new setup?

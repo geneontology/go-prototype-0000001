@@ -117,7 +117,19 @@ def run_pipeline(
               + (f" — {process_hint}" if process_hint else ""),
         taxon=species_taxon or DEFAULT_TAXON,
     )
-    model, ledger = orchestrate(intent, builder, max_turns=max_turns)
+    model, ledger = orchestrate(
+        intent, builder, max_turns=max_turns,
+        events_out=out_dir / "orchestrator_events.json",
+    )
+    n_act = len(model.activities or [])
+    n_gene = len(getattr(intent, "genes", None) or [])
+    if n_act == 0 and n_gene > 0:
+        print(
+            f"[WARN] orchestrator produced 0 activities from {n_gene} gene mention(s) — "
+            f"the model is EMPTY. Inspect {out_dir / 'orchestrator_events.json'} "
+            "(stop_reason per turn) before trusting this run.",
+            flush=True,
+        )
 
     print("[3/4] Writing model + provenance + viewer JSON", flush=True)
     write_model_and_ledger(model, ledger, out_dir)

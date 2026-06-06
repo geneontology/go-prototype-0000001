@@ -84,6 +84,13 @@ def create_message(
     "adaptive"`); manual `budget_tokens`, `temperature`/`top_p`/`top_k`, and
     assistant prefill are unsupported. The installed anthropic SDK has no
     native `effort`/`output_config` kwarg, so we pass them through `extra_body`.
+
+    The call is STREAMED (via `client.messages.stream(...).get_final_message()`).
+    The SDK refuses a *non-streaming* request whose `max_tokens` could exceed the
+    10-minute server limit — Opus 4.8 with a large `max_tokens` (32000, needed so
+    a dense figure's adaptive-thinking turn isn't truncated) trips that guard, so
+    streaming is required. The accumulated final Message is returned, so callers
+    see the same shape (`.content` / `.stop_reason` / `.usage`) as before.
     """
     extra: dict = {}
     if effort:
@@ -99,4 +106,5 @@ def create_message(
     if extra:
         params["extra_body"] = extra
     params.update(kwargs)
-    return client.messages.create(**params)
+    with client.messages.stream(**params) as stream:
+        return stream.get_final_message()
