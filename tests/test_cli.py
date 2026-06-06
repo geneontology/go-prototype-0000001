@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import yaml
 
-from gocam_prototype.cli import regenerate_landing, summarize_provenance
+from gocam_prototype.cli import _stamp_assets, regenerate_landing, summarize_provenance
 
 
 def _write_model(path: Path, title: str, n_activities: int) -> None:
@@ -108,3 +109,40 @@ def test_summarize_provenance_counts_v2_lists(tmp_path: Path) -> None:
 
 def test_summarize_provenance_missing_file(tmp_path: Path) -> None:
     assert summarize_provenance(tmp_path / "does-not-exist.json") == {}
+
+
+def test_stamp_assets_cache_busts(tmp_path: Path) -> None:
+    """_stamp_assets appends a per-asset content hash to asset URLs in the landing
+    and run pages; it's idempotent and the hash tracks the asset content."""
+    docs = tmp_path / "docs"
+    (docs / "assets").mkdir(parents=True)
+    (docs / "runs" / "demo").mkdir(parents=True)
+    (docs / "assets" / "viewer.js").write_text("console.log('v1');")
+    (docs / "assets" / "styles.css").write_text("body{}")
+    (docs / "index.html").write_text('<link href="assets/styles.css"><script src="assets/viewer.js">')
+    (docs / "runs" / "demo" / "index.html").write_text(
+        '<link rel="stylesheet" href="../../assets/styles.css">'
+        '<script type="module" src="../../assets/viewer.js"></script>'
+    )
+
+    assert _stamp_assets(docs) == 2  # both pages rewritten
+    landing = (docs / "index.html").read_text()
+    run = (docs / "runs" / "demo" / "index.html").read_text()
+    m = re.search(r"assets/viewer\.js\?v=([a-f0-9]{8})", landing)
+    assert m, landing
+    v1 = m.group(1)
+    # Same asset → same hash on the run page (relative path preserved).
+    assert f"../../assets/viewer.js?v={v1}" in run
+    assert "assets/styles.css?v=" in landing
+
+    # Idempotent: re-stamping unchanged assets changes nothing.
+    assert _stamp_assets(docs) == 0
+    assert (docs / "index.html").read_text() == landing
+
+    # Change the asset → new hash, URL updated (old ?v replaced, not duplicated).
+    (docs / "assets" / "viewer.js").write_text("console.log('v2 changed');")
+    _stamp_assets(docs)
+    relanding = (docs / "index.html").read_text()
+    v2 = re.search(r"assets/viewer\.js\?v=([a-f0-9]{8})", relanding).group(1)
+    assert v2 != v1
+    assert relanding.count("assets/viewer.js?v=") == 1

@@ -17,7 +17,9 @@ landing page lists the new run.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
@@ -314,6 +316,47 @@ def _render_tag_cloud(counts: dict[str, int]) -> str:
     return f'<ul class="tag-cloud">{"".join(chips)}</ul>'
 
 
+# Cache-busting. GH Pages serves docs/assets/*.{js,css} with cache-control:
+# max-age=600 and no version string, so an asset change (e.g. viewer.js) is not
+# picked up until the browser/CDN cache expires — every change needs a manual
+# hard-refresh. We append a per-asset content hash (`?v=<hash>`) to each asset
+# URL so a changed asset gets a new URL and reloads immediately. Re-stamped on
+# every regenerate_landing (and thus every run), idempotent.
+_ASSET_URL_RE = re.compile(
+    r'((?:href|src)=")((?:\.\./)*assets/([A-Za-z0-9_.-]+\.(?:js|css)))(?:\?v=[^"]*)?(")'
+)
+
+
+def _asset_version(assets_dir: Path, name: str) -> str:
+    try:
+        return hashlib.sha256((assets_dir / name).read_bytes()).hexdigest()[:8]
+    except OSError:
+        return "0"
+
+
+def _stamp_assets(docs_dir: Path) -> int:
+    """Rewrite asset URLs in the landing + every run page to `...asset?v=<hash>`,
+    where the hash is the asset's current content. Returns the count of pages
+    changed."""
+    assets_dir = docs_dir / "assets"
+
+    def repl(m: re.Match) -> str:
+        ver = _asset_version(assets_dir, m.group(3))
+        return f"{m.group(1)}{m.group(2)}?v={ver}{m.group(4)}"
+
+    pages = [docs_dir / "index.html", *sorted((docs_dir / "runs").glob("*/index.html"))]
+    changed = 0
+    for page in pages:
+        if not page.is_file():
+            continue
+        original = page.read_text()
+        stamped = _ASSET_URL_RE.sub(repl, original)
+        if stamped != original:
+            page.write_text(stamped)
+            changed += 1
+    return changed
+
+
 def regenerate_landing(docs_dir: Path) -> Path:
     runs_dir = docs_dir / "runs"
     entries: list[dict] = []
@@ -371,6 +414,8 @@ def regenerate_landing(docs_dir: Path) -> Path:
     landing = _LANDING_HEAD + body + _LANDING_TAIL
     landing_path = docs_dir / "index.html"
     landing_path.write_text(landing)
+    # Cache-bust the landing + every run page against the current asset contents.
+    _stamp_assets(docs_dir)
     return landing_path
 
 

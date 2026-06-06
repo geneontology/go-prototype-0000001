@@ -346,3 +346,19 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-06 04:45:17Z
 
 > With all of this in place, can you re-run figure one as well, just to see?
+
+### 2026-06-06 05:01:06Z
+
+> Can you make a note of that for later.
+
+### 2026-06-06 05:11:18Z
+
+> I'm noticing that in the latest product, the graph seems good, but the evidence glyph for go annotation (and maybe others?) isn't appearing on the edges?
+
+### 2026-06-06 05:11:40Z
+
+> I'm noticing that in the latest product, the graph seems good, but the evidence glyph for go annotation (and maybe others?) isn't appearing on the edges? Specifically, for has_input and has_output?
+
+### 2026-06-06 05:58:44Z
+
+> WRT "GH Pages will pick it up on the next build.", when will that be? The glyphs are still not there...
