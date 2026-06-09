@@ -6,41 +6,69 @@ activities:
 - id: gomodel:demo-celegans-fat-loss/tph1
   enabled_by:
     type: EnabledByGeneProductAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
     term: WB:WBGene00006600
   molecular_function:
     type: MolecularFunctionAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - go_api.gene_annotations
     term: GO:0004510
   occurs_in:
     type: CellularAnatomicalEntityAssociation
-    evidence: []
-    term: CL:0000540
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - go_api.gene_annotations
+    term: GO:0043005
   part_of:
     type: BiologicalProcessAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - golr.annotations_for_gene
     term: GO:0042427
   causal_associations:
   - type: CausalAssociation
     evidence:
-    - term: ECO:0000314
+    - term: ECO:0000000
       reference: PMID:11099056
       provenances:
-      - date: '2026-06-06'
+      - date: '2026-06-09'
     predicate: RO:0002304
     downstream_activity: gomodel:demo-celegans-fat-loss/mod1
 - id: gomodel:demo-celegans-fat-loss/mod1
   enabled_by:
     type: EnabledByGeneProductAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
     term: WB:WBGene00003533
   molecular_function:
     type: MolecularFunctionAssociation
     evidence:
-    - term: ECO:0000314
+    - term: ECO:0000000
       reference: PMID:11099056
       provenances:
-      - date: '2026-06-06'
+      - date: '2026-06-09'
         provided_by:
         - europepmc.search
     term: GO:0022824
@@ -56,11 +84,21 @@ activities:
 - id: gomodel:demo-celegans-fat-loss/nhr76
   enabled_by:
     type: EnabledByGeneProductAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
     term: WB:WBGene00015497
   molecular_function:
     type: MolecularFunctionAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - go_api.gene_annotations
     term: GO:0004879
   occurs_in:
     type: CellularAnatomicalEntityAssociation
@@ -68,21 +106,45 @@ activities:
     term: CL:0000584
   part_of:
     type: BiologicalProcessAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - go_api.gene_annotations
     term: GO:0006357
   causal_associations:
   - type: CausalAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000305
+      provenances:
+      - contributor:
+        - 0000-0001-0000-0000
+        date: '2026-06-09'
     predicate: RO:0002407
     downstream_activity: gomodel:demo-celegans-fat-loss/atgl1
 - id: gomodel:demo-celegans-fat-loss/atgl1
   enabled_by:
     type: EnabledByGeneProductAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
     term: WB:WBGene00010532
   molecular_function:
     type: MolecularFunctionAssociation
-    evidence: []
+    evidence:
+    - term: ECO:0000250
+      reference: GO_REF:0000024
+      with_objects:
+      - HGNC:17431
+      - GO:0004806
+      provenances:
+      - date: '2026-06-09'
+        provided_by:
+        - alliance.gene_orthologs
     term: GO:0004806
   occurs_in:
     type: CellularAnatomicalEntityAssociation
@@ -93,17 +155,27 @@ activities:
     evidence: []
     term: GO:0019433
 objects:
+- id: ECO:0000000
+  label: evidence
+  type: gocam:EvidenceTermObject
 - id: WB:WBGene00006600
   label: tph-1
   type: gocam:GeneProductTermObject
+- id: ECO:0000318
+  label: biological aspect of ancestor evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: GO_REF:0000033
+  label: 'Existing GO annotation: neuron projection (preferred over the CL cell-type
+    term)'
+  type: gocam:PublicationObject
 - id: GO:0004510
   label: tryptophan 5-monooxygenase activity
   type: gocam:MolecularFunctionTermObject
 - id: GO:0042427
   label: serotonin biosynthetic process
   type: gocam:BiologicalProcessTermObject
-- id: CL:0000540
-  label: neuron
+- id: GO:0043005
+  label: neuron projection
   type: gocam:CellularAnatomicalEntityTermObject
 - id: WB:WBGene00003533
   label: mod-1
@@ -115,6 +187,9 @@ objects:
 - id: GO:0022824
   label: transmitter-gated monoatomic ion channel activity
   type: gocam:MolecularFunctionTermObject
+- id: CL:0000540
+  label: neuron
+  type: gocam:CellularAnatomicalEntityTermObject
 - id: WB:WBGene00015497
   label: nhr-76
   type: gocam:GeneProductTermObject
@@ -130,6 +205,13 @@ objects:
 - id: WB:WBGene00010532
   label: atgl-1
   type: gocam:GeneProductTermObject
+- id: ECO:0000250
+  label: sequence similarity evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: GO_REF:0000024
+  label: Human PNPLA2 (the ATGL ortholog) carries an experimental annotation to triacylglycerol
+    lipase activity; transferred by orthology.
+  type: gocam:PublicationObject
 - id: GO:0004806
   label: triacylglycerol lipase activity
   type: gocam:MolecularFunctionTermObject
@@ -139,6 +221,9 @@ objects:
 - id: RO:0002304
   label: causally upstream of, positive effect
   type: gocam:PredicateTermObject
+- id: ECO:0000305
+  label: curator inference used in manual assertion
+  type: gocam:EvidenceTermObject
 - id: RO:0002407
   label: indirectly positively regulates
   type: gocam:PredicateTermObject

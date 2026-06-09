@@ -53,7 +53,9 @@ def build_demo(out_dir: Path) -> dict:
         source=go_annotation(
             source_id="GO:0004510",
             tool_name="go_api.gene_annotations",
-            snippet="Existing GO annotation: tryptophan 5-monooxygenase activity, IDA",
+            evidence_code="IBA", reference="GO_REF:0000033",
+            term_label="tryptophan 5-monooxygenase activity",
+            snippet="Existing GO annotation: tryptophan 5-monooxygenase activity",
         ),
         label="tryptophan 5-monooxygenase activity",
     )
@@ -62,16 +64,24 @@ def build_demo(out_dir: Path) -> dict:
         source=amigo(
             source_id="GO:0042427",
             tool_name="golr.annotations_for_gene",
-            snippet="Golr annotation doc: serotonin biosynthetic process, ISS evidence",
+            evidence_code="IBA", reference="GO_REF:0000033",
+            term_label="serotonin biosynthetic process",
+            snippet="Existing GO annotation: serotonin biosynthetic process",
         ),
         label="serotonin biosynthetic process",
     )
+    # occurs_in: PREFER the real GO CC annotation (GO:0043005 neuron projection,
+    # IBA) over a figure-inferred CL cell-type term — issue #52 pt7.
     b.set_occurs_in(
-        tph1, "CL:0000540",
-        source=instinct(
-            justification="Figure 1 panel E places tph-1 inside the labeled NEURONS box; CL:0000540 (neuron) is the canonical cell-type term.",
+        tph1, "GO:0043005",
+        source=go_annotation(
+            source_id="GO:0043005",
+            tool_name="go_api.gene_annotations",
+            evidence_code="IBA", reference="GO_REF:0000033",
+            term_label="neuron projection",
+            snippet="Existing GO annotation: neuron projection (preferred over the CL cell-type term)",
         ),
-        label="neuron",
+        label="neuron projection",
     )
 
     # mod-1: serotonin-gated chloride channel in neurons.

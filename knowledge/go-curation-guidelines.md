@@ -222,7 +222,13 @@ never a direct node property. `[gocam-shapes-evidence-on-reified-edge]`
 **Build workflow** — ask, in order:
 
 1. **What activities?** Identify each MF and its enabling gene product.
-2. **Where?** Add `occurs_in` (cell/compartment) where the figure shows it.
+2. **Where?** Add `occurs_in` where the figure shows it. **Prefer an existing
+   experimentally/phylogenetically supported GO CC (`GO:0005575` descendant)
+   annotation for the gene over a cell-type (CL/WBbt) term inferred from the
+   figure's compartment box.** A CL/WBbt cell-type term is valid only when the
+   gene has no usable GO CC annotation; the figure's compartment still informs
+   which CC/cell to choose. (E.g. *tph-1* is annotated to `GO:0043005` neuron
+   projection — use that, not `CL:0000540` neuron.)
 3. **What process?** Add `part_of` to the BP each activity belongs to.
 4. **How causally related?** Connect upstream→downstream with the right causal
    relation (§4).

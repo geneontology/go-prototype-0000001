@@ -370,3 +370,21 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-06 06:28:58Z
 
 > Lovely--I can see it now. Thank you!
+
+### 2026-06-09 19:07:48Z
+
+> Can you take a look at https://github.com/geneontology/go-prototype-0000001/issues/52 and see if the feedback seems like something actionable?
+
+### 2026-06-09 19:14:30Z
+
+> Yes, please start a plan to address everything, remembering (if applicable) that we do want to have the LinkML bones in the background. For identity, the list of all curators that have access to this tool is at https://github.com/geneontology/go-site/blob/master/metadata/users.yaml, those with allow-edit permissions.
+
+### 2026-06-09 19:15:10Z
+
+> Yes, please start a plan to address everything, remembering (if applicable) that we do want to have the LinkML bones in the background. For identity, the list of all curators that have access to this tool is at https://github.com/geneontology/go-site/blob/master/metadata/users.yaml, those with allow-edit permissions.
+> 
+> Before you start, would we get better results going to ultracode first? I tried using Fable, but got blocked out as this was considered to be a "biological" question.
+
+### 2026-06-09 19:35:21Z
+
+> Let's keep the conversation internal for now. Please proceed with execution and rollout.

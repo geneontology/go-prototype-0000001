@@ -9,7 +9,14 @@ import yaml
 from gocam.datamodel import Model
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
-from gocam_prototype.provenance import alliance, figure, go_annotation, instinct, literature
+from gocam_prototype.provenance import (
+    alliance,
+    figure,
+    go_annotation,
+    instinct,
+    literature,
+    orthology,
+)
 
 
 def _build_two_activity_model() -> tuple[GoCamBuilder, str, str]:
@@ -102,22 +109,65 @@ def test_builder_ledger_has_all_assertions() -> None:
     assert counts == {"alliance": 2, "go_annotation": 1, "literature": 3, "instinct": 1}
 
 
-def test_evidence_only_attached_for_literature() -> None:
-    """Non-literature sources must NOT synthesize an EvidenceItem into the
-    canonical gocam model; their provenance lives in the sidecar only."""
+def test_evidence_minted_for_db_sources_not_for_flagged_tiers() -> None:
+    """Database-backed / literature sources mint a real LinkML EvidenceItem (#52);
+    the deliberately-unverified tiers (figure/instinct) stay sidecar-only, and a
+    fabricated ECO:0000314 is never emitted."""
+    import yaml
+
     b, aid_a, _ = _build_two_activity_model()
     model, _ = b.build()
     act_a = next(a for a in model.activities if a.id == aid_a)
 
-    # enabled_by used a database source -> no gocam evidence.
-    assert act_a.enabled_by.evidence in (None, [])
-    # part_of used a database source -> no gocam evidence.
-    assert act_a.part_of.evidence in (None, [])
-    # occurs_in used instinct -> no gocam evidence.
+    # enabled_by used an alliance source with no GAF code -> EvidenceItem with the
+    # unknown-evidence ECO root, NEVER a fabricated direct-assay ECO:0000314.
+    assert act_a.enabled_by.evidence
+    assert act_a.enabled_by.evidence[0].term == "ECO:0000000"
+    # part_of used a go_annotation source -> now gets an EvidenceItem too.
+    assert act_a.part_of.evidence
+    # occurs_in used instinct -> NO gocam evidence (flagged tier; sidecar only).
     assert act_a.occurs_in.evidence in (None, [])
-    # molecular_function used literature -> has gocam evidence.
+    # molecular_function used literature -> evidence carries the PMID reference.
     assert act_a.molecular_function.evidence
     assert act_a.molecular_function.evidence[0].reference == "PMID:111"
+    # No fabricated direct-assay code anywhere in the model.
+    assert "ECO:0000314" not in yaml.safe_dump(model.model_dump(exclude_none=True, mode="json"))
+
+
+def test_go_annotation_evidence_code_maps_to_eco_with_reference() -> None:
+    """A go_annotation source carrying a real GAF code + reference lands as a
+    correct EvidenceItem(term=<ECO>, reference=<PMID/GO_REF>) with the ECO label
+    in objects[] (#52 pts 1,2,3)."""
+    b = GoCamBuilder(model_id="gomodel:ev", title="ev", contributor_orcid="ORCID:0000-0002-1234")
+    aid = b.add_activity("a", enabled_by_gene="WB:WBGene1",
+                         enabled_by_source=alliance(source_id="WB:WBGene1"))
+    b.set_molecular_function(aid, "GO:0004510",
+        source=go_annotation(source_id="GO:0004510", evidence_code="IBA",
+                             reference="GO_REF:0000033", term_label="tryptophan 5-monooxygenase activity",
+                             tool_name="go_api.gene_annotations"),
+        label="tryptophan 5-monooxygenase activity")
+    model, _ = b.build()
+    act = next(a for a in model.activities if a.id == aid)
+    ev = act.molecular_function.evidence[0]
+    assert ev.term == "ECO:0000318"            # IBA
+    assert ev.reference == "GO_REF:0000033"
+    assert ev.provenances[0].contributor == ["ORCID:0000-0002-1234"]
+    objs = {o.id: o.label for o in model.objects}
+    assert objs["ECO:0000318"] == "biological aspect of ancestor evidence used in manual assertion"
+
+
+def test_orthology_evidence_has_iss_and_with_objects() -> None:
+    b = GoCamBuilder(model_id="gomodel:o", title="o")
+    aid = b.add_activity("a", enabled_by_gene="WB:WBGene1",
+                         enabled_by_source=alliance(source_id="WB:WBGene1"))
+    b.set_part_of(aid, "GO:0042427",
+        source=orthology(ortholog_curie="HGNC:11178", ortholog_species="Homo sapiens",
+                         from_annotation="GO:0042427"))
+    model, _ = b.build()
+    ev = next(a for a in model.activities if a.id == aid).part_of.evidence[0]
+    assert ev.term == "ECO:0000250"            # orthology defaults to ISS -> ECO:0000250
+    assert ev.reference == "GO_REF:0000024"
+    assert "HGNC:11178" in (ev.with_objects or [])
 
 
 def test_add_source_layers_extra_claim_on_a_slot() -> None:
@@ -145,7 +195,9 @@ def test_add_source_literature_appends_evidence_item() -> None:
     model, _ = b.build()
     act_a = next(a for a in model.activities if a.id == aid_a)
     refs = [e.reference for e in (act_a.part_of.evidence or [])]
-    assert refs == ["PMID:999"]
+    # part_of's primary go_annotation now also mints evidence, so the added
+    # literature evidence is appended — assert it's present, not the only one.
+    assert "PMID:999" in refs
 
 
 def test_add_source_causal_requires_existing_edge() -> None:

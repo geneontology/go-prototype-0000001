@@ -85,6 +85,28 @@ SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
                            "source_type='figure' instead).",
         },
         "tool_name": {"type": "string"},
+        "evidence_code": {
+            "type": "string",
+            "description": "For go_annotation/alliance/orthology: the cited annotation's GAF evidence "
+                           "code EXACTLY as go_gene_annotations returned it (e.g. 'IDA', 'IBA', 'ISS'). "
+                           "Copy it; do NOT invent one. Mapped to an ECO term at build time.",
+        },
+        "reference": {
+            "type": "string",
+            "description": "For go_annotation/alliance/orthology: the cited annotation's reference "
+                           "(PMID:… or GO_REF:…) from go_gene_annotations — DISTINCT from source_id, "
+                           "which for go_annotation is the GO TERM CURIE.",
+        },
+        "term_label": {
+            "type": "string",
+            "description": "Human label of source_id (e.g. 'tryptophan 5-monooxygenase activity' for "
+                           "GO:0004510) — copy object_label from the retrieval result so the panel can "
+                           "show id + label.",
+        },
+        "supporting_text": {
+            "type": "string",
+            "description": "Quoted supporting text from the reference, if you actually have it.",
+        },
         "extra": {
             "type": "object",
             "additionalProperties": {"type": "string"},
@@ -95,6 +117,44 @@ SOURCE_OBJECT_SCHEMA: dict[str, Any] = {
     },
     "required": ["source_type"],
 }
+
+
+# The GO API leaves `association.aspect` null and instead types the term via
+# `object.category` (['molecular_activity'] / ['biological_process'] /
+# ['cellular_component']). Without this the agent can't tell a CC annotation
+# from an MF/BP one — the root of issue #52 pt7 (occurs_in suggesting a CL term
+# when a real GO CC annotation exists).
+_CATEGORY_TO_ASPECT = {
+    "molecular_activity": "molecular_function",
+    "molecular_function": "molecular_function",
+    "biological_process": "biological_process",
+    "cellular_component": "cellular_component",
+}
+
+_REFERENCE_PREFIXES = ("PMID:", "PMC", "GO_REF:", "DOI:", "Reactome:")
+
+
+def _annotation_aspect(assoc: dict) -> str | None:
+    cats = (assoc.get("object") or {}).get("category") or []
+    for c in cats:
+        a = _CATEGORY_TO_ASPECT.get(str(c).lower())
+        if a:
+            return a
+    return None
+
+
+def _annotation_reference(assoc: dict) -> str | None:
+    """The citable reference (PMID / GO_REF / …) for an annotation. The GO API
+    exposes this as `reference` (e.g. ['GO_REF:0000033'] for IBA); fall back to
+    `publications` when needed. Returns the first real-looking reference."""
+    candidates: list = []
+    ref = assoc.get("reference")
+    candidates.extend(ref if isinstance(ref, list) else ([ref] if ref else []))
+    candidates.extend((p or {}).get("id") for p in (assoc.get("publications") or []))
+    for c in candidates:
+        if isinstance(c, str) and c.startswith(_REFERENCE_PREFIXES):
+            return c
+    return None
 
 
 SYSTEM_PROMPT = """\
@@ -135,9 +195,14 @@ WORKFLOW
 1. For each gene mention, call `alliance_resolve_symbol` to obtain a stable CURIE (e.g. tph-1 -> \
    WB:WBGene00006600). The resolution itself is a source_type='alliance' source — its source_id is \
    the CURIE you got back, tool_name is 'alliance.resolve_symbol_to_curie'.
-2. For each resolved gene, call `go_gene_annotations` to pull existing GO annotations. The most \
-   informative annotations give you MF / BP / CC. Tag each assertion you derive this way as \
-   source_type='go_annotation' (its source_id is the GO term CURIE you used).
+2. For each resolved gene, call `go_gene_annotations` to pull existing GO annotations. Each result \
+   carries object_id + object_label, aspect (molecular_function/biological_process/cellular_component), \
+   evidence_code (the GAF code, e.g. IDA/IBA/ISS), and reference (PMID/GO_REF). When you derive an \
+   MF / BP / CC slot from one, tag it source_type='go_annotation' and COPY the annotation's real \
+   metadata into the source: source_id = the GO term CURIE; evidence_code = the GAF code EXACTLY as \
+   returned (NEVER invent one); reference = the PMID/GO_REF; term_label = object_label. The builder \
+   turns evidence_code into the correct ECO term — a wrong/missing code yields wrong evidence in the \
+   model, so copy faithfully.
 3. If the gene has no useful GO annotations, fall back to:
      - `alliance_gene_info` / phenotype / interactions / expression — tag as source_type='alliance'
      - `alliance_gene_orthologs` — if you transfer an annotation by orthology, tag as \
@@ -156,6 +221,13 @@ WORKFLOW
    by both a go_annotation and a pathway_resource), record the primary on the set_* call and layer the \
    other(s) with `add_source(activity_id, slot=..., source=...)` — but that is for multiple real \
    sources, not for tacking figure onto an already-resolved claim.
+   occurs_in (CC) PREFERENCE: when go_gene_annotations returns an annotation with \
+   aspect='cellular_component' (a real GO CC term, GO:0005575 descendant) for the gene, PREFER it for \
+   `set_occurs_in` over a cell-type (CL) term you inferred from the figure's compartment box — even \
+   if the CC annotation is IBA — and tag it source_type='go_annotation' with its evidence_code/ \
+   reference. A CL/WBbt cell-type term stays valid ONLY when the gene has no usable GO CC annotation; \
+   the figure's compartment still informs which CC/cell to pick. (e.g. tph-1 has GO:0043005 'neuron \
+   projection' — use that, not CL:0000540 'neuron'.)
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -210,13 +282,17 @@ from node-ifying the excluded downstream gene sets.
 SOURCE TYPES (taxonomy is mandatory — the right type for the right action)
 
 * `literature`        — a PMID you actually found via a tool. source_id is the PMID. NEVER fabricate.
-* `go_annotation`     — an existing GO annotation pulled via the GO API. source_id is the GO term CURIE.
-                        APPLIES TO PER-GENE SLOTS ONLY (MF / BP / CC). NEVER for causal edges — see below.
+* `go_annotation`     — an existing GO annotation pulled via the GO API. source_id is the GO term CURIE;
+                        ALSO set evidence_code (the GAF code), reference (PMID/GO_REF), and term_label
+                        (object_label) from the retrieval result. APPLIES TO PER-GENE SLOTS ONLY
+                        (MF / BP / CC). NEVER for causal edges — see below.
 * `alliance`          — Alliance gene info / phenotypes / interactions / expression / orthologs.
-                        source_id is whatever CURIE / identifier the Alliance API returned.
-* `amigo`             — a direct Golr / AmiGO Solr query result.
+                        source_id is whatever CURIE / identifier the Alliance API returned; set
+                        evidence_code/reference/term_label too when it cites a specific annotation.
+* `amigo`             — a direct Golr / AmiGO Solr query result. Set evidence_code/reference/term_label.
 * `orthology`         — by-orthology inference. source_id = ortholog CURIE; extra.ortholog_species and
-                        extra.from_annotation give the surrounding context.
+                        extra.from_annotation give the surrounding context. Defaults to evidence_code
+                        'ISS' + reference 'GO_REF:0000024' unless the transfer warrants otherwise.
 * `pathway_resource`  — Reactome / WikiPathways cross-reference. source_id = pathway id;
                         extra.resource = 'Reactome' or 'WikiPathways'; extra.pathway_url optional.
 * `expert_review`     — curator-asserted or expert-vetted. Use sparingly; not common in v0.
@@ -376,8 +452,12 @@ class Orchestrator:
         )
         self._register(
             "go_gene_annotations",
-            "Fetch existing GO annotations for a gene CURIE. Returns a slim list with the GO term id, "
-            "label, aspect, evidence ECO, and up to 3 publications.",
+            "Fetch existing GO annotations for a gene CURIE. Returns a slim list per annotation: "
+            "object_id (GO term CURIE) + object_label, aspect (molecular_function/biological_process/"
+            "cellular_component), evidence_code (the GAF code, e.g. IDA/IBA/ISS), reference (PMID or "
+            "GO_REF for the annotation), publications, and qualifiers. When you derive an MF/BP/CC "
+            "slot from one of these, COPY its evidence_code, reference, and object_label into the "
+            "go_annotation source — do not invent an evidence code.",
             {
                 "type": "object",
                 "additionalProperties": False,
@@ -509,7 +589,9 @@ class Orchestrator:
         )
         self._register(
             "set_occurs_in",
-            "Set the cellular component / anatomy (occurs_in) slot.",
+            "Set the cellular component / anatomy (occurs_in) slot. PREFER an existing GO CC "
+            "(GO:0005575 descendant) annotation for the gene over a figure-inferred CL cell-type "
+            "term; use CL/WBbt only when no GO CC annotation exists.",
             self._slot_schema("term"),
             self._t_set_cc,
         )
@@ -686,11 +768,13 @@ class Orchestrator:
             return {"error": f"HTTP error: {e}"}
         slim: list[dict[str, Any]] = []
         for a in (raw.get("associations") or [])[: inp.get("rows", 25)]:
+            obj = a.get("object") or {}
             slim.append({
-                "object_id": (a.get("object") or {}).get("id"),
-                "object_label": (a.get("object") or {}).get("label"),
-                "aspect": a.get("aspect"),
-                "evidence_type": a.get("evidence_type"),
+                "object_id": obj.get("id"),
+                "object_label": obj.get("label"),           # term label (#52 pt3)
+                "aspect": _annotation_aspect(a),            # GO API leaves aspect null; derive it
+                "evidence_code": a.get("evidence_type"),    # GAF code: IDA / IBA / ISS … (#52 pt1)
+                "reference": _annotation_reference(a),      # PMID / GO_REF for the cited annotation (#52 pt2)
                 "publications": [(p or {}).get("id") for p in (a.get("publications") or [])][:3],
                 "qualifiers": a.get("qualifiers") or [],
             })

@@ -6,12 +6,13 @@ Design notes:
 * Each assertion the builder records is paired with a SourceObject in the
   ledger. The agent passes the SourceObject in; this module never invents
   one.
-* The gocam-py `EvidenceItem.reference` is populated ONLY when the source
-  is a real literature reference (e.g. PMID). For database / amigo /
-  instinct sources we intentionally leave the gocam evidence list empty,
-  so the prototype never synthesizes a fake citation into the canonical
-  model — every non-literature provenance is captured in the sidecar
-  `provenance.json` instead.
+* Every database-backed / literature source mints a real LinkML
+  `EvidenceItem(term=<ECO>, reference=<PMID/GO_REF>, with_objects=…,
+  provenances=[ProvenanceInfo(contributor=<ORCID>, …)])` — the ECO term is
+  mapped from the source's actual GAF `evidence_code` (eco.py), never a
+  hard-coded ECO:0000314 (#52). The deliberately-unverified tiers (figure /
+  instinct / go_term_request) stay sidecar-only — they carry no EvidenceItem,
+  since a synthesized ECO would imply evidence they don't have.
 * `objects[]` (the gocam-py denormalized label cache) is populated
   automatically from labels the builder learns as the model is assembled.
 """
@@ -46,6 +47,7 @@ from gocam.datamodel import (
     TaxonTermObject,
 )
 
+from gocam_prototype.eco import ECO_UNKNOWN, eco_for_go_code, eco_label
 from gocam_prototype.provenance import ProvenanceLedger, SourceObject
 
 TermKind = Literal[
@@ -99,16 +101,59 @@ class GoCamBuilder:
 
     # -------------------------------------------------------- evidence helper
 
-    def _evidence(self, eco: str, source: SourceObject) -> list[EvidenceItem]:
-        if source.source_type != "literature" or not source.source_id:
+    # Source types that carry FORMAL evidence into the LinkML model. figure /
+    # instinct / go_term_request are the deliberately-unverified "verify this"
+    # tiers — they stay sidecar-only and never mint an EvidenceItem (a fabricated
+    # ECO term would imply evidence they don't have).
+    _EVIDENCE_BEARING = frozenset(
+        {"literature", "go_annotation", "alliance", "amigo", "orthology", "expert_review"}
+    )
+
+    def _evidence(self, eco: str | None, source: SourceObject) -> list[EvidenceItem]:
+        """Mint a LinkML EvidenceItem for any database-backed/literature source —
+        with the source's REAL ECO term (mapped from its GAF evidence_code),
+        reference (PMID/GO_REF), with/from objects, and a ProvenanceInfo
+        contributor. Never fabricates ECO:0000314 (#52 pts 1,2)."""
+        if source.source_type not in self._EVIDENCE_BEARING:
             return []
+        # ECO term: the source's real GAF code wins; else the explicit eco arg;
+        # else a sensible per-type default; else the unknown-evidence root.
+        # NEVER silently default to ECO:0000314 (direct assay) — that fabricates.
+        eco_term = eco_for_go_code(source.evidence_code) or eco
+        if eco_term is None and source.source_type == "expert_review":
+            eco_term = "ECO:0000305"  # curator inference used in manual assertion
+        if eco_term is None:
+            eco_term = ECO_UNKNOWN
+        # Reference: the cited PMID/GO_REF. For a literature source, source_id IS
+        # the PMID; for go_annotation, source_id is the GO TERM, so use .reference.
+        reference = source.reference or (
+            source.source_id if source.source_type == "literature" else None
+        )
+        # with/from objects for orthology (the ortholog + originating annotation).
+        with_objects: list[str] | None = None
+        if source.source_type == "orthology":
+            wo = [source.source_id] if source.source_id else []
+            from_ann = (source.extra or {}).get("from_annotation")
+            if from_ann:
+                wo.append(from_ann)
+            with_objects = wo or None
+        # Contributor: a curator ORCID (carried on the source) takes precedence
+        # over the run-level contributor — so a curator-confirmed assertion is
+        # attributed to the curator in ProvenanceInfo (#52 pt5).
+        orcid = (source.extra or {}).get("orcid") or self.contributor_orcid
         prov = ProvenanceInfo(
-            contributor=[self.contributor_orcid] if self.contributor_orcid else None,
+            contributor=[orcid] if orcid else None,
             date=datetime.now(timezone.utc).date().isoformat(),
             provided_by=[source.tool_name] if source.tool_name else None,
         )
-        self.remember(source.source_id, source.snippet or source.source_id, "publication")
-        return [EvidenceItem(term=eco, reference=source.source_id, provenances=[prov])]
+        self.remember(eco_term, eco_label(eco_term), "evidence")
+        if reference:
+            self.remember(
+                reference, source.supporting_text or source.snippet or reference, "publication"
+            )
+        return [EvidenceItem(
+            term=eco_term, reference=reference, with_objects=with_objects, provenances=[prov],
+        )]
 
     # ----------------------------------------------------------- public API
 
@@ -121,7 +166,7 @@ class GoCamBuilder:
         *,
         enabled_by_gene: str,
         enabled_by_source: SourceObject,
-        enabled_by_eco: str = "ECO:0000314",
+        enabled_by_eco: str | None = None,
         gene_label: str | None = None,
     ) -> str:
         aid = self.activity_id(local_part)
@@ -145,7 +190,7 @@ class GoCamBuilder:
         term: str,
         *,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         label: str | None = None,
     ) -> None:
         act = self._require_activity(activity_id)
@@ -161,7 +206,7 @@ class GoCamBuilder:
         term: str,
         *,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         label: str | None = None,
     ) -> None:
         act = self._require_activity(activity_id)
@@ -177,7 +222,7 @@ class GoCamBuilder:
         term: str,
         *,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         label: str | None = None,
     ) -> None:
         act = self._require_activity(activity_id)
@@ -194,7 +239,7 @@ class GoCamBuilder:
         *,
         predicate: str,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         predicate_label: str | None = None,
     ) -> None:
         act = self._require_activity(source_activity_id)
@@ -223,7 +268,7 @@ class GoCamBuilder:
         molecule: str,
         *,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         label: str | None = None,
         molecule_kind: TermKind = "molecule",
     ) -> str:
@@ -240,7 +285,7 @@ class GoCamBuilder:
         molecule: str,
         *,
         source: SourceObject,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
         label: str | None = None,
         molecule_kind: TermKind = "molecule",
     ) -> str:
@@ -289,7 +334,7 @@ class GoCamBuilder:
         source: SourceObject,
         *,
         target_activity_id: str | None = None,
-        eco: str = "ECO:0000314",
+        eco: str | None = None,
     ) -> str:
         """Attach an ADDITIONAL source to an assertion that already exists.
 

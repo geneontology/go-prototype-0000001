@@ -71,6 +71,15 @@ class SourceObject(BaseModel):
     snippet: str | None = Field(default=None, description="Quoted text or short summary of what the source says.")
     justification: str | None = Field(default=None, description="Required when source_type == 'instinct'.")
     tool_name: str | None = Field(default=None, description="Audit trail: which retrieval tool produced this source.")
+    # Structured evidence for database-backed claims (#52). For a go_annotation /
+    # alliance / orthology source these carry the cited annotation's real GAF
+    # evidence code, its reference, and the source term's label — so the builder
+    # can mint a correct LinkML EvidenceItem(term=<ECO>, reference=<PMID/GO_REF>)
+    # instead of a hard-coded ECO:0000314, and the viewer can show id + label.
+    evidence_code: str | None = Field(default=None, description="GAF evidence code of the cited annotation (IDA/IBA/ISS/…). Mapped to an ECO CURIE at build time.")
+    reference: str | None = Field(default=None, description="PMID / GO_REF for the cited annotation — distinct from source_id (which for go_annotation is the GO term CURIE).")
+    supporting_text: str | None = Field(default=None, description="Quoted supporting text from the reference, if available (#52 pt2).")
+    term_label: str | None = Field(default=None, description="Human label of source_id (e.g. 'tryptophan 5-monooxygenase activity' for GO:0004510) so the panel shows id + label (#52 pt3).")
     extra: dict[str, str] | None = Field(default=None, description="Kind-specific fields (ortholog_species, resource, pathway_url, orcid, …).")
     retrieved_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -104,18 +113,55 @@ def literature(*, pmid: str, snippet: str | None = None, tool_name: str | None =
     return SourceObject(source_type="literature", source_id=pmid, snippet=snippet, tool_name=tool_name)
 
 
-def go_annotation(*, source_id: str, snippet: str | None = None, tool_name: str | None = None) -> SourceObject:
-    """An existing GO annotation pulled via the GO API."""
-    return SourceObject(source_type="go_annotation", source_id=source_id, snippet=snippet, tool_name=tool_name)
+def go_annotation(
+    *,
+    source_id: str,
+    snippet: str | None = None,
+    tool_name: str | None = None,
+    evidence_code: str | None = None,
+    reference: str | None = None,
+    term_label: str | None = None,
+    supporting_text: str | None = None,
+) -> SourceObject:
+    """An existing GO annotation pulled via the GO API. `source_id` is the GO TERM
+    CURIE; `evidence_code` is the annotation's GAF code (IDA/IBA/…), `reference`
+    is its PMID/GO_REF, `term_label` is the term's label."""
+    return SourceObject(
+        source_type="go_annotation", source_id=source_id, snippet=snippet, tool_name=tool_name,
+        evidence_code=evidence_code, reference=reference, term_label=term_label,
+        supporting_text=supporting_text,
+    )
 
 
-def alliance(*, source_id: str, snippet: str | None = None, tool_name: str | None = None) -> SourceObject:
+def alliance(
+    *,
+    source_id: str,
+    snippet: str | None = None,
+    tool_name: str | None = None,
+    evidence_code: str | None = None,
+    reference: str | None = None,
+    term_label: str | None = None,
+) -> SourceObject:
     """Alliance gene info / phenotypes / interactions / expression / ortholog lookup."""
-    return SourceObject(source_type="alliance", source_id=source_id, snippet=snippet, tool_name=tool_name)
+    return SourceObject(
+        source_type="alliance", source_id=source_id, snippet=snippet, tool_name=tool_name,
+        evidence_code=evidence_code, reference=reference, term_label=term_label,
+    )
 
 
-def amigo(*, source_id: str, snippet: str | None = None, tool_name: str | None = None) -> SourceObject:
-    return SourceObject(source_type="amigo", source_id=source_id, snippet=snippet, tool_name=tool_name)
+def amigo(
+    *,
+    source_id: str,
+    snippet: str | None = None,
+    tool_name: str | None = None,
+    evidence_code: str | None = None,
+    reference: str | None = None,
+    term_label: str | None = None,
+) -> SourceObject:
+    return SourceObject(
+        source_type="amigo", source_id=source_id, snippet=snippet, tool_name=tool_name,
+        evidence_code=evidence_code, reference=reference, term_label=term_label,
+    )
 
 
 def orthology(
@@ -125,9 +171,13 @@ def orthology(
     from_annotation: str | None = None,
     snippet: str | None = None,
     tool_name: str | None = None,
+    evidence_code: str | None = None,
+    reference: str | None = None,
+    term_label: str | None = None,
 ) -> SourceObject:
     """By-orthology inference. `source_id` is the ortholog's CURIE; species (and the originating
-    annotation, if known) ride in `extra`."""
+    annotation, if known) ride in `extra`. Defaults to ISS evidence (GO_REF:0000024) for the
+    transferred term unless the caller overrides."""
     extra: dict[str, str] = {"ortholog_species": ortholog_species}
     if from_annotation:
         extra["from_annotation"] = from_annotation
@@ -136,6 +186,9 @@ def orthology(
         source_id=ortholog_curie,
         snippet=snippet,
         tool_name=tool_name,
+        evidence_code=evidence_code or "ISS",
+        reference=reference or "GO_REF:0000024",
+        term_label=term_label,
         extra=extra,
     )
 
