@@ -1,0 +1,900 @@
+{
+  "model_id": "gomodel:run-figure2-004",
+  "version": 2,
+  "assertions": {
+    "gomodel:run-figure2-004/fshr1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00008239",
+        "snippet": "Resolved C. elegans symbol fshr-1 to WB:WBGene00008239",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.385958Z"
+      }
+    ],
+    "gomodel:run-figure2-004/tir1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00006575",
+        "snippet": "Resolved C. elegans symbol tir-1 (TIR-1/SARM1) to WB:WBGene00006575",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386059Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nsy1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00003822",
+        "snippet": "Resolved C. elegans symbol nsy-1 (MAPKKK) to WB:WBGene00003822",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386103Z"
+      }
+    ],
+    "gomodel:run-figure2-004/sek1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00004758",
+        "snippet": "Resolved C. elegans symbol sek-1 (MAPKK) to WB:WBGene00004758",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386135Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00004055",
+        "snippet": "Resolved C. elegans symbol pmk-1 (p38 MAPK) to WB:WBGene00004055",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386161Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00002025",
+        "snippet": "Resolved C. elegans symbol hsp-60 to WB:WBGene00002025",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386186Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atfs1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00013878",
+        "snippet": "Resolved C. elegans symbol atfs-1 (ATF-4/ATFS-1) to WB:WBGene00013878",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386211Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hif1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00001851",
+        "snippet": "Resolved C. elegans symbol hif-1 to WB:WBGene00001851",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386235Z"
+      }
+    ],
+    "gomodel:run-figure2-004/aak2/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00020142",
+        "snippet": "Resolved figure label AMPK to C. elegans catalytic subunit aak-2 = WB:WBGene00020142",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386258Z"
+      }
+    ],
+    "gomodel:run-figure2-004/daf16/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00000912",
+        "snippet": "Resolved C. elegans symbol daf-16 (FOXO) to WB:WBGene00000912",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:31:45.386280Z"
+      }
+    ],
+    "gomodel:run-figure2-004/skn1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00004804",
+        "snippet": "Resolved C. elegans symbol skn-1 (Nrf2) to WB:WBGene00004804",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361525Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsf1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00002004",
+        "snippet": "Resolved C. elegans symbol hsf-1 to WB:WBGene00002004",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361602Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atf7/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00000223",
+        "snippet": "Resolved C. elegans symbol atf-7 to WB:WBGene00000223",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361629Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip4/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00021552",
+        "snippet": "Resolved C. elegans symbol zip-4 to WB:WBGene00021552",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361650Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00016997",
+        "snippet": "Resolved C. elegans symbol cebp-1 to WB:WBGene00016997",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361669Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp2/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00016754",
+        "snippet": "Resolved C. elegans symbol cebp-2 to WB:WBGene00016754",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361688Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip2/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00019327",
+        "snippet": "Resolved C. elegans symbol zip-2 to WB:WBGene00019327",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361716Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nhr86/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00003676",
+        "snippet": "Resolved C. elegans symbol nhr-86 (HNF-4) to WB:WBGene00003676",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-09T20:32:15.361744Z"
+      }
+    ],
+    "gomodel:run-figure2-004/fshr1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004930",
+        "snippet": "fshr-1 annotated to G protein-coupled receptor activity; signaling-receptor MF consistent with apical receptor glyph in Lumen.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IEA",
+        "reference": "GO_REF:0000002",
+        "term_label": "G protein-coupled receptor activity",
+        "retrieved_at": "2026-06-09T20:36:46.838024Z"
+      }
+    ],
+    "gomodel:run-figure2-004/fshr1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "fshr-1 required for defense against Gram-negative bacteria (P. aeruginosa).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:19196974",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:36:46.838167Z"
+      }
+    ],
+    "gomodel:run-figure2-004/fshr1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005886",
+        "snippet": "fshr-1 localizes to plasma membrane; figure shows it as a transmembrane receptor at the intestinal apical/luminal surface.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "plasma membrane",
+        "retrieved_at": "2026-06-09T20:36:46.838229Z"
+      }
+    ],
+    "gomodel:run-figure2-004/tir1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0035591",
+        "snippet": "TIR-1/SARM1 acts as a signaling adaptor upstream of the NSY-1 p38 MAPK module.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:15625192",
+        "term_label": "signaling adaptor activity",
+        "retrieved_at": "2026-06-09T20:36:46.838280Z"
+      }
+    ],
+    "gomodel:run-figure2-004/tir1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0042742",
+        "snippet": "tir-1 required for defense response to bacterium in the intestine.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:15048112",
+        "term_label": "defense response to bacterium",
+        "retrieved_at": "2026-06-09T20:36:46.838316Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nsy1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004709",
+        "snippet": "NSY-1 is the MAPKKK of the C. elegans p38 module.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11751572",
+        "term_label": "MAP kinase kinase kinase activity",
+        "retrieved_at": "2026-06-09T20:36:46.838360Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nsy1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0038066",
+        "snippet": "NSY-1 functions in the p38 MAPK cascade for innate immunity.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:12142542",
+        "term_label": "p38MAPK cascade",
+        "retrieved_at": "2026-06-09T20:36:46.838393Z"
+      }
+    ],
+    "gomodel:run-figure2-004/sek1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004708",
+        "snippet": "SEK-1 is the MAPKK of the C. elegans p38 module.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11751572",
+        "term_label": "MAP kinase kinase activity",
+        "retrieved_at": "2026-06-09T20:36:46.838423Z"
+      }
+    ],
+    "gomodel:run-figure2-004/sek1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0038066",
+        "snippet": "SEK-1 functions in the p38 MAPK cascade for innate immunity.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:12142542",
+        "term_label": "p38MAPK cascade",
+        "retrieved_at": "2026-06-09T20:36:46.838453Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004707",
+        "snippet": "PMK-1 is the p38 MAP kinase of the intestinal immune module.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11703092",
+        "term_label": "MAP kinase activity",
+        "retrieved_at": "2026-06-09T20:36:46.838482Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0038066",
+        "snippet": "PMK-1 functions in the p38 MAPK cascade for innate immunity.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:12142542",
+        "term_label": "p38MAPK cascade",
+        "retrieved_at": "2026-06-09T20:36:46.838519Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0140662",
+        "snippet": "HSP-60 is a mitochondrial chaperonin; its induction is the readout of UPRmt.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IEA",
+        "reference": "GO_REF:0000002",
+        "term_label": "ATP-dependent protein folding chaperone",
+        "retrieved_at": "2026-06-09T20:37:20.960317Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0034514",
+        "snippet": "hsp-60 induction is a hallmark of the mitochondrial unfolded protein response (UPRmt).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:15280428",
+        "term_label": "mitochondrial unfolded protein response",
+        "retrieved_at": "2026-06-09T20:37:20.960472Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005739",
+        "snippet": "HSP-60 localizes to mitochondria; figure places it inside the Mitochondria organelle.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:17189267",
+        "term_label": "mitochondrion",
+        "retrieved_at": "2026-06-09T20:37:20.960532Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atfs1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0000981",
+        "snippet": "ATFS-1 is the master bZIP transcription factor of the UPRmt.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:25773600",
+        "term_label": "DNA-binding transcription factor activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:37:20.960569Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atfs1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0034514",
+        "snippet": "ATFS-1 drives the transcriptional UPRmt program (incl. ESRE/stress genes shown into the Nucleus).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:20188671",
+        "term_label": "mitochondrial unfolded protein response",
+        "retrieved_at": "2026-06-09T20:37:20.960599Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atfs1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "ATFS-1 accumulates in the nucleus to activate target genes.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:25274306",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:37:20.960628Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hif1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0003700",
+        "snippet": "HIF-1 is the hypoxia-inducible bHLH-PAS transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:19632181",
+        "term_label": "DNA-binding transcription factor activity",
+        "retrieved_at": "2026-06-09T20:37:20.960654Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hif1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0001666",
+        "snippet": "HIF-1 mediates the response to hypoxia; activated by mtROS in this figure.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:11427734",
+        "term_label": "response to hypoxia",
+        "retrieved_at": "2026-06-09T20:37:20.960680Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hif1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "HIF-1 acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11427734",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:37:20.960751Z"
+      }
+    ],
+    "gomodel:run-figure2-004/aak2/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004679",
+        "snippet": "aak-2 is the catalytic alpha subunit of AMPK (figure label 'AMPK').",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:15574588",
+        "term_label": "AMP-activated protein kinase activity",
+        "retrieved_at": "2026-06-09T20:37:20.960778Z"
+      }
+    ],
+    "gomodel:run-figure2-004/aak2/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005737",
+        "snippet": "AAK-2/AMPK localizes to the cytoplasm.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:18408008",
+        "term_label": "cytoplasm",
+        "retrieved_at": "2026-06-09T20:37:20.960817Z"
+      }
+    ],
+    "gomodel:run-figure2-004/aak2/part_of": [
+      {
+        "source_type": "instinct",
+        "snippet": "mtROS --> AMPK (aak-2), placing AAK-2 in the oxidative stress response arm.",
+        "justification": "Figure shows mitochondrial ROS (mtROS) activating AMPK/aak-2 as part of the cellular oxidative-stress response feeding nuclear stress genes. aak-2 had no oxidative-stress BP in its retrieved annotation set, so the process is inferred from the figure context; curator to confirm exact GO BP.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:04.120369Z"
+      }
+    ],
+    "gomodel:run-figure2-004/daf16/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0001228",
+        "snippet": "DAF-16/FOXO is a transcriptional activator.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11124266",
+        "term_label": "DNA-binding transcription activator activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:04.120547Z"
+      }
+    ],
+    "gomodel:run-figure2-004/daf16/part_of": [
+      {
+        "source_type": "instinct",
+        "snippet": "DAF-16 --> cellular stress response genes (regulation of transcription).",
+        "justification": "DAF-16/FOXO is a sequence-specific RNA Pol II transcription factor; the figure shows it driving 'cellular stress response genes' in the nucleus. A positive regulation-of-transcription BP was not in the retrieved annotation subset, so the transcriptional role is asserted by inference for the TF-endpoint pattern.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:04.120746Z"
+      }
+    ],
+    "gomodel:run-figure2-004/daf16/occurs_in": [
+      {
+        "source_type": "instinct",
+        "snippet": "DAF-16 box with arrow into the Nucleus compartment.",
+        "justification": "DAF-16/FOXO is a canonical nuclear transcription factor (nucleus entailed by its DNA-binding TF activity); figure shows it acting on nuclear gene sets. No nucleus CC was present in the retrieved annotation subset.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:04.120844Z"
+      }
+    ],
+    "gomodel:run-figure2-004/skn1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0001228",
+        "snippet": "SKN-1/Nrf2 acts as an RNA Pol II transcriptional activator.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:11124266",
+        "term_label": "DNA-binding transcription activator activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:04.120919Z"
+      }
+    ],
+    "gomodel:run-figure2-004/skn1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0006979",
+        "snippet": "SKN-1/Nrf2 drives the oxidative/cellular stress response (figure: SKN-1 --> cellular stress response genes).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IEP",
+        "reference": "PMID:12869585",
+        "term_label": "response to oxidative stress",
+        "retrieved_at": "2026-06-09T20:38:04.121067Z"
+      }
+    ],
+    "gomodel:run-figure2-004/skn1/occurs_in": [
+      {
+        "source_type": "instinct",
+        "snippet": "SKN-1 box with arrow into the Nucleus compartment.",
+        "justification": "SKN-1/Nrf2 is a canonical nuclear transcription factor (nucleus entailed by its DNA-binding TF activity); figure shows it acting on nuclear gene sets. No nucleus CC was present in the retrieved annotation subset.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:04.121177Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsf1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0003700",
+        "snippet": "HSF-1 is the heat-shock transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:26759377",
+        "term_label": "DNA-binding transcription factor activity",
+        "retrieved_at": "2026-06-09T20:38:04.121259Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsf1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0009408",
+        "snippet": "HSF-1 drives the cytoprotective heat-shock/cellular stress response (figure: HSF-1 --> cellular stress response genes).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:15611166",
+        "term_label": "response to heat",
+        "retrieved_at": "2026-06-09T20:38:04.121357Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsf1/occurs_in": [
+      {
+        "source_type": "instinct",
+        "snippet": "HSF-1 box with arrow into the Nucleus compartment.",
+        "justification": "HSF-1 is a canonical nuclear transcription factor (nucleus entailed by its DNA-binding TF activity); figure shows it acting on nuclear gene sets. No nucleus CC was present in the retrieved annotation subset.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:04.121449Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atf7/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0003700",
+        "snippet": "ATF-7 is a bZIP transcription factor downstream of PMK-1.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "ISS",
+        "reference": "PMID:20369020",
+        "term_label": "DNA-binding transcription factor activity",
+        "retrieved_at": "2026-06-09T20:38:04.121522Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atf7/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "PMK-1-phosphorylated ATF-7 activates antimicrobial defence genes (figure: ATF-7 --> antimicrobial defence genes).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:20369020",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:38:04.121612Z"
+      }
+    ],
+    "gomodel:run-figure2-004/atf7/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "ATF-7 acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:20369020",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:38:04.121696Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip4/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0000981",
+        "snippet": "ZIP-4 is a bZIP transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "DNA-binding transcription factor activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:48.859391Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip4/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "zip-4 functions in defense against Gram-negative bacteria.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:28662060",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:38:48.859487Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip4/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "ZIP-4 transcription factor acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:38:48.859531Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0000981",
+        "snippet": "CEBP-1 is a bZIP transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:26484536",
+        "term_label": "DNA-binding transcription factor activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:48.859566Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "cebp-1 functions in defense against Gram-negative bacteria.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:27927200",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:38:48.859595Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp1/occurs_in": [
+      {
+        "source_type": "instinct",
+        "snippet": "CEBP-1/2 box in the intestinal-cell nuclear regulator group.",
+        "justification": "CEBP-1 is a bZIP transcription factor (nucleus entailed by its DNA-binding TF activity); figure places it among nuclear regulators. No nucleus CC was present in the retrieved annotation subset.",
+        "tool_name": "go.gene_annotations",
+        "retrieved_at": "2026-06-09T20:38:48.859623Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp2/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0000981",
+        "snippet": "CEBP-2 is a bZIP transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "DNA-binding transcription factor activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:48.859642Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp2/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "cebp-2 functions with zip-2 in antibacterial defence (figure: CEBP-1/2 --> ZIP-2).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:20133860",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:38:48.859668Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp2/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "CEBP-2 transcription factor acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:38:48.859694Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip2/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0000981",
+        "snippet": "ZIP-2 is the bZIP transcription factor that activates antimicrobial genes upon P. aeruginosa exposure.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:26484536",
+        "term_label": "DNA-binding transcription factor activity, RNA polymerase II-specific",
+        "retrieved_at": "2026-06-09T20:38:48.859739Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip2/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0050829",
+        "snippet": "ZIP-2 drives antimicrobial defence gene expression (figure: ZIP-2 --> antimicrobial defence genes in Nucleus).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:26876169",
+        "term_label": "defense response to Gram-negative bacterium",
+        "retrieved_at": "2026-06-09T20:38:48.859766Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip2/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "ZIP-2 acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:26876169",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:38:48.859792Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nhr86/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0003700",
+        "snippet": "NHR-86/HNF-4 is a nuclear-receptor transcription factor.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "DNA-binding transcription factor activity",
+        "retrieved_at": "2026-06-09T20:38:48.859817Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nhr86/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0140367",
+        "snippet": "NHR-86/HNF-4 activates antibacterial defence genes (figure: NHR-86 --> antimicrobial defence genes).",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IMP",
+        "reference": "PMID:20133860",
+        "term_label": "antibacterial innate immune response",
+        "retrieved_at": "2026-06-09T20:38:48.859841Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nhr86/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "NHR-86 acts in the nucleus.",
+        "tool_name": "go.gene_annotations",
+        "evidence_code": "IDA",
+        "reference": "PMID:20461074",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-09T20:38:48.859880Z"
+      }
+    ],
+    "gomodel:run-figure2-004/tir1/has_input/CHEBI:27974": [
+      {
+        "source_type": "figure",
+        "snippet": "Pyocyanin (green hexagon, Lumen) --> TIR-1/SARM1 pointed arrow crossing the membrane. Pyocyanin is the P. aeruginosa phenazine stimulus that triggers TIR-1-dependent p38 immunity. ChEBI:27974 (pyocyanin) identification to be verified by curator.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879663Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nhr86/has_input/CHEBI:27974": [
+      {
+        "source_type": "figure",
+        "snippet": "PCN (pyocyanin, green hexagon, Lumen) --> NHR-86/HNF-4 pointed arrow. NHR-86 senses the bacterial phenazine to activate antibacterial genes. ChEBI:27974 (pyocyanin) identification to be verified by curator; edge flagged uncertain in transcription (conf 0.5).",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879777Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hif1/has_input/CHEBI:26523": [
+      {
+        "source_type": "figure",
+        "snippet": "mtROS (label inside Mitochondria) --> HIF-1 pointed arrow. Mitochondrial reactive oxygen species activate HIF-1.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879813Z"
+      }
+    ],
+    "gomodel:run-figure2-004/aak2/has_input/CHEBI:26523": [
+      {
+        "source_type": "figure",
+        "snippet": "mtROS (label inside Mitochondria) --> AMPK (aak-2) pointed arrow. Mitochondrial reactive oxygen species activate AMPK.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879839Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsf1/has_input/CHEBI:26523": [
+      {
+        "source_type": "figure",
+        "snippet": "HSF-1 -- ROS box connector (direction/relation ambiguous, conf 0.35). Modeled as ROS being sensed by the HSF-1 stress-response arm; curator to verify direction.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879860Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/has_input/CHEBI:29034": [
+      {
+        "source_type": "figure",
+        "snippet": "Pyoverdine (Lumen) sequesters iron; +Fe3+ accumulates in the Mitochondria organelle, driving mitochondrial stress and the UPRmt (hsp-60 induction). Iron(3+) routed as the mitochondrial iron-stress stimulus on the UPRmt responder HSP-60; curator to re-home if a dedicated mito-stress activity is preferred.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:39:13.879879Z"
+      }
+    ],
+    "gomodel:run-figure2-004/tir1/causal/gomodel:run-figure2-004/nsy1": [
+      {
+        "source_type": "literature",
+        "source_id": "PMID:39299238",
+        "snippet": "Figure collapses TIR-1 --> LRO stress (pH increase) --> NSY-1 into one edge. Pathogen effectors trigger TIR-1/SARM1 aggregation on lysosome-related organelles (LRO stress), which activates the MAPKKK NSY-1 of the p38 module. tir-1 indirectly positively regulates nsy-1 (via the LRO-stress intermediate). Predicate: indirectly positively regulates.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.438564Z"
+      },
+      {
+        "source_type": "literature",
+        "source_id": "PMID:39299237",
+        "snippet": "Lysosome-related organelle integrity suppresses TIR-1 aggregation to restrain toxic propagation of p38 innate immunity — corroborates that LRO stress controls TIR-1-dependent activation of the NSY-1/SEK-1/PMK-1 p38 cascade. Predicate: indirectly positively regulates.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:38.878748Z"
+      }
+    ],
+    "gomodel:run-figure2-004/nsy1/causal/gomodel:run-figure2-004/sek1": [
+      {
+        "source_type": "literature",
+        "source_id": "PMID:11751572",
+        "snippet": "NSY-1 (MAPKKK) directly phosphorylates and activates SEK-1 (MAPKK); the two physically interact in the C. elegans p38 module. Predicate: directly positively regulates.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.438999Z"
+      }
+    ],
+    "gomodel:run-figure2-004/sek1/causal/gomodel:run-figure2-004/pmk1": [
+      {
+        "source_type": "literature",
+        "source_id": "PMID:12142542",
+        "snippet": "SEK-1 (MAPKK) directly phosphorylates and activates PMK-1 (p38 MAPK) in the intestinal innate-immunity cascade. Predicate: directly positively regulates.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.439221Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/causal/gomodel:run-figure2-004/atf7": [
+      {
+        "source_type": "literature",
+        "source_id": "PMID:20369020",
+        "snippet": "PMK-1 (p38) physically binds and directly phosphorylates the transcription factor ATF-7, converting it from a repressor to an activator of PMK-1-dependent antimicrobial genes. Predicate: directly positively regulates.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.439361Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/causal/gomodel:run-figure2-004/daf16": [
+      {
+        "source_type": "instinct",
+        "snippet": "PMK-1 causally upstream, positive effect, of DAF-16 (grouped connector into the DAF-16/SKN-1/HSF-1 cluster).",
+        "justification": "Figure draws a grouped connector PMK-1 --> DAF-16/SKN-1/HSF-1 cluster (conf 0.65; exact targets/directness uncertain). PMK-1 p38 signaling promotes DAF-16/FOXO-dependent stress gene expression, but the figure does not resolve mechanism/directness and no specific PMID for a direct PMK-1->DAF-16 step was retrieved, so modeled as causally upstream, positive effect.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.439456Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/causal/gomodel:run-figure2-004/skn1": [
+      {
+        "source_type": "instinct",
+        "snippet": "PMK-1 causally upstream, positive effect, of SKN-1 (oxidative stress response arm).",
+        "justification": "Part of the grouped PMK-1 --> DAF-16/SKN-1/HSF-1 connector (conf 0.65). PMK-1 p38 signaling promotes SKN-1/Nrf2 oxidative-stress responses; the figure does not resolve directness and no specific PMID was retrieved here, so modeled as causally upstream, positive effect.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.439507Z"
+      }
+    ],
+    "gomodel:run-figure2-004/pmk1/causal/gomodel:run-figure2-004/hsf1": [
+      {
+        "source_type": "instinct",
+        "snippet": "PMK-1 causally upstream, positive effect, of HSF-1 (cellular stress response arm).",
+        "justification": "Part of the grouped PMK-1 --> DAF-16/SKN-1/HSF-1 connector (conf 0.65). PMK-1 p38 signaling is shown promoting the HSF-1 cytoprotective/stress program; directness not resolved by the figure and no specific PMID retrieved, so modeled as causally upstream, positive effect.",
+        "tool_name": "europepmc.search",
+        "retrieved_at": "2026-06-09T20:40:09.439550Z"
+      }
+    ],
+    "gomodel:run-figure2-004/hsp60/causal/gomodel:run-figure2-004/atfs1": [
+      {
+        "source_type": "figure",
+        "snippet": "HSP-60 --> ATFS-1 pointed arrow (conf 0.65, flagged uncertain in transcription). Figure draws the mitochondrial UPRmt (marked by HSP-60) as upstream of ATFS-1. NOTE: canonically ATFS-1 is the master UPRmt TF that drives hsp-60 induction (i.e. ATFS-1 is usually upstream of HSP-60), so the drawn direction is flagged for curator verification. Predicate: causally upstream of, positive effect.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:40:09.439589Z"
+      }
+    ],
+    "gomodel:run-figure2-004/zip4/causal/gomodel:run-figure2-004/zip2": [
+      {
+        "source_type": "figure",
+        "snippet": "ZIP-4 --> ZIP-2 pointed arrow (conf 0.55, flagged uncertain). bZIP TF ZIP-4 promotes the ZIP-2-driven antimicrobial response; TF-to-TF regulation acts via transcription (intervening module), so modeled as indirectly positively regulates. Predicate: indirectly positively regulates.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:40:09.439671Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp1/causal/gomodel:run-figure2-004/zip2": [
+      {
+        "source_type": "figure",
+        "snippet": "CEBP-1/2 --> ZIP-2 pointed arrow (conf 0.55, flagged uncertain). bZIP TF CEBP-1 promotes the ZIP-2 antimicrobial program; TF-to-TF regulation via transcription, so modeled as indirectly positively regulates. Predicate: indirectly positively regulates.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:40:09.439810Z"
+      }
+    ],
+    "gomodel:run-figure2-004/cebp2/causal/gomodel:run-figure2-004/zip2": [
+      {
+        "source_type": "figure",
+        "snippet": "CEBP-1/2 --> ZIP-2 pointed arrow (CEBP-2 secondary label, conf 0.5, flagged uncertain). CEBP-2 partners in the ZIP-2 antimicrobial response; TF-to-TF regulation via transcription, so modeled as indirectly positively regulates. Predicate: indirectly positively regulates.",
+        "tool_name": "figure.read",
+        "retrieved_at": "2026-06-09T20:40:09.439873Z"
+      }
+    ]
+  }
+}

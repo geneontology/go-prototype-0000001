@@ -393,3 +393,13 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 
 > You had error: "● API Error: The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch()
 > "; please recover and continue.
+
+### 2026-06-09 20:23:32Z
+
+> <task-notification>
+> <task-id>bw03vp3rr</task-id>
+> <tool-use-id>toolu_01C9rsX3WLCGdiD8XBzw2pZ8</tool-use-id>
+> <output-file>/tmp/claude-1000/-home-sjcarbon-local-src-git-go-prototype-0000001/9baf81d8-3d2d-442a-a188-2037d91a6974/tasks/bw03vp3rr.output</output-file>
+> <status>failed</status>
+> <summary>Background command "Re-run figure2 (full pipeline) as figure2-004 for gallery coherence" failed with exit code 144</summary>
+> </task-notification>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo run — GO-CAM prototype</title>
+  <link rel="stylesheet" href="../../assets/styles.css?v=cbc487d9">
+  <script type="module" src="https://unpkg.com/@geneontology/web-components@1.0.0/dist/web-components/web-components.esm.js"></script>
+</head>
+<body class="viewer-body">
+  <header class="run-header">
+    <h1 id="run-title">Loading…</h1>
+    <p class="meta">
+      <a href="../../">← all runs</a>
+      <span class="sep">·</span>
+      <a href="model.yaml">model.yaml</a>
+      <span class="sep">·</span>
+      <a href="provenance.json">provenance.json</a>
+      <span class="sep">·</span>
+      <a href="viewer.json">viewer.json</a>
+    </p>
+  </header>
+
+  <main class="run-layout">
+    <section class="viewer-pane">
+      <go-gocam-viewer id="viewer" show-legend="false"></go-gocam-viewer>
+      <p class="hint">Click any node or edge to see its source. ⓘ</p>
+    </section>
+
+    <aside id="provenance-panel" class="prov-panel">
+      <p class="prov-placeholder">Click a node or edge to see its source.</p>
+    </aside>
+  </main>
+
+  <div id="error" role="alert"></div>
+
+  <script type="module" src="../../assets/viewer.js?v=34374ecb"></script>
+  <script type="module" src="../../assets/figure-thumb.js?v=fc4f1b2b"></script>
+</body>
+</html>
