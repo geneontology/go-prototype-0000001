@@ -373,16 +373,24 @@ def regenerate_landing(docs_dir: Path) -> Path:
                 continue
             counts = summarize_provenance(run / "provenance.json")
             figure = _find_run_figure(run)
+            mtime = model_path.stat().st_mtime
             entries.append({
                 "run_id": run.name,
                 "title": data.get("title") or run.name,
                 "n_activities": len(data.get("activities") or []),
+                "mtime": mtime,
                 "modified": datetime.fromtimestamp(
-                    model_path.stat().st_mtime, tz=timezone.utc
+                    mtime, tz=timezone.utc
                 ).strftime("%Y-%m-%d"),
                 "source_counts": counts,
                 "figure_filename": figure.name if figure else None,
             })
+
+    # Most recent run at the top, oldest at the bottom (by model.yaml mtime).
+    # NB: mtime is the local write time; this is baked into the committed
+    # index.html at regenerate time, so regenerate locally (or via the pipeline,
+    # which writes a fresh model.yaml for the new run) to refresh the order.
+    entries.sort(key=lambda e: e["mtime"], reverse=True)
 
     li_blocks: list[str] = []
     for e in entries:

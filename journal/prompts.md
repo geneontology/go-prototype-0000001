@@ -441,3 +441,11 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-09 21:12:46Z
 
 > Noting that for the side column, the feedback buttons are visually attached to the next item--it is very confusing. Can you "see" and confirm?
+
+### 2026-06-09 21:19:51Z
+
+> Ah, thank you--much better!
+
+### 2026-06-09 21:28:34Z
+
+> Thank you. Can you also order the models on the landing page with the most recent run at the top and the oldest at the bottom?
