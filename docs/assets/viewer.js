@@ -1002,13 +1002,18 @@ function renderPanel({ kind, header, assertionId, entries, edgeFacts, note }) {
     // biological fact); render one card per source. `src` (singular) is the
     // v1 back-compat shape.
     const srcs = entry.srcs ?? srcList(entry.src);
+    // Group the source card(s) AND their curator-action buttons into one unit,
+    // so the buttons visually belong to THIS statement, not the next one below.
+    const group = document.createElement("div");
+    group.className = "assertion-group";
     for (const src of srcs) {
-      panel.appendChild(renderSource(entry.slot, src, eid));
+      group.appendChild(renderSource(entry.slot, src, eid));
     }
     // One curator-action block per assertion, regardless of source count —
     // the curator acts on the statement, not on each individual citation.
     SRC_BY_ASSERTION.set(eid, srcs);
-    panel.appendChild(renderCuratorActions(eid, entry.slot));
+    group.appendChild(renderCuratorActions(eid, entry.slot));
+    panel.appendChild(group);
   }
 }
 

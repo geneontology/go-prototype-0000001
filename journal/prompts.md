@@ -403,3 +403,41 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 > <status>failed</status>
 > <summary>Background command "Re-run figure2 (full pipeline) as figure2-004 for gallery coherence" failed with exit code 144</summary>
 > </task-notification>
+
+### 2026-06-09 20:44:21Z
+
+> <task-notification>
+> <task-id>bwennxmcg</task-id>
+> <tool-use-id>toolu_019TWi3S83c8xey2pJfysK2n</tool-use-id>
+> <output-file>/tmp/claude-1000/-home-sjcarbon-local-src-git-go-prototype-0000001/9baf81d8-3d2d-442a-a188-2037d91a6974/tasks/bwennxmcg.output</output-file>
+> <status>completed</status>
+> <summary>Background command "Poll figure2-004" completed (exit code 0)</summary>
+> </task-notification>
+
+### 2026-06-09 20:46:42Z
+
+> <task-notification>
+> <task-id>bc33245tr</task-id>
+> <tool-use-id>toolu_01RfgTMPTmD7L8t4J1trZ5vL</tool-use-id>
+> <output-file>/tmp/claude-1000/-home-sjcarbon-local-src-git-go-prototype-0000001/9baf81d8-3d2d-442a-a188-2037d91a6974/tasks/bc33245tr.output</output-file>
+> <status>completed</status>
+> <summary>Background command "Poll figure2-004" completed (exit code 0)</summary>
+> </task-notification>
+
+### 2026-06-09 20:49:00Z
+
+> <task-notification>
+> <task-id>b31sskfs4</task-id>
+> <tool-use-id>toolu_016xWgusiquQk9SvtUXipD5J</tool-use-id>
+> <output-file>/tmp/claude-1000/-home-sjcarbon-local-src-git-go-prototype-0000001/9baf81d8-3d2d-442a-a188-2037d91a6974/tasks/b31sskfs4.output</output-file>
+> <status>completed</status>
+> <summary>Background command "Poll figure2-004" completed (exit code 0)</summary>
+> </task-notification>
+
+### 2026-06-09 21:07:45Z
+
+> Can you give me a link to a live example of the fixes?
+
+### 2026-06-09 21:12:46Z
+
+> Noting that for the side column, the feedback buttons are visually attached to the next item--it is very confusing. Can you "see" and confirm?

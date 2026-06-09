@@ -708,10 +708,33 @@ code, .assertion-id {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin: 0.6rem 0 0;
+  margin: 0.5rem 0 0;
   padding-top: 0.5rem;
   border-top: 1px dashed var(--c-border);
 }
+
+/* One statement = its source card(s) + their curator-action buttons, enclosed
+   in ONE box so the buttons unambiguously belong to THIS statement (not the
+   next item below). The box is the group; each source card collapses to a
+   colored left-stripe + content inside it. */
+.assertion-group {
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  background: var(--c-card);
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 1rem;
+}
+.assertion-group:last-child { margin-bottom: 0; }
+.assertion-group .source-card {
+  border-top: none;
+  border-right: none;
+  border-bottom: none;       /* keep only the colored left accent (border-left) */
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 0 0.6rem;
+  margin-bottom: 0.4rem;
+}
+.assertion-group .curator-actions { margin-bottom: 0; }
 
 .prior-actions {
   flex-basis: 100%;
