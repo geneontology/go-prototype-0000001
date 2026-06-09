@@ -83,6 +83,11 @@ def linkml_to_viewer_json(model: Model) -> dict:
             annotations = []
             if ev.reference:
                 annotations.append({"key": "source", "value": ev.reference})
+            # Surface the ProvenanceInfo contributor (curator ORCID) so the panel
+            # can show who an assertion is attributed to (#52 pt5).
+            for prov in (ev.provenances or []):
+                for orcid in (prov.contributor or []):
+                    annotations.append({"key": "contributor", "value": orcid})
             add_individual(ev_iri, ev.term, "evidence", annotations=annotations)
             out.append(ev_iri)
         return out

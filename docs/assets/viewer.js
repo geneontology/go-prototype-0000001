@@ -50,7 +50,7 @@ function inferRunId() {
 }
 const CURRENT_RUN_ID = inferRunId();
 
-function curatorActionIssueUrl({ actionKind, assertionId, slot, srcSummary, note }) {
+function curatorActionIssueUrl({ actionKind, assertionId, slot, srcSummary, note, curator }) {
   const params = new URLSearchParams({ template: CURATOR_ACTION_TEMPLATE });
   if (actionKind)     params.set("action_kind", actionKind);
   if (CURRENT_RUN_ID) params.set("model_run_id", CURRENT_RUN_ID);
@@ -58,6 +58,8 @@ function curatorActionIssueUrl({ actionKind, assertionId, slot, srcSummary, note
   if (slot)           params.set("slot", slot);
   if (srcSummary)     params.set("current_source", srcSummary);
   if (note)           params.set("note", note);
+  if (curator?.orcid)    params.set("curator_orcid", curator.orcid);
+  if (curator?.nickname) params.set("curator_nickname", curator.nickname);
   // Help GH pre-render a usable issue title.
   if (actionKind && assertionId) {
     const shortId = assertionId.split("/").slice(-2).join("/");
@@ -107,9 +109,12 @@ function saveActions(modelId, actions) {
   try { localStorage.setItem(ACTIONS_STORE_KEY(modelId), JSON.stringify(actions)); }
   catch { /* private browsing / quota — silently drop */ }
 }
-function recordAction(modelId, assertionId, kind, payload) {
+function recordAction(modelId, assertionId, kind, payload, curator) {
   const actions = loadActions(modelId);
-  actions.push({ assertionId, kind, payload: payload || null, ts: new Date().toISOString() });
+  actions.push({
+    assertionId, kind, payload: payload || null, ts: new Date().toISOString(),
+    curator: curator ? { nickname: curator.nickname, orcid: curator.orcid } : null,
+  });
   saveActions(modelId, actions);
   notifyActionsChanged();
   return actions;
@@ -120,6 +125,76 @@ function actionsFor(modelId, assertionId) {
 
 function notifyActionsChanged() {
   document.dispatchEvent(new CustomEvent("gocam-proto-actions-changed"));
+}
+
+/* ----------------------------------------------------- curator identity (#52 pt5)
+   The static GH-Pages site has no auth, so a chosen curator is SELF-ASSERTED /
+   unverified — verified attribution into the LinkML ProvenanceInfo.contributor
+   only happens via the authenticated GitHub-issue -> re-run path. The picker is
+   populated from the vendored allow-edit roster (assets/curators.json, built from
+   go-site users.yaml by gocam_prototype/curators.py). */
+const CURATOR_KEY = "gocam-proto-curator";
+let CURATORS = [];
+
+function getCurrentCurator() {
+  try { return JSON.parse(localStorage.getItem(CURATOR_KEY) || "null"); } catch { return null; }
+}
+function setCurrentCurator(c) {
+  try { localStorage.setItem(CURATOR_KEY, JSON.stringify(c)); } catch { /* ignore */ }
+  document.dispatchEvent(new CustomEvent("gocam-proto-curator-changed"));
+}
+async function loadCurators() {
+  if (CURATORS.length) return CURATORS;
+  try {
+    const r = await fetch("../../assets/curators.json");
+    if (r.ok) CURATORS = await r.json();
+  } catch { /* offline / missing — picker just shows none */ }
+  return CURATORS;
+}
+
+// Modal picker — resolves to the chosen {nickname, orcid, github} or null.
+async function pickCurator() {
+  const curators = await loadCurators();
+  return new Promise((resolve) => {
+    document.querySelector("#curator-modal")?.remove();
+    const m = document.createElement("div");
+    m.id = "curator-modal";
+    m.className = "modal-backdrop";
+    const options = curators
+      .map((c, i) => `<option value="${i}">${escapeHtml(c.nickname)}</option>`).join("");
+    m.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Identify yourself">
+        <h3>Who are you?</h3>
+        <p>Pick your name — GO curators with edit access. Stored locally and
+           <strong>self-asserted / unverified</strong>; only actions you escalate to a
+           GitHub issue carry verified attribution.</p>
+        <select class="modal-input curator-select">
+          <option value="" disabled selected>Select a curator…</option>
+          ${options}
+        </select>
+        <div class="modal-actions">
+          <button type="button" class="curator-btn cancel">Cancel</button>
+          <button type="button" class="curator-btn primary submit">Save</button>
+        </div>
+      </div>`;
+    const sel = m.querySelector(".curator-select");
+    const done = (val) => { m.remove(); resolve(val); };
+    m.querySelector(".submit").addEventListener("click", () =>
+      done(sel.value === "" ? null : curators[Number(sel.value)]));
+    m.querySelector(".cancel").addEventListener("click", () => done(null));
+    m.addEventListener("click", (ev) => { if (ev.target === m) done(null); });
+    document.body.appendChild(m);
+  });
+}
+
+// Ensure a curator is chosen (prompting once). Returns it, or null if declined.
+async function ensureCurator() {
+  let c = getCurrentCurator();
+  if (!c) {
+    c = await pickCurator();
+    if (c) setCurrentCurator(c);
+  }
+  return c;
 }
 
 let CURRENT_MODEL_ID = null;  // populated in main()
@@ -133,6 +208,7 @@ async function main() {
   ]);
 
   CURRENT_MODEL_ID = viewerData.id || "unknown-model";
+  TERM_LABELS = buildTermLabelIndex(viewerData);
 
   // Pretty the page title from the model annotations.
   const titleAnn = (viewerData.annotations || []).find(a => a.key === "title");
@@ -160,7 +236,7 @@ async function main() {
   if (cy) {
     emphasizeCausalEdges(cy);
     keepGraphFitted(cy, viewerEl);
-    installSourceChipsOverlay(cy, prov, viewerEl);
+    installSourceChipsOverlay(cy, prov, viewerEl, labelIndex);
   }
 
   installModelActionsHeader();
@@ -312,6 +388,38 @@ function showModal({ title, body, details }) {
   document.body.appendChild(m);
 }
 
+// In-page text-input modal — replaces the browser-native prompt() (which shows
+// "geneontology.github.io says …"). Returns a Promise resolving to the trimmed
+// text, or null if cancelled. (#52 pt6)
+function textInputModal({ title, placeholder = "", submitLabel = "Submit" }) {
+  return new Promise((resolve) => {
+    document.querySelector("#input-modal")?.remove();
+    const m = document.createElement("div");
+    m.id = "input-modal";
+    m.className = "modal-backdrop";
+    m.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+        <h3>${escapeHtml(title)}</h3>
+        <textarea class="modal-input" rows="3" placeholder="${escapeHtml(placeholder)}"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="curator-btn cancel">Cancel</button>
+          <button type="button" class="curator-btn primary submit">${escapeHtml(submitLabel)}</button>
+        </div>
+      </div>`;
+    const ta = m.querySelector(".modal-input");
+    const done = (val) => { m.remove(); resolve(val); };
+    m.querySelector(".submit").addEventListener("click", () => done(ta.value.trim() || null));
+    m.querySelector(".cancel").addEventListener("click", () => done(null));
+    m.addEventListener("click", (ev) => { if (ev.target === m) done(null); });
+    ta.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && (ev.metaKey || ev.ctrlKey)) done(ta.value.trim() || null);
+      else if (ev.key === "Escape") done(null);
+    });
+    document.body.appendChild(m);
+    ta.focus();
+  });
+}
+
 // Build {iri -> human-readable label} from viewer.json's individuals and objects.
 function buildLabelIndex(viewerData) {
   const index = {};
@@ -320,6 +428,24 @@ function buildLabelIndex(viewerData) {
     if (t?.label) index[ind.id] = t.label;
   }
   return index;
+}
+
+// CURIE -> label, built from the LinkML objects[] cache surfaced into the
+// viewer individuals' type[] entries (every GO/gene/ECO/predicate term used).
+// Lets the panel show "GO:0004510 — tryptophan 5-monooxygenase activity" for
+// any cited CURIE, not only ones carrying an explicit term_label (#52 pt3).
+let TERM_LABELS = {};
+function buildTermLabelIndex(viewerData) {
+  const m = {};
+  for (const ind of viewerData.individuals || []) {
+    for (const t of ind.type || []) {
+      if (t?.id && t?.label && t.id !== t.label) m[t.id] = t.label;
+    }
+  }
+  return m;
+}
+function termLabel(curie) {
+  return (curie && TERM_LABELS[curie]) || null;
 }
 
 // Walk Cytoscape edges and visually distinguish causal predicates (RO CURIEs) from
@@ -420,7 +546,7 @@ function edgeChipEmoji(prov, edge) {
 // Paint per-node and per-edge evidence-type emoji onto an HTML overlay
 // stacked over the cytoscape canvas. pointer-events: none so clicks
 // pass through. Re-renders on pan / zoom / resize.
-function installSourceChipsOverlay(cy, prov, viewerEl) {
+function installSourceChipsOverlay(cy, prov, viewerEl, labelIndex) {
   const host = viewerEl.parentElement; // .viewer-pane
   if (!host) return;
   if (getComputedStyle(host).position === "static") host.style.position = "relative";
@@ -441,10 +567,17 @@ function installSourceChipsOverlay(cy, prov, viewerEl) {
     overlay.style.height = `${cr.height}px`;
   }
 
-  function chipEl(emojis, className) {
+  function chipEl(emojis, className, onClick) {
     const el = document.createElement("span");
     el.className = `source-chips ${className}`;
     el.textContent = emojis.join("");
+    if (onClick) {
+      // Re-enable pointer events on the chip itself (the overlay stays
+      // click-through) so it links into the panel. (#52 pt8)
+      el.classList.add("clickable");
+      el.title = "Show this evidence in the panel";
+      el.addEventListener("click", (ev) => { ev.stopPropagation(); onClick(); });
+    }
     return el;
   }
 
@@ -460,7 +593,7 @@ function installSourceChipsOverlay(cy, prov, viewerEl) {
       const emojis = nodeChipEmojis(prov, id);
       if (!emojis.length) return;
       const bbox = node.renderedBoundingBox({ includeLabels: false });
-      const el = chipEl(emojis, "node-chip");
+      const el = chipEl(emojis, "node-chip", () => handleNodeClick(node, prov, labelIndex));
       // Anchor outside the top-right corner of the node — clear of the
       // edge midpoints where the per-edge chips sit.
       el.style.left = `${bbox.x2 + 4}px`;
@@ -473,7 +606,7 @@ function installSourceChipsOverlay(cy, prov, viewerEl) {
       if (!e) return;
       const mid = edge.renderedMidpoint();
       if (!mid || !Number.isFinite(mid.x)) return;
-      const el = chipEl([e], "edge-chip");
+      const el = chipEl([e], "edge-chip", () => handleEdgeClick(edge, prov, labelIndex));
       el.style.left = `${mid.x}px`;
       el.style.top  = `${mid.y}px`;
       overlay.appendChild(el);
@@ -874,6 +1007,9 @@ const SRC_BY_ASSERTION = new Map();
 function renderSource(slot, src, assertionId) {
   const card = document.createElement("div");
   card.className = `source-card ${src.source_type}`;
+  // Tag the card so an evidence chip can scroll to / highlight this exact
+  // source in the panel (#52 pt8).
+  if (assertionId) card.dataset.assertionId = assertionId;
 
   const meta = SOURCE_META[src.source_type] || { emoji: "?", label: src.source_type };
   const badge = document.createElement("span");
@@ -889,7 +1025,9 @@ function renderSource(slot, src, assertionId) {
   if (src.source_id) {
     const a = document.createElement("a");
     a.className = "source-id";
-    a.textContent = src.source_id;
+    // #52 pt3: show the id AND its label (e.g. "GO:0004510 — tryptophan 5-…").
+    const label = src.term_label || termLabel(src.source_id);
+    a.textContent = label && label !== src.source_id ? `${src.source_id} — ${label}` : src.source_id;
     const url = sourceUrl(src.source_id);
     a.href = url;
     if (url !== "#") {
@@ -897,6 +1035,29 @@ function renderSource(slot, src, assertionId) {
       a.rel = "noopener";
     }
     card.appendChild(a);
+  }
+  // #52 pts 1,2: structured evidence — the GAF code and a LINKED reference
+  // (PMID/GO_REF), shown consistently regardless of which tool retrieved it.
+  if (src.evidence_code || src.reference) {
+    const ev = document.createElement("p");
+    ev.className = "evidence-line";
+    let html = "";
+    if (src.evidence_code) html += `<strong>Evidence:</strong> ${escapeHtml(src.evidence_code)}`;
+    if (src.reference) {
+      const refUrl = sourceUrl(src.reference);
+      const refLink = refUrl !== "#"
+        ? `<a href="${refUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.reference)}</a>`
+        : escapeHtml(src.reference);
+      html += `${html ? " · " : ""}<span class="ref">${refLink}</span>`;
+    }
+    ev.innerHTML = html;
+    card.appendChild(ev);
+  }
+  if (src.supporting_text) {
+    const q = document.createElement("blockquote");
+    q.className = "supporting-text";
+    q.textContent = src.supporting_text;
+    card.appendChild(q);
   }
   if (src.snippet) {
     const q = document.createElement("blockquote");
@@ -972,7 +1133,7 @@ function renderCuratorActions(assertionId, slot) {
     wrap.appendChild(btn);
   }
 
-  // Existing-action chips: show what the user has already done with this assertion.
+  // Existing-action records: show what's been done, BY WHOM and WHEN (#52 pt5).
   const previous = actionsFor(CURRENT_MODEL_ID, assertionId);
   if (previous.length) {
     const chips = document.createElement("div");
@@ -980,8 +1141,10 @@ function renderCuratorActions(assertionId, slot) {
     for (const a of previous) {
       const chip = document.createElement("span");
       chip.className = `prior-action ${a.kind}`;
-      chip.title = `${a.kind} at ${a.ts}` + (a.payload ? `\n${a.payload}` : "");
-      chip.textContent = a.kind;
+      const who = a.curator?.nickname ? ` by ${a.curator.nickname}` : "";
+      const when = a.ts ? ` · ${formatActionTime(a.ts)}` : "";
+      chip.textContent = `${a.kind}${who}${when}`;
+      chip.title = `${a.kind}${who}${a.ts ? " at " + a.ts : ""}` + (a.payload ? `\n${a.payload}` : "");
       chips.appendChild(chip);
     }
     wrap.appendChild(chips);
@@ -989,20 +1152,30 @@ function renderCuratorActions(assertionId, slot) {
   return wrap;
 }
 
-function handleCuratorAction(assertionId, slot, kind) {
+function formatActionTime(iso) {
+  try { return new Date(iso).toLocaleString(); } catch { return iso; }
+}
+
+async function handleCuratorAction(assertionId, slot, kind) {
   let note = null;
   if (kind === "comment" || kind === "add-evidence" || kind === "edit-relation") {
-    const label = kind === "comment" ? "Comment" :
-                  kind === "add-evidence" ? "New evidence (PMID / snippet)" :
-                  "New relation (free-text suggestion)";
-    note = prompt(`${label}:`);
+    const title = kind === "comment" ? "Please add your comment"
+                : kind === "add-evidence" ? "Add evidence (PMID and/or supporting text)"
+                : "Suggest a new relation";
+    const placeholder = kind === "comment" ? "Your comment…"
+                : kind === "add-evidence" ? "PMID:… and/or a sentence of support"
+                : "e.g. directly negatively regulates";
+    note = await textInputModal({ title, placeholder });
     if (!note) return;
   }
-  recordAction(CURRENT_MODEL_ID, assertionId, kind, note);
+  // Identify the curator once (self-asserted; declining keeps it anonymous).
+  const curator = await ensureCurator();
+  recordAction(CURRENT_MODEL_ID, assertionId, kind, note, curator);
 
   // Offer a one-click GH-issue path. The action is already saved locally —
   // this just escalates it from "noted in this browser" to "filed in the
-  // project tracker".
+  // project tracker", carrying the curator so the issue->re-run path can write
+  // a verified ProvenanceInfo.contributor into the model.
   const src = SRC_BY_ASSERTION.get(assertionId);
   const issueUrl = curatorActionIssueUrl({
     actionKind: kind,
@@ -1010,9 +1183,10 @@ function handleCuratorAction(assertionId, slot, kind) {
     slot,
     srcSummary: summarizeSource(src),
     note: note || "",
+    curator,
   });
   toastWithAction(
-    `✓ ${kind} saved locally`,
+    `✓ ${kind} saved locally${curator ? ` (as ${curator.nickname})` : ""}`,
     "Open as GitHub issue ↗",
     () => openInNewTab(issueUrl),
   );

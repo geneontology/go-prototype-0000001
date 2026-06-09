@@ -1,0 +1,762 @@
+[
+  {
+    "nickname": "Achsel Tilmann",
+    "orcid": "https://orcid.org/0000-0002-1190-4481",
+    "github": null
+  },
+  {
+    "nickname": "Aduragbemi Adesina",
+    "orcid": "https://orcid.org/0000-0002-1029-4159",
+    "github": "adura-a"
+  },
+  {
+    "nickname": "Alexandros Kanellopoulos",
+    "orcid": "https://orcid.org/0000-0002-2094-7491",
+    "github": null
+  },
+  {
+    "nickname": "Allan P Davis",
+    "orcid": "https://orcid.org/0000-0002-5741-7128",
+    "github": null
+  },
+  {
+    "nickname": "Amy Singer",
+    "orcid": "https://orcid.org/0000-0002-9663-3237",
+    "github": "asingeror"
+  },
+  {
+    "nickname": "Antonia Lock",
+    "orcid": "https://orcid.org/0000-0003-1179-5999",
+    "github": "Antonialock"
+  },
+  {
+    "nickname": "Arthur de Jong",
+    "orcid": "https://orcid.org/0000-0002-7620-2704",
+    "github": null
+  },
+  {
+    "nickname": "Astrid L\u00e6greid",
+    "orcid": "https://orcid.org/0000-0002-3941-4257",
+    "github": "astridla"
+  },
+  {
+    "nickname": "Bel\u00e9n Juanes Cort\u00e9s",
+    "orcid": "https://orcid.org/0000-0003-3641-7548",
+    "github": "belenjc"
+  },
+  {
+    "nickname": "Cailey Mitchell",
+    "orcid": "https://orcid.org/0000-0002-6659-9031",
+    "github": "mitchellcailey"
+  },
+  {
+    "nickname": "Carlo Sala",
+    "orcid": "https://orcid.org/0000-0003-0662-9523",
+    "github": null
+  },
+  {
+    "nickname": "Casper Hoogenraad",
+    "orcid": "https://orcid.org/0000-0002-2666-0758",
+    "github": null
+  },
+  {
+    "nickname": "Ceri Van Slyke",
+    "orcid": "https://orcid.org/0000-0002-2244-7917",
+    "github": "cerivs"
+  },
+  {
+    "nickname": "Chandra Theesfeld",
+    "orcid": "https://orcid.org/0000-0002-8379-6600",
+    "github": null
+  },
+  {
+    "nickname": "Chiara Verpelli",
+    "orcid": "https://orcid.org/0000-0003-2949-9725",
+    "github": null
+  },
+  {
+    "nickname": "Chris Mungall",
+    "orcid": "https://orcid.org/0000-0002-6601-2165",
+    "github": "cmungall"
+  },
+  {
+    "nickname": "Christina James-Zorn",
+    "orcid": "https://orcid.org/0000-0001-5495-4588",
+    "github": "Xenbase2"
+  },
+  {
+    "nickname": "Claudia Bagni",
+    "orcid": "https://orcid.org/0000-0002-4419-210X",
+    "github": null
+  },
+  {
+    "nickname": "Colin Logie",
+    "orcid": "https://orcid.org/0000-0002-8534-6582",
+    "github": "colinlog"
+  },
+  {
+    "nickname": "Conny Yu",
+    "orcid": "https://orcid.org/0000-0002-6478-5762",
+    "github": "CY-uniprot"
+  },
+  {
+    "nickname": "Cordelia Imig",
+    "orcid": "https://orcid.org/0000-0001-7351-8706",
+    "github": null
+  },
+  {
+    "nickname": "Cristina Casals",
+    "orcid": "https://orcid.org/0000-0001-8769-177X",
+    "github": "ccasalsc"
+  },
+  {
+    "nickname": "Daniela Dieterich",
+    "orcid": "https://orcid.org/0000-0002-9880-1214",
+    "github": null
+  },
+  {
+    "nickname": "David Carpentier",
+    "orcid": "https://orcid.org/0000-0002-8172-9121",
+    "github": "EBIDaveC"
+  },
+  {
+    "nickname": "David Fashena",
+    "orcid": "https://orcid.org/0000-0001-9656-0683",
+    "github": "SomeCallMeDave"
+  },
+  {
+    "nickname": "David Hill",
+    "orcid": "https://orcid.org/0000-0001-7476-6306",
+    "github": "ukemi"
+  },
+  {
+    "nickname": "Debby Siegele",
+    "orcid": "https://orcid.org/0000-0001-8935-0696",
+    "github": "dsiegele"
+  },
+  {
+    "nickname": "Diane Inglis",
+    "orcid": "https://orcid.org/0000-0003-3166-4638",
+    "github": "dianeoinglis"
+  },
+  {
+    "nickname": "Dianna Fisk",
+    "orcid": "https://orcid.org/0000-0003-4929-9472",
+    "github": null
+  },
+  {
+    "nickname": "Dmitry Sitnikov",
+    "orcid": "https://orcid.org/0000-0003-3394-9805",
+    "github": "dms321"
+  },
+  {
+    "nickname": "Dnyanada Sahasrabudhe",
+    "orcid": "https://orcid.org/0000-0003-2916-7616",
+    "github": "sahasrasawaal"
+  },
+  {
+    "nickname": "Doug Howe",
+    "orcid": "https://orcid.org/0000-0001-5831-7439",
+    "github": "doughowe"
+  },
+  {
+    "nickname": "Dustin Ebert",
+    "orcid": "https://orcid.org/0000-0002-6659-0416",
+    "github": "dustine32"
+  },
+  {
+    "nickname": "Eckart Gundelfinger",
+    "orcid": "https://orcid.org/0000-0001-9377-7414",
+    "github": null
+  },
+  {
+    "nickname": "Edith Wong",
+    "orcid": "https://orcid.org/0000-0001-9799-5523",
+    "github": "edwong57"
+  },
+  {
+    "nickname": "Emily Bordeleau ",
+    "orcid": "https://orcid.org/0009-0008-9725-6614",
+    "github": "emilyann-RB"
+  },
+  {
+    "nickname": "Emily Bowler-Barnett",
+    "orcid": "https://orcid.org/0000-0003-4785-7231",
+    "github": "EmilyBowlerBarnett"
+  },
+  {
+    "nickname": "Emily Heald Camozzi",
+    "orcid": "https://orcid.org/0000-0003-0855-3059",
+    "github": "emilycamozzi"
+  },
+  {
+    "nickname": "Eunjoon Kim",
+    "orcid": "https://orcid.org/0000-0001-5518-6584",
+    "github": null
+  },
+  {
+    "nickname": "Eurie Hong",
+    "orcid": "https://orcid.org/0000-0002-1775-4998",
+    "github": null
+  },
+  {
+    "nickname": "Frank Koopmans",
+    "orcid": "https://orcid.org/0000-0002-4973-5732",
+    "github": "ftwkoopmans"
+  },
+  {
+    "nickname": "Guilaine Argoud-Puy",
+    "orcid": "https://orcid.org/0000-0002-2979-8613",
+    "github": "Argoudpuy"
+  },
+  {
+    "nickname": "Hana Goldschmidt",
+    "orcid": "https://orcid.org/0000-0002-5676-366X",
+    "github": null
+  },
+  {
+    "nickname": "Harold Drabkin",
+    "orcid": "https://orcid.org/0000-0003-2689-5511",
+    "github": "hdrabkin"
+  },
+  {
+    "nickname": "Harold MacGillavry",
+    "orcid": "https://orcid.org/0000-0002-6153-3586",
+    "github": null
+  },
+  {
+    "nickname": "Helen Attrill",
+    "orcid": "https://orcid.org/0000-0003-3212-6364",
+    "github": "hattrill"
+  },
+  {
+    "nickname": "Huaiyu Mi",
+    "orcid": "https://orcid.org/0000-0001-8721-202X",
+    "github": "huaiyumi"
+  },
+  {
+    "nickname": "James de Candole",
+    "orcid": "https://orcid.org/0009-0005-6259-9260",
+    "github": "JamesDC04"
+  },
+  {
+    "nickname": "Jan van Weering",
+    "orcid": "https://orcid.org/0000-0001-5259-4945",
+    "github": null
+  },
+  {
+    "nickname": "Janos Demeter",
+    "orcid": "https://orcid.org/0000-0002-7301-8055",
+    "github": null
+  },
+  {
+    "nickname": "Jesualdo Tom\u00e1s Fern\u00e1ndez Breis",
+    "orcid": "https://orcid.org/0000-0002-7558-2880",
+    "github": "jesualdotomasfernandezbreis"
+  },
+  {
+    "nickname": "Jim Balhoff",
+    "orcid": "https://orcid.org/0000-0002-8688-6599",
+    "github": "balhoff"
+  },
+  {
+    "nickname": "Joanna Argasinska",
+    "orcid": "https://orcid.org/0000-0003-2678-2824",
+    "github": "jpa29"
+  },
+  {
+    "nickname": "Job Berkhout",
+    "orcid": "https://orcid.org/0009-0005-9047-3868",
+    "github": "jobberkhout"
+  },
+  {
+    "nickname": "Jodi Hirschman",
+    "orcid": "https://orcid.org/0000-0001-8850-9925",
+    "github": null
+  },
+  {
+    "nickname": "Jodi Lew-Smith",
+    "orcid": "https://orcid.org/0000-0003-0784-046X",
+    "github": "jlewsmith"
+  },
+  {
+    "nickname": "John Chua",
+    "orcid": "https://orcid.org/0000-0002-5615-1014",
+    "github": null
+  },
+  {
+    "nickname": "Jolene Ramsey",
+    "orcid": "https://orcid.org/0000-0002-3774-5896",
+    "github": "jrr-cpt"
+  },
+  {
+    "nickname": "Jon Muyskens",
+    "orcid": "https://orcid.org/0000-0002-7496-2937",
+    "github": "jmuysken"
+  },
+  {
+    "nickname": "Kara Dolinski",
+    "orcid": "https://orcid.org/0000-0002-7010-0264",
+    "github": null
+  },
+  {
+    "nickname": "Karen Christie",
+    "orcid": "https://orcid.org/0000-0001-5501-853X",
+    "github": "krchristie"
+  },
+  {
+    "nickname": "Karl-Heinz Smalla",
+    "orcid": "https://orcid.org/0000-0002-0269-0311",
+    "github": null
+  },
+  {
+    "nickname": "Kevin MacPherson",
+    "orcid": "https://orcid.org/0000-0002-2657-8762",
+    "github": "kmacpher5"
+  },
+  {
+    "nickname": "Kim Rutherford",
+    "orcid": "https://orcid.org/0000-0001-6277-726X",
+    "github": "kimrutherford"
+  },
+  {
+    "nickname": "Kimberly Van Auken",
+    "orcid": "https://orcid.org/0000-0002-1706-4196",
+    "github": "vanaukenk"
+  },
+  {
+    "nickname": "Leonore Reiser",
+    "orcid": "https://orcid.org/0000-0003-0073-0858",
+    "github": "lreiser"
+  },
+  {
+    "nickname": "Leyla Ruzicka",
+    "orcid": "https://orcid.org/0000-0002-1009-339X",
+    "github": "LeylaR"
+  },
+  {
+    "nickname": "Li Ni",
+    "orcid": "https://orcid.org/0000-0002-9796-7693",
+    "github": "LiNiMGI"
+  },
+  {
+    "nickname": "Lina Ma",
+    "orcid": "https://orcid.org/0000-0001-6390-6289",
+    "github": "lina2015"
+  },
+  {
+    "nickname": "Lionel Breuza",
+    "orcid": "https://orcid.org/0000-0002-8075-8625",
+    "github": "lbreuza"
+  },
+  {
+    "nickname": "Livia Famiglietti",
+    "orcid": "https://orcid.org/0000-0002-5283-6593",
+    "github": "MariaLivia"
+  },
+  {
+    "nickname": "Lucille Pourcel",
+    "orcid": "https://orcid.org/0000-0003-1522-9900",
+    "github": "LucillePo"
+  },
+  {
+    "nickname": "Mahdokht Kohansalnodehi",
+    "orcid": "https://orcid.org/0000-0002-3898-5197",
+    "github": null
+  },
+  {
+    "nickname": "Malcolm Fisher",
+    "orcid": "https://orcid.org/0000-0003-1074-8103",
+    "github": "malcolmfisher103"
+  },
+  {
+    "nickname": "Marc Feuermann",
+    "orcid": "https://orcid.org/0000-0002-4187-2863",
+    "github": "marcfeuermann"
+  },
+  {
+    "nickname": "Mardi Nenni",
+    "orcid": "https://orcid.org/0000-0002-6238-1932",
+    "github": "MardiNenni"
+  },
+  {
+    "nickname": "Marek Skrzypek",
+    "orcid": "https://orcid.org/0000-0001-6749-615X",
+    "github": "marekskrzypek"
+  },
+  {
+    "nickname": "Maria Andres-Alonso",
+    "orcid": "https://orcid.org/0000-0002-1585-539X",
+    "github": null
+  },
+  {
+    "nickname": "Maria Costanzo",
+    "orcid": "https://orcid.org/0000-0001-9043-693X",
+    "github": null
+  },
+  {
+    "nickname": "Marie-Claire Harrison",
+    "orcid": "https://orcid.org/0000-0002-3013-9906",
+    "github": "mcharrison345"
+  },
+  {
+    "nickname": "Matthijs Verhage",
+    "orcid": "https://orcid.org/0000-0002-2514-0216",
+    "github": null
+  },
+  {
+    "nickname": "Miaomiao Wang",
+    "orcid": "https://orcid.org/0009-0004-4855-0893",
+    "github": "wmm1103"
+  },
+  {
+    "nickname": "Michael Kreutz",
+    "orcid": "https://orcid.org/0000-0003-0575-6950",
+    "github": null
+  },
+  {
+    "nickname": "Michele Magrane",
+    "orcid": "https://orcid.org/0000-0003-3544-996X",
+    "github": "magrane"
+  },
+  {
+    "nickname": "Michelle Gwinn Giglio",
+    "orcid": "https://orcid.org/0000-0001-7628-5565",
+    "github": "mgiglio99"
+  },
+  {
+    "nickname": "Midori Harris",
+    "orcid": "https://orcid.org/0000-0003-4148-4606",
+    "github": "mah11"
+  },
+  {
+    "nickname": "Mike Tiemeyer",
+    "orcid": "https://orcid.org/0000-0002-8704-9143",
+    "github": "mtiemeyer0919"
+  },
+  {
+    "nickname": "Momchil Ninov",
+    "orcid": "https://orcid.org/0000-0002-0808-7003",
+    "github": null
+  },
+  {
+    "nickname": "Nadine Gruaz",
+    "orcid": "https://orcid.org/0000-0002-4699-4907",
+    "github": "nadgruaz"
+  },
+  {
+    "nickname": "Niels Cornelisse",
+    "orcid": "https://orcid.org/0000-0001-9425-2935",
+    "github": null
+  },
+  {
+    "nickname": "Nils Brose",
+    "orcid": "https://orcid.org/0000-0003-0938-8534",
+    "github": null
+  },
+  {
+    "nickname": "Noa Lipstein",
+    "orcid": "https://orcid.org/0000-0002-0755-5899",
+    "github": null
+  },
+  {
+    "nickname": "Pascal Carme",
+    "orcid": "https://orcid.org/0009-0003-9059-1333",
+    "github": "PCarme"
+  },
+  {
+    "nickname": "Pascal Kaeser",
+    "orcid": "https://orcid.org/0000-0002-1558-1958",
+    "github": null
+  },
+  {
+    "nickname": "Pascale Gaudet",
+    "orcid": "https://orcid.org/0000-0003-1813-6857",
+    "github": "pgaudet"
+  },
+  {
+    "nickname": "Patrick Kalita",
+    "orcid": "https://orcid.org/0000-0002-6150-307X",
+    "github": "pkalita-lbl"
+  },
+  {
+    "nickname": "Patrick Masson",
+    "orcid": "https://orcid.org/0000-0001-7646-0052",
+    "github": "pmasson55"
+  },
+  {
+    "nickname": "Patrick Ng",
+    "orcid": "https://orcid.org/0000-0001-8208-652X",
+    "github": "patrickcng90"
+  },
+  {
+    "nickname": "Paul Denny",
+    "orcid": "https://orcid.org/0000-0003-4659-6893",
+    "github": "Pauldenny"
+  },
+  {
+    "nickname": "Paul Lloyd",
+    "orcid": "https://orcid.org/0000-0003-3508-5553",
+    "github": null
+  },
+  {
+    "nickname": "Paul Thomas",
+    "orcid": "https://orcid.org/0000-0002-9074-3507",
+    "github": "thomaspd"
+  },
+  {
+    "nickname": "Pedro Raposo",
+    "orcid": "https://orcid.org/0000-0001-6149-9456",
+    "github": "PedroRaposo"
+  },
+  {
+    "nickname": "Peter D'Eustachio",
+    "orcid": "https://orcid.org/0000-0002-5494-626X",
+    "github": "deustp01"
+  },
+  {
+    "nickname": "Peter McPherson",
+    "orcid": "https://orcid.org/0000-0001-7806-5662",
+    "github": null
+  },
+  {
+    "nickname": "Petra Fey",
+    "orcid": "https://orcid.org/0000-0002-4532-2703",
+    "github": "pfey03"
+  },
+  {
+    "nickname": "Pim van Nierop",
+    "orcid": "https://orcid.org/0000-0003-0593-3443",
+    "github": "Pimmelorus"
+  },
+  {
+    "nickname": "Polina Eka",
+    "orcid": "https://orcid.org/0009-0001-2744-0829",
+    "github": "PolinaEka"
+  },
+  {
+    "nickname": "Rainer Pielot",
+    "orcid": "https://orcid.org/0000-0002-9681-3318",
+    "github": null
+  },
+  {
+    "nickname": "Rama Balakrishnan",
+    "orcid": "https://orcid.org/0000-0003-2468-9933",
+    "github": null
+  },
+  {
+    "nickname": "Ranjana Kishore",
+    "orcid": "https://orcid.org/0000-0002-1478-7671",
+    "github": "rankishore"
+  },
+  {
+    "nickname": "Raymond Lee",
+    "orcid": "https://orcid.org/0000-0002-8151-7479",
+    "github": "raymond91125"
+  },
+  {
+    "nickname": "Reinhard Jahn",
+    "orcid": "https://orcid.org/0000-0003-1542-3498",
+    "github": null
+  },
+  {
+    "nickname": "Rene Ranzinger",
+    "orcid": "https://orcid.org/0000-0003-3147-448X",
+    "github": "ReneRanzinger"
+  },
+  {
+    "nickname": "Richard Huganir",
+    "orcid": "https://orcid.org/0000-0001-9783-5183",
+    "github": null
+  },
+  {
+    "nickname": "Rob Nash",
+    "orcid": "https://orcid.org/0000-0002-3726-7441",
+    "github": "robnash"
+  },
+  {
+    "nickname": "Robert Dodson",
+    "orcid": "https://orcid.org/0000-0002-2757-5950",
+    "github": "rjdodson"
+  },
+  {
+    "nickname": "Rose Oughtred",
+    "orcid": "https://orcid.org/0000-0002-6475-3373",
+    "github": null
+  },
+  {
+    "nickname": "Rossana Zaru",
+    "orcid": "https://orcid.org/0000-0002-3358-4423",
+    "github": "rozaru"
+  },
+  {
+    "nickname": "Ruth Lovering",
+    "orcid": "https://orcid.org/0000-0002-9791-0064",
+    "github": "RLovering"
+  },
+  {
+    "nickname": "Ruud Toonen",
+    "orcid": "https://orcid.org/0000-0002-9900-4233",
+    "github": null
+  },
+  {
+    "nickname": "Sabrina Toro",
+    "orcid": "https://orcid.org/0000-0002-4142-7153",
+    "github": "sabrinatoro"
+  },
+  {
+    "nickname": "Selina Dwight",
+    "orcid": "https://orcid.org/0000-0002-8546-7798",
+    "github": null
+  },
+  {
+    "nickname": "Seth Carbon",
+    "orcid": "https://orcid.org/0000-0001-8244-1536",
+    "github": "kltm"
+  },
+  {
+    "nickname": "Shaosen Zhang",
+    "orcid": "https://orcid.org/0009-0008-5439-6043",
+    "github": "ShaosenZhang"
+  },
+  {
+    "nickname": "Sharan Prakash",
+    "orcid": "https://orcid.org/0000-0003-1777-0987",
+    "github": "sharan-gh"
+  },
+  {
+    "nickname": "Shur-Jen Wang",
+    "orcid": "https://orcid.org/0000-0001-5256-8683",
+    "github": "shurjenw"
+  },
+  {
+    "nickname": "Sridhar Ramachandran",
+    "orcid": "https://orcid.org/0000-0002-2246-3722",
+    "github": "sramachand"
+  },
+  {
+    "nickname": "Stacia Engel",
+    "orcid": "https://orcid.org/0000-0001-5472-917X",
+    "github": "srengel"
+  },
+  {
+    "nickname": "Stephanie Lo",
+    "orcid": "https://orcid.org/0000-0002-2182-0222",
+    "github": "StephanieWLo"
+  },
+  {
+    "nickname": "Steven Marygold",
+    "orcid": "https://orcid.org/0000-0003-2759-266X",
+    "github": "sjm41"
+  },
+  {
+    "nickname": "Suvarna Nadendla",
+    "orcid": "https://orcid.org/0000-0003-3643-281X",
+    "github": "nsuvarnaiari"
+  },
+  {
+    "nickname": "Suzi Aleksander",
+    "orcid": "https://orcid.org/0000-0001-6787-2901",
+    "github": "suzialeksander"
+  },
+  {
+    "nickname": "Sylvain Poux",
+    "orcid": "https://orcid.org/0000-0001-7299-6685",
+    "github": "sylvainpoux"
+  },
+  {
+    "nickname": "Tanya Berardini",
+    "orcid": "https://orcid.org/0000-0002-3837-8864",
+    "github": "tberardini"
+  },
+  {
+    "nickname": "Terry L. Jackson",
+    "orcid": "https://orcid.org/0000-0003-2387-6411",
+    "github": "Jackson73"
+  },
+  {
+    "nickname": "Thomas Biederer",
+    "orcid": "https://orcid.org/0000-0002-3670-7863",
+    "github": null
+  },
+  {
+    "nickname": "Timothy Ryan",
+    "orcid": "https://orcid.org/0000-0003-2533-9548",
+    "github": null
+  },
+  {
+    "nickname": "Tony Cijsouw",
+    "orcid": "https://orcid.org/0000-0003-0912-1514",
+    "github": null
+  },
+  {
+    "nickname": "Tony Planchart",
+    "orcid": "https://orcid.org/0000-0001-8691-8856",
+    "github": null
+  },
+  {
+    "nickname": "Tremayne Mushayahama",
+    "orcid": "https://orcid.org/0000-0002-2874-6934",
+    "github": "tmushayahama"
+  },
+  {
+    "nickname": "Val Wood",
+    "orcid": "https://orcid.org/0000-0001-6330-7526",
+    "github": "ValWood"
+  },
+  {
+    "nickname": "Vincent O`Connor",
+    "orcid": "https://orcid.org/0000-0003-3185-5709",
+    "github": null
+  },
+  {
+    "nickname": "Vitalina Kharchenko",
+    "orcid": "https://orcid.org/0009-0002-7487-1936",
+    "github": "Vitalina-Kha"
+  },
+  {
+    "nickname": "Vittoria Mariano",
+    "orcid": "https://orcid.org/0000-0002-9848-0262",
+    "github": null
+  },
+  {
+    "nickname": "Wei-Chia Tseng",
+    "orcid": "https://orcid.org/0000-0002-3665-4482",
+    "github": "weichiatseng"
+  },
+  {
+    "nickname": "Xing Zheng",
+    "orcid": "https://orcid.org/0000-0003-4494-3214",
+    "github": "ZXingRong"
+  },
+  {
+    "nickname": "Xinyu Zhou",
+    "orcid": "https://orcid.org/0000-0003-4331-2023",
+    "github": "Thea1009"
+  },
+  {
+    "nickname": "Yue Qi",
+    "orcid": "https://orcid.org/0009-0009-7894-0143",
+    "github": "WENERYUE620"
+  },
+  {
+    "nickname": "Yves Snijckers",
+    "orcid": "https://orcid.org/0000-0001-6913-5104",
+    "github": "GewieksteVos"
+  },
+  {
+    "nickname": "Yvonne M Bradford",
+    "orcid": "https://orcid.org/0000-0002-9900-7880",
+    "github": "ybradford"
+  },
+  {
+    "nickname": "Zhao Li",
+    "orcid": "https://orcid.org/0000-0001-7374-3348",
+    "github": "lizhao-git"
+  },
+  {
+    "nickname": "\u00c0lex Bay\u00e9s",
+    "orcid": "https://orcid.org/0000-0002-5265-6306",
+    "github": null
+  }
+]

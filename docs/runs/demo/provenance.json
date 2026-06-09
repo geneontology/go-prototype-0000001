@@ -8,7 +8,7 @@
         "source_id": "WB:WBGene00006600",
         "snippet": "tph-1 resolved via Alliance gene search",
         "tool_name": "alliance.resolve_symbol_to_curie",
-        "retrieved_at": "2026-06-09T19:49:18.004108Z"
+        "retrieved_at": "2026-06-09T20:09:56.458820Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/tph1/molecular_function": [
@@ -20,7 +20,7 @@
         "evidence_code": "IBA",
         "reference": "GO_REF:0000033",
         "term_label": "tryptophan 5-monooxygenase activity",
-        "retrieved_at": "2026-06-09T19:49:18.004162Z"
+        "retrieved_at": "2026-06-09T20:09:56.458874Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/tph1/part_of": [
@@ -32,7 +32,7 @@
         "evidence_code": "IBA",
         "reference": "GO_REF:0000033",
         "term_label": "serotonin biosynthetic process",
-        "retrieved_at": "2026-06-09T19:49:18.004224Z"
+        "retrieved_at": "2026-06-09T20:09:56.458937Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/tph1/occurs_in": [
@@ -44,7 +44,7 @@
         "evidence_code": "IBA",
         "reference": "GO_REF:0000033",
         "term_label": "neuron projection",
-        "retrieved_at": "2026-06-09T19:49:18.004258Z"
+        "retrieved_at": "2026-06-09T20:09:56.458971Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/mod1/enabled_by": [
@@ -52,7 +52,7 @@
         "source_type": "alliance",
         "source_id": "WB:WBGene00003533",
         "tool_name": "alliance.resolve_symbol_to_curie",
-        "retrieved_at": "2026-06-09T19:49:18.004283Z"
+        "retrieved_at": "2026-06-09T20:09:56.458997Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/mod1/molecular_function": [
@@ -61,14 +61,14 @@
         "source_id": "PMID:11099056",
         "snippet": "Ranganathan, Cannon & Horvitz 2000 — mod-1 encodes a serotonin-gated chloride channel.",
         "tool_name": "europepmc.search",
-        "retrieved_at": "2026-06-09T19:49:18.004303Z"
+        "retrieved_at": "2026-06-09T20:09:56.459016Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/mod1/occurs_in": [
       {
         "source_type": "instinct",
         "justification": "Figure shows mod-1 in the NEURONS box alongside tph-1.",
-        "retrieved_at": "2026-06-09T19:49:18.004319Z"
+        "retrieved_at": "2026-06-09T20:09:56.459032Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/nhr76/enabled_by": [
@@ -76,7 +76,7 @@
         "source_type": "alliance",
         "source_id": "WB:WBGene00015497",
         "tool_name": "alliance.resolve_symbol_to_curie",
-        "retrieved_at": "2026-06-09T19:49:18.004333Z"
+        "retrieved_at": "2026-06-09T20:09:56.459050Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/nhr76/molecular_function": [
@@ -85,7 +85,7 @@
         "source_id": "GO:0004879",
         "snippet": "Existing GO annotation: nuclear receptor transcription factor activity",
         "tool_name": "go_api.gene_annotations",
-        "retrieved_at": "2026-06-09T19:49:18.004352Z"
+        "retrieved_at": "2026-06-09T20:09:56.459067Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/nhr76/part_of": [
@@ -94,14 +94,14 @@
         "source_id": "GO:0006357",
         "snippet": "Existing GO annotation: regulation of transcription by RNA polymerase II",
         "tool_name": "go_api.gene_annotations",
-        "retrieved_at": "2026-06-09T19:49:18.004366Z"
+        "retrieved_at": "2026-06-09T20:09:56.459081Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/nhr76/occurs_in": [
       {
         "source_type": "instinct",
         "justification": "Figure shows nhr-76 inside the labeled INTESTINE compartment; CL:0000584 (enterocyte) is the canonical intestinal cell-type term.",
-        "retrieved_at": "2026-06-09T19:49:18.004381Z"
+        "retrieved_at": "2026-06-09T20:09:56.459096Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/atgl1/enabled_by": [
@@ -109,7 +109,7 @@
         "source_type": "alliance",
         "source_id": "WB:WBGene00010532",
         "tool_name": "alliance.resolve_symbol_to_curie",
-        "retrieved_at": "2026-06-09T19:49:18.004390Z"
+        "retrieved_at": "2026-06-09T20:09:56.459105Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/atgl1/molecular_function": [
@@ -124,7 +124,7 @@
           "ortholog_species": "Homo sapiens",
           "from_annotation": "GO:0004806"
         },
-        "retrieved_at": "2026-06-09T19:49:18.004406Z"
+        "retrieved_at": "2026-06-09T20:09:56.459122Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/atgl1/part_of": [
@@ -137,14 +137,14 @@
           "resource": "Reactome",
           "pathway_url": "https://reactome.org/PathwayBrowser/#/R-HSA-163560"
         },
-        "retrieved_at": "2026-06-09T19:49:18.004429Z"
+        "retrieved_at": "2026-06-09T20:09:56.459147Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/atgl1/occurs_in": [
       {
         "source_type": "instinct",
         "justification": "Figure shows atgl-1 inside the INTESTINE compartment downstream of nhr-76.",
-        "retrieved_at": "2026-06-09T19:49:18.004437Z"
+        "retrieved_at": "2026-06-09T20:09:56.459157Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/tph1/causal/gomodel:demo-celegans-fat-loss/mod1": [
@@ -152,14 +152,14 @@
         "source_type": "literature",
         "source_id": "PMID:11099056",
         "snippet": "tph-1 supplies the serotonin signal that mod-1 responds to (Ranganathan et al. 2000).",
-        "retrieved_at": "2026-06-09T19:49:18.004446Z"
+        "retrieved_at": "2026-06-09T20:09:56.459165Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/mod1/causal/gomodel:demo-celegans-fat-loss/nhr76": [
       {
         "source_type": "instinct",
         "justification": "Figure 1 panel E draws an 'endocrine signal' arrow from the NEURONS compartment (containing mod-1) to the INTESTINE compartment (containing nhr-76); the directionality is shown but no direct molecular link is annotated in GO yet.",
-        "retrieved_at": "2026-06-09T19:49:18.004474Z"
+        "retrieved_at": "2026-06-09T20:09:56.459205Z"
       }
     ],
     "gomodel:demo-celegans-fat-loss/nhr76/causal/gomodel:demo-celegans-fat-loss/atgl1": [
@@ -171,7 +171,7 @@
           "orcid": "0000-0001-0000-0000",
           "contributor_name": "GO biocurator (placeholder)"
         },
-        "retrieved_at": "2026-06-09T19:49:18.004486Z"
+        "retrieved_at": "2026-06-09T20:09:56.459222Z"
       }
     ]
   }

@@ -356,7 +356,12 @@
           "label": "evidence"
         }
       ],
-      "annotations": []
+      "annotations": [
+        {
+          "key": "contributor",
+          "value": "0000-0001-0000-0000"
+        }
+      ]
     },
     {
       "id": "gomodel:demo-celegans-fat-loss/atgl1",

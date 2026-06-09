@@ -404,24 +404,35 @@ code, .assertion-id {
 .source-chips {
   position: absolute;
   display: inline-block;
-  padding: 1px 5px;
-  background: rgba(255, 255, 255, 0.92);
+  padding: 2px 7px;
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--c-border);
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: 12px;
+  font-size: 19px;            /* bigger so the glyphs are actually usable (#52 pt8) */
   line-height: 1.2;
   white-space: nowrap;
-  letter-spacing: 1px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  letter-spacing: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 .source-chips.node-chip {
   /* Anchored just outside the top-right corner of an activity node. */
 }
 .source-chips.edge-chip {
   transform: translate(-50%, -50%);
-  font-size: 12px;
-  padding: 0 4px;
+  font-size: 17px;
+  padding: 1px 6px;
   letter-spacing: 0;
+}
+/* Clickable chips link into the right-hand panel; the overlay itself stays
+   click-through (pointer-events:none) so only the chips intercept. (#52 pt8) */
+.source-chips.clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.source-chips.clickable:hover {
+  background: #fff;
+  border-color: var(--c-lit);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Source-figure thumbnail (injected by docs/assets/figure-thumb.js when
@@ -796,6 +807,38 @@ code, .assertion-id {
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+.modal-input,
+.modal select.modal-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem;
+  font: inherit;
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* Structured evidence on a source card (#52 pts 1,2): GAF code + linked ref. */
+.source-card .evidence-line {
+  margin: 0.3rem 0;
+  font-size: 0.85em;
+}
+.source-card .evidence-line .ref a { color: var(--c-lit); }
+.source-card .supporting-text {
+  margin: 0.3rem 0;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--c-border);
+  font-style: italic;
+  color: var(--c-muted);
+  font-size: 0.85em;
+}
+/* Briefly highlight a source card a chip scrolled to (#52 pt8). */
+.source-card.flash { animation: card-flash 1.4s ease-out 1; }
+@keyframes card-flash {
+  0%   { background: #fff6cc; }
+  100% { background: transparent; }
 }
 .modal h3 { margin-top: 0; }
 .modal-actions {
