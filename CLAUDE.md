@@ -147,6 +147,37 @@ never trust a truncated parse; and the *last* field of the schema vanishes
 first, so adding a field after `tentative_edges` changes which one silently
 drops (re-check the guard if you reorder `CuratorIntent`).
 
+## Evidence lands in the LinkML model via the GAF-code→ECO map — never fabricate ECO:0000314
+
+Every database-backed / literature source now mints a real
+`EvidenceItem(term=<ECO>, reference=<PMID/GO_REF>, with_objects, provenances)` on
+its association (`builder._evidence`, no longer literature-only). The ECO term
+comes from the source's actual GAF `evidence_code` (IDA/IBA/ISS…) via
+`eco.py:eco_for_go_code` — a **vendored snapshot** of the canonical
+`gaf-eco-mapping-derived.txt` (refresh by re-pulling that file). The ONLY
+fallback is `ECO:0000000`; a hard-coded `ECO:0000314` (direct assay) must never
+be a default — that fabricates evidence (the #52 bug). The agent gets
+`evidence_code`/`reference`/`term_label` from `go_gene_annotations` (which derives
+`aspect` from `object.category` — the GO API leaves `aspect` null) and copies
+them onto the `go_annotation` source; figure/instinct stay sidecar-only (no
+EvidenceItem). When adding a slot/source path, route real evidence through
+`_evidence`, don't re-introduce a 0000314 default.
+
+## ProvenanceInfo.contributor is a BARE ORCID everywhere — keep new write-sites consistent
+
+A curator/contributor ORCID is written as the bare id (`0000-0002-1190-4481`),
+NOT the full `https://orcid.org/…` URL — in `demo.py`, the vendored
+`docs/assets/curators.json` (`curators.py` strips the prefix), the
+`curator-action.yml` issue template, and `builder._evidence`. gocam-py's LinkML
+declares `orcid: https://orcid.org/` as the prefix, so the bare form is the local
+convention (not the CURIE `orcid:…` form). Mixing forms keys the same curator as
+two distinct `ProvenanceInfo.contributor` values (a review caught this). Any new
+path that writes a contributor must emit the bare ORCID. The roster is
+`curators.json`, built by `gocam_prototype.curators` from go-site `users.yaml`
+allow-edit entries; the viewer's self-id picker is **self-asserted/unverified**
+(static GH-Pages has no auth) — verified attribution only via the authenticated
+issue→re-run path.
+
 ## Alliance API shape drifts — run the drift-canary
 
 `src/gocam_prototype/alliance.py` is pinned to the Alliance REST shape as of
