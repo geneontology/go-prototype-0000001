@@ -546,6 +546,22 @@ function edgeChipEmoji(prov, edge) {
 // Paint per-node and per-edge evidence-type emoji onto an HTML overlay
 // stacked over the cytoscape canvas. pointer-events: none so clicks
 // pass through. Re-renders on pan / zoom / resize.
+// A chip click opens the panel (via the node/edge handler) and then draws the
+// curator's eye to the supporting source cards — scroll the panel into view and
+// briefly flash its source cards. (#52 pt8)
+function chipOpenPanel(openHandler) {
+  openHandler();
+  const panel = document.querySelector("#provenance-panel");
+  if (!panel) return;
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  panel.querySelectorAll(".source-card").forEach((c) => {
+    c.classList.remove("flash");
+    void c.offsetWidth;        // restart the CSS animation
+    c.classList.add("flash");
+    c.addEventListener("animationend", () => c.classList.remove("flash"), { once: true });
+  });
+}
+
 function installSourceChipsOverlay(cy, prov, viewerEl, labelIndex) {
   const host = viewerEl.parentElement; // .viewer-pane
   if (!host) return;
@@ -593,7 +609,7 @@ function installSourceChipsOverlay(cy, prov, viewerEl, labelIndex) {
       const emojis = nodeChipEmojis(prov, id);
       if (!emojis.length) return;
       const bbox = node.renderedBoundingBox({ includeLabels: false });
-      const el = chipEl(emojis, "node-chip", () => handleNodeClick(node, prov, labelIndex));
+      const el = chipEl(emojis, "node-chip", () => chipOpenPanel(() => handleNodeClick(node, prov, labelIndex)));
       // Anchor outside the top-right corner of the node — clear of the
       // edge midpoints where the per-edge chips sit.
       el.style.left = `${bbox.x2 + 4}px`;
@@ -606,7 +622,7 @@ function installSourceChipsOverlay(cy, prov, viewerEl, labelIndex) {
       if (!e) return;
       const mid = edge.renderedMidpoint();
       if (!mid || !Number.isFinite(mid.x)) return;
-      const el = chipEl([e], "edge-chip", () => handleEdgeClick(edge, prov, labelIndex));
+      const el = chipEl([e], "edge-chip", () => chipOpenPanel(() => handleEdgeClick(edge, prov, labelIndex)));
       el.style.left = `${mid.x}px`;
       el.style.top  = `${mid.y}px`;
       overlay.appendChild(el);

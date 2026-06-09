@@ -35,9 +35,13 @@ def build_curators(users: list[dict]) -> list[dict]:
         uri = u.get("uri") or ""
         if "orcid.org/" not in uri:  # no ORCID -> can't be a model contributor
             continue
+        # Store the BARE ORCID (e.g. 0000-0002-1190-4481), not the full URL, to
+        # match how ProvenanceInfo.contributor is written everywhere else in this
+        # repo (demo.py, the curator-action issue template) — otherwise the same
+        # curator keys as two distinct contributors.
         out.append({
             "nickname": u.get("nickname") or uri,
-            "orcid": uri,
+            "orcid": uri.rstrip("/").rsplit("/", 1)[-1],
             "github": (u.get("accounts") or {}).get("github"),
         })
     out.sort(key=lambda c: (c["nickname"] or "").lower())
