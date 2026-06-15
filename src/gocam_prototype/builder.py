@@ -275,7 +275,7 @@ class GoCamBuilder:
         """has_input (RO:0002233): substrate / binding partner / TF-target gene.
         Returns the assertion key."""
         return self._add_molecule(
-            activity_id, molecule, "RO:0002233", "has_input",
+            activity_id, molecule, "has_input",
             source=source, eco=eco, label=label, molecule_kind=molecule_kind,
         )
 
@@ -292,19 +292,68 @@ class GoCamBuilder:
         """has_output (RO:0002234): product (incl. a modified protein form).
         Returns the assertion key."""
         return self._add_molecule(
-            activity_id, molecule, "RO:0002234", "has_output",
+            activity_id, molecule, "has_output",
             source=source, eco=eco, label=label, molecule_kind=molecule_kind,
         )
 
+    def add_activator(
+        self,
+        activity_id: str,
+        molecule: str,
+        *,
+        source: SourceObject,
+        eco: str | None = None,
+        label: str | None = None,
+    ) -> str:
+        """has small molecule activator (RO:0012001): a CHEBI small molecule that
+        ACTIVATES this MF — e.g. a ligand of a signaling receptor / nuclear
+        receptor, or the transmitter that gates a ligand-gated channel. This is
+        the correct relation for such ligands, NOT has_input (#53). ChEBI only."""
+        return self._add_molecule(
+            activity_id, molecule, "has_small_molecule_activator",
+            source=source, eco=eco, label=label, molecule_kind="molecule",
+        )
+
+    def add_inhibitor(
+        self,
+        activity_id: str,
+        molecule: str,
+        *,
+        source: SourceObject,
+        eco: str | None = None,
+        label: str | None = None,
+    ) -> str:
+        """has small molecule inhibitor (RO:0012002): a CHEBI small molecule that
+        INHIBITS this MF. ChEBI only."""
+        return self._add_molecule(
+            activity_id, molecule, "has_small_molecule_inhibitor",
+            source=source, eco=eco, label=label, molecule_kind="molecule",
+        )
+
+    # Molecular relations the builder can attach to an activity's MF, by slot
+    # name -> (RO predicate, human label). has_input/output are substrate/product;
+    # the small-molecule activator/inhibitor relations (RO:0012001/2) are the
+    # shape-grounded way to attach a ligand that regulates the activity (#53).
+    _MOLECULE_RELATIONS = {
+        "has_input":  ("RO:0002233", "has input"),
+        "has_output": ("RO:0002234", "has output"),
+        "has_small_molecule_activator": ("RO:0012001", "has small molecule activator"),
+        "has_small_molecule_inhibitor": ("RO:0012002", "has small molecule inhibitor"),
+    }
+
     def _add_molecule(
-        self, activity_id: str, molecule: str, predicate: str, slot: str,
-        *, source: SourceObject, eco: str, label: str | None, molecule_kind: TermKind,
+        self, activity_id: str, molecule: str, slot: str,
+        *, source: SourceObject, eco: str | None, label: str | None, molecule_kind: TermKind,
     ) -> str:
         act = self._require_activity(activity_id)
         if molecule_kind not in ("molecule", "gene_product"):
             raise ValueError(
                 f"molecule_kind must be 'molecule' or 'gene_product', got {molecule_kind!r}"
             )
+        try:
+            predicate, predicate_label = self._MOLECULE_RELATIONS[slot]
+        except KeyError as e:
+            raise ValueError(f"unknown molecule relation slot {slot!r}") from e
         if act.molecular_associations is None:
             act.molecular_associations = []
         act.molecular_associations.append(
@@ -313,11 +362,11 @@ class GoCamBuilder:
                 evidence=self._evidence(eco, source),
             )
         )
-        # Per-molecule key (an activity may carry several inputs/outputs).
+        # Per-molecule key (an activity may carry several inputs/outputs/regulators).
         key = f"{activity_id}/{slot}/{molecule}"
         self._ledger.attach(key, source)
         self.remember(molecule, label or molecule, molecule_kind)
-        self.remember(predicate, "has input" if slot == "has_input" else "has output", "predicate")
+        self.remember(predicate, predicate_label, "predicate")
         return key
 
     _SLOT_ATTRS = {

@@ -193,8 +193,10 @@ The activity unit's slots:
 | enabler (required) | `enabled_by` (RO:0002333) | gene product / complex | THE relation for all MF→gene-product links. An activity with no enabler is incomplete. |
 | location | `occurs_in` (BFO:0000066) | CC / Cell (CL/WBbt) / anatomical structure (UBERON) | `{0,1}`. For a BP only when **all** its MFs share the location. |
 | program | `part_of` (BFO:0000050) | BP (GO:0008150 descendant) | The MF is an integral first/last/intervening step. Nest BP→BP further. |
-| input | `has_input` (RO:0002233) | ChEBI / complex / gene product | Substrate/target/TF-target, when more specific than the term. |
+| input | `has_input` (RO:0002233) | ChEBI / complex / gene product | The **substrate** an enzyme consumes / the TF-target gene, when more specific than the term. **Not** a receptor's ligand — use the activator/inhibitor slots below. |
 | output | `has_output` (RO:0002234) | ChEBI / complex / gene product | Product incl. modified protein forms. |
+| sm activator | `has small molecule activator` (RO:0012001) | ChEBI | A small molecule that **activates** this MF — a ligand of a signaling/nuclear receptor or a ligand-gated channel. Shape-grounded (MF→ChEBI). Prefer over has_input for such ligands. |
+| sm inhibitor | `has small molecule inhibitor` (RO:0012002) | ChEBI | A small molecule that **inhibits** this MF. |
 
 **enabled_by** is THE relation for every MF→gene-product association; do not use
 it to attach processes, locations, complexes, or chemicals. Note: "exactly one
@@ -347,9 +349,16 @@ relation to its target. Match each gene's role to one of these (full table in
   positively regulates** the receptor.
 - **Signaling receptor** → signaling receptor activity (`GO:0038023`); the
   **receptor `has_input` its downstream effector — NOT its ligand**; directly
-  positively regulates its target.
-- **Small-molecule ligand** → has no MF; link it to the receptor with **`is
-  small molecule activator/inhibitor`** (RO:0012005/0012006).
+  positively regulates its target. For a **small-molecule** ligand of the
+  receptor, see the next bullet.
+- **Small-molecule ligand** → has no MF of its own. Attach it to the
+  **receptor's / channel's MF** via **`has small molecule activator`** or
+  **`has small molecule inhibitor`** (RO:0012001 / RO:0012002) — the
+  shape-grounded MF→ChEBI direction. Use this **NOT `has_input`** for a ligand
+  of a signaling receptor (`GO:0038023`↓), a nuclear receptor (`GO:0004879`), or
+  a ligand-/transmitter-gated channel. (Do not use the WIP `is small molecule
+  activator/inhibitor of` stubs RO:0012005/0012006 — see the relations
+  appendix.)
 - **Molecular adaptor** (`GO:0060090`) → `has_input` the molecules it joins;
   directly-positively-regulates / constitutively-upstream-of / provides-input-for.
 - **Sequestering** (`GO:0140311` protein sequestering) → `has_input` the
@@ -359,8 +368,9 @@ relation to its target. Match each gene's role to one of these (full table in
   the regulated gene**; `occurs_in` nucleus; **TF → target = `indirectly
   positively/negatively regulates`** (RO:0002407/0002409) — the #39 rule. One
   activity unit per transcriptional target.
-- **Nuclear receptor** (`GO:0004879`) → small molecule `is small molecule
-  activator of`; `has_input` the gene; **indirect** to the target.
+- **Nuclear receptor** (`GO:0004879`) → the receptor MF **`has small molecule
+  activator`** (RO:0012001) its ChEBI ligand; `has_input` the regulated gene;
+  **indirect** to the target.
 - **Transcription coregulator** (`GO:0003713`/`GO:0003714`) → directly regulates
   the TF; **indirect** to the target gene.
 - **Molecular carrier** (`GO:0140104`) → `has_input` the cargo; `has_output` it

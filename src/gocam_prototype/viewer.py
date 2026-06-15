@@ -47,6 +47,15 @@ _ROOT_TYPE = {
     ],
 }
 
+# molecular_associations RO predicate -> slot segment of the assertion key /
+# molecule IRI (must mirror builder.GoCamBuilder._MOLECULE_RELATIONS). #53.
+_MOLECULE_PREDICATE_SLOT = {
+    "RO:0002233": "has_input",
+    "RO:0002234": "has_output",
+    "RO:0012001": "has_small_molecule_activator",
+    "RO:0012002": "has_small_molecule_inhibitor",
+}
+
 
 def linkml_to_viewer_json(model: Model) -> dict:
     """Convert a gocam-py Model into the viewer's expected dict."""
@@ -129,15 +138,16 @@ def linkml_to_viewer_json(model: Model) -> dict:
                 materialize_evidence(edge_iri, ca.evidence),
             )
 
-        # has_input / has_output (molecular_associations): render the molecule /
-        # target gene as its own individual + a fact, so the stimulus chemicals
-        # and TF targets are visible and clickable. IRI == the provenance ledger
-        # key so the panel resolves the source on click.
+        # molecular_associations (has_input / has_output / has small molecule
+        # activator|inhibitor): render the molecule as its own individual + a fact,
+        # so the substrates, products, ligands and TF targets are visible and
+        # clickable. IRI == the provenance ledger key so the panel resolves the
+        # source on click. The slot must match the builder's key (#53).
         for ma in (act.molecular_associations or []):
             mol = ma.molecule
             if not mol:
                 continue
-            slot = "has_input" if ma.predicate == "RO:0002233" else "has_output"
+            slot = _MOLECULE_PREDICATE_SLOT.get(ma.predicate, "has_input")
             mol_iri = f"{act.id}/{slot}/{mol}"
             kind = "molecule" if mol.startswith("CHEBI:") else "gene_product"
             add_individual(mol_iri, mol, kind)

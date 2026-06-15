@@ -28,8 +28,17 @@ const SLOT_PRETTY = {
   occurs_in:           "occurs in (CC)",
   has_input:           "has input",
   has_output:          "has output",
+  has_small_molecule_activator: "has small molecule activator",
+  has_small_molecule_inhibitor: "has small molecule inhibitor",
   causal:              "causal edge",
 };
+
+// The molecular-association slots: a per-molecule assertion key is
+// `<activity>/<slot>/<molecule CURIE>`. Mirrors the builder / viewer.py. (#53)
+const MOLECULE_SLOTS = [
+  "has_input", "has_output",
+  "has_small_molecule_activator", "has_small_molecule_inhibitor",
+];
 
 // Local-only "curator actions" store. Keyed per model so a curator's
 // confirm / dispute / comment actions persist across page reloads in the
@@ -529,7 +538,7 @@ function edgeChipEmoji(prov, edge) {
     // be on either end depending on edge orientation (has_input is drawn
     // molecule→activity, so the key is the source there).
     for (const end of [tgt, src]) {
-      if (end && (end.includes("/has_input/") || end.includes("/has_output/"))) {
+      if (end && MOLECULE_SLOTS.some((slot) => end.includes(`/${slot}/`))) {
         const s = srcList(prov.assertions?.[end]);
         if (s.length) { sources = s; break; }
       }
@@ -832,7 +841,7 @@ function handleNodeClick(detail, prov, labelIndex) {
     .map((slot) => ({ slot, srcs: srcList(prov.assertions[`${id}/${slot}`]), assertionId: `${id}/${slot}` }))
     .filter((x) => x.srcs.length);
   for (const k of Object.keys(prov.assertions || {})) {
-    if (k.startsWith(`${id}/has_input/`) || k.startsWith(`${id}/has_output/`)) {
+    if (MOLECULE_SLOTS.some((slot) => k.startsWith(`${id}/${slot}/`))) {
       entries.push({ slot: slotOf(k), srcs: srcList(prov.assertions[k]), assertionId: k });
     }
   }
@@ -925,8 +934,9 @@ function lastSegment(iri) {
 // trailing molecule CURIE (`<act>/has_input/<mol>`), so lastSegment() would
 // return the molecule — special-case them to the real slot name.
 function slotOf(key) {
-  if (key.includes("/has_input/")) return "has_input";
-  if (key.includes("/has_output/")) return "has_output";
+  for (const slot of MOLECULE_SLOTS) {
+    if (key.includes(`/${slot}/`)) return slot;
+  }
   return lastSegment(key);
 }
 
@@ -938,6 +948,8 @@ function prettySlotHeader(slot) {
     occurs_in: "Cellular component",
     has_input: "Has input",
     has_output: "Has output",
+    has_small_molecule_activator: "Has small molecule activator",
+    has_small_molecule_inhibitor: "Has small molecule inhibitor",
     causal: "Causal edge",
   }[slot] || "Node";
 }

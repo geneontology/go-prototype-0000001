@@ -60,3 +60,50 @@ def test_go_annotation_on_causal_edge_is_error() -> None:
     )
     findings = validate_model(model, ledger)
     assert any(f["rule"] == "no-go-annotation-on-causal-edge" for f in findings)
+
+
+def _ma(predicate, molecule):
+    return SimpleNamespace(predicate=predicate, molecule=molecule)
+
+
+def _obj(oid, label):
+    return SimpleNamespace(id=oid, label=label)
+
+
+def test_receptor_chebi_has_input_is_flagged() -> None:
+    # A receptor activity taking a ChEBI ligand as has_input should use an
+    # activator/inhibitor relation instead (#53).
+    act = _act("m/ser6", mf="GO:0008227")
+    act.molecular_associations = [_ma("RO:0002233", "CHEBI:17234")]
+    model = SimpleNamespace(
+        activities=[act],
+        objects=[_obj("GO:0008227", "G protein-coupled amine receptor activity")],
+    )
+    rules = {f["rule"] for f in validate_model(model)}
+    assert "receptor-ligand-not-has-input" in rules
+
+
+def test_receptor_activator_relation_is_clean() -> None:
+    # Same receptor, but the ligand is attached as an activator -> no finding.
+    act = _act("m/ser6", mf="GO:0008227")
+    act.molecular_associations = [_ma("RO:0012001", "CHEBI:17234")]
+    model = SimpleNamespace(
+        activities=[act],
+        objects=[_obj("GO:0008227", "G protein-coupled amine receptor activity")],
+    )
+    assert not any(
+        f["rule"] == "receptor-ligand-not-has-input" for f in validate_model(model)
+    )
+
+
+def test_enzyme_chebi_has_input_is_clean() -> None:
+    # An enzyme substrate as has_input is correct -> the lint must NOT fire.
+    act = _act("m/tph1", mf="GO:0004510")
+    act.molecular_associations = [_ma("RO:0002233", "CHEBI:16828")]
+    model = SimpleNamespace(
+        activities=[act],
+        objects=[_obj("GO:0004510", "tryptophan 5-monooxygenase activity")],
+    )
+    assert not any(
+        f["rule"] == "receptor-ligand-not-has-input" for f in validate_model(model)
+    )

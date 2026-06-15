@@ -255,6 +255,33 @@ def test_add_input_output_molecular_associations() -> None:
     assert obj_kinds["WB:WBGene00000001"] == "GeneProductTermObject"
 
 
+def test_add_activator_inhibitor_molecular_associations() -> None:
+    """A receptor/channel ligand lands as has small molecule activator|inhibitor
+    (RO:0012001/0012002), ChEBI-typed, with a per-molecule ledger key (#53)."""
+    b, aid_a, aid_b = _build_two_activity_model()
+    # aid_b is the ligand-gated channel; octopamine/serotonin activate it.
+    k_act = b.add_activator(aid_b, "CHEBI:17234",
+                            source=figure(snippet="serotonin drawn opening the channel"),
+                            label="serotonin")
+    k_inh = b.add_inhibitor(aid_b, "CHEBI:16236",
+                            source=literature(pmid="PMID:9"), label="ethanol")
+    assert k_act == f"{aid_b}/has_small_molecule_activator/CHEBI:17234"
+    assert k_inh == f"{aid_b}/has_small_molecule_inhibitor/CHEBI:16236"
+
+    model, ledger = b.build()
+    act = next(a for a in model.activities if a.id == aid_b)
+    ma = [(m.predicate, m.molecule) for m in (act.molecular_associations or [])]
+    assert ("RO:0012001", "CHEBI:17234") in ma
+    assert ("RO:0012002", "CHEBI:16236") in ma
+    assert {k_act, k_inh} <= set(ledger.assertions.keys())
+    Model.model_validate(model.model_dump(exclude_none=True, mode="json"))
+    obj_kinds = {o.id: type(o).__name__ for o in model.objects}
+    assert obj_kinds["CHEBI:17234"] == "MoleculeTermObject"
+    # The relation labels are remembered for the viewer.
+    labels = {o.id: o.label for o in model.objects}
+    assert labels["RO:0012001"] == "has small molecule activator"
+
+
 def test_add_input_rejects_bad_kind_and_missing_activity() -> None:
     b, aid_a, _ = _build_two_activity_model()
     with pytest.raises(ValueError):
