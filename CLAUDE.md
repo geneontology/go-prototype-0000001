@@ -195,3 +195,56 @@ GOCAM_RUN_LIVE_TESTS=1 uv run pytest tests/test_alliance.py -q
 
 It resolves `tph-1 -> WB:WBGene00006600` against the live API; a failure means
 the shape moved again.
+
+## A molecule relation lives in FOUR sites — keep them in lockstep
+
+A small-molecule / target-gene relation slot (`has_input`, `has_output`,
+`has_small_molecule_activator` RO:0012001, `has_small_molecule_inhibitor`
+RO:0012002) is maintained by hand across four files, and they drift silently:
+
+- `builder._MOLECULE_RELATIONS` (slot → RO predicate + label) — the *write* side;
+- `viewer.py:_MOLECULE_PREDICATE_SLOT` (RO predicate → slot) — turns the model
+  back into the per-molecule individual IRI / provenance key;
+- `viewer.js:MOLECULE_SLOTS` (the slot list driving `slotOf`, the edge-chip
+  fallback, and the activity-panel aggregation) **and**
+  `viewer.js:MOLECULE_PREDICATE_SLOT` (RO predicate → slot, for relay edges).
+
+Adding a relation means editing all four **plus** the orchestrator tool +
+handler + prompt, and the §4b / slot-table prose in `guidelines.md` (the agent
+reads the markdown, not rules.yaml). A predicate present in the builder but
+missing from `viewer.py`'s map silently renders as `has_input`; missing from the
+JS maps and its node loses panel/chip provenance. The receptor-ligand choice
+(#53) is RO:0012001/0012002 (MF→ChEBI, shape-grounded), **not** the WIP
+RO:0012005/0012006 "is small molecule …of" stubs — `validate.py`'s
+`receptor-ligand-not-has-input` lint (label-heuristic, warn-only) guards against
+regressing a receptor/channel ligand back to `has_input`.
+
+## occurs_in is a GO CC; the cell type is a part_of EXTENSION (not the term)
+
+`set_occurs_in`'s `term` is ALWAYS a GO cellular component (GO:0005575
+descendant). The cell type the activity happens in is the GO-CAM
+`CellularAnatomicalEntityAssociation.part_of = CellTypeAssociation(term=<CL>)`
+extension (#54), passed as the optional `cell_type` arg and keyed
+`<activity>/occurs_in/cell_type` in the sidecar. Do **not** put a CL/WBbt term
+in the occurs_in `term` slot (the #52-pt7 confusion). `viewer.py` renders the
+cell type as its own CL individual (root-type `CL:0000000` cell) + a BFO:0000050
+fact off the CC individual, so the go-gocam-viewer draws it as a connected node.
+The cell type is grounded by `celltype.resolve_cell_type` (verified-CL seed →
+OLS4 exact-label lookup in the taxon's ontologies — WBbt then CL for worm),
+which is deliberately conservative: it returns `None` (→ omit the extension)
+rather than guess, and never hits the network in unit tests unless
+`GOCAM_RUN_LIVE_TESTS=1`.
+
+## A ChEBI relay renders as ONE shared node, but provenance stays per-activity
+
+A ChEBI molecule that one activity `has_output`s and another consumes
+(`has_input`/activator/inhibitor) is merged by `viewer.py` into a single shared
+individual `<model>/molecule/<CHEBI>` that both activities' facts point at (#51)
+— the producer↔consumer relay would otherwise be two disconnected copies. Only
+ChEBI relays merge; a gene-product `has_input` (a TF target) is never shared.
+The shared node's IRI is **not** a provenance key, so the ledger keeps the
+per-activity keys (`<act>/<slot>/<mol>`) untouched; `viewer.js` reconstructs
+them on click/hover (`handleNodeClick` Case 0 aggregates every key ending in the
+CURIE; `edgeChipEmoji` rebuilds `<activity>/<slot>/<curie>` from the edge's
+predicate). If you change the shared-IRI shape, update `sharedMoleculeCurie` and
+both reconstruction sites together.
