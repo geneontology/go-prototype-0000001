@@ -1,0 +1,74 @@
+[
+  {
+    "turn": 0,
+    "stop_reason": "tool_use",
+    "input_tokens": 5773,
+    "output_tokens": 2414
+  },
+  {
+    "turn": 1,
+    "stop_reason": "tool_use",
+    "input_tokens": 9255,
+    "output_tokens": 1501
+  },
+  {
+    "turn": 2,
+    "stop_reason": "tool_use",
+    "input_tokens": 42236,
+    "output_tokens": 10210
+  },
+  {
+    "turn": 3,
+    "stop_reason": "tool_use",
+    "input_tokens": 54793,
+    "output_tokens": 639
+  },
+  {
+    "turn": 4,
+    "stop_reason": "tool_use",
+    "input_tokens": 55522,
+    "output_tokens": 16476
+  },
+  {
+    "turn": 5,
+    "stop_reason": "tool_use",
+    "input_tokens": 72947,
+    "output_tokens": 5394
+  },
+  {
+    "turn": 6,
+    "stop_reason": "tool_use",
+    "input_tokens": 78959,
+    "output_tokens": 8031
+  },
+  {
+    "turn": 7,
+    "stop_reason": "tool_use",
+    "input_tokens": 87540,
+    "output_tokens": 4322
+  },
+  {
+    "turn": 8,
+    "stop_reason": "tool_use",
+    "input_tokens": 92336,
+    "output_tokens": 1454
+  },
+  {
+    "turn": 9,
+    "stop_reason": "tool_use",
+    "input_tokens": 97700,
+    "output_tokens": 8571
+  },
+  {
+    "turn": 10,
+    "stop_reason": "tool_use",
+    "input_tokens": 106574,
+    "output_tokens": 1603
+  },
+  {
+    "turn": 11,
+    "stop_reason": "tool_use",
+    "input_tokens": 108582,
+    "output_tokens": 800
+  }
+]
