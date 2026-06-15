@@ -26,6 +26,7 @@ const SLOT_PRETTY = {
   molecular_function:  "molecular function",
   part_of:             "part of (BP)",
   occurs_in:           "occurs in (CC)",
+  cell_type:           "occurs in cell (of)",
   has_input:           "has input",
   has_output:          "has output",
   has_small_molecule_activator: "has small molecule activator",
@@ -845,6 +846,12 @@ function handleNodeClick(detail, prov, labelIndex) {
       entries.push({ slot: slotOf(k), srcs: srcList(prov.assertions[k]), assertionId: k });
     }
   }
+  // occurs_in cell-type extension (#54): a separately-attributed claim hanging
+  // off occurs_in (CC part_of CellType), keyed `<activity>/occurs_in/cell_type`.
+  const ctKey = `${id}/occurs_in/cell_type`;
+  if (srcList(prov.assertions[ctKey]).length) {
+    entries.push({ slot: "cell_type", srcs: srcList(prov.assertions[ctKey]), assertionId: ctKey });
+  }
   if (entries.length > 0) {
     renderPanel({
       kind: "activity",
@@ -946,6 +953,7 @@ function prettySlotHeader(slot) {
     molecular_function: "Molecular function",
     part_of: "Biological process",
     occurs_in: "Cellular component",
+    cell_type: "Cell type (occurs in)",
     has_input: "Has input",
     has_output: "Has output",
     has_small_molecule_activator: "Has small molecule activator",

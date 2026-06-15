@@ -191,7 +191,8 @@ The activity unit's slots:
 | Slot | Relation | Target | Notes |
 |---|---|---|---|
 | enabler (required) | `enabled_by` (RO:0002333) | gene product / complex | THE relation for all MF→gene-product links. An activity with no enabler is incomplete. |
-| location | `occurs_in` (BFO:0000066) | CC / Cell (CL/WBbt) / anatomical structure (UBERON) | `{0,1}`. For a BP only when **all** its MFs share the location. |
+| location | `occurs_in` (BFO:0000066) | **GO cellular component** (GO:0005575 descendant) | `{0,1}`. The *subcellular* location. The cell TYPE is a part_of extension of this CC, not a direct occurs_in target — see the cell-type note below. For a BP only when **all** its MFs share the location. |
+| cell type (extension) | CC `part_of` (BFO:0000050) **CellType** | CL / species anatomy (WBbt) | `{0,1}` on the occurs_in CC. The cell the activity happens in (e.g. neuron `CL:0000540`). Ground the label before use; omit if it cannot be grounded. |
 | program | `part_of` (BFO:0000050) | BP (GO:0008150 descendant) | The MF is an integral first/last/intervening step. Nest BP→BP further. |
 | input | `has_input` (RO:0002233) | ChEBI / complex / gene product | The **substrate** an enzyme consumes / the TF-target gene, when more specific than the term. **Not** a receptor's ligand — use the activator/inhibitor slots below. |
 | output | `has_output` (RO:0002234) | ChEBI / complex / gene product | Product incl. modified protein forms. |

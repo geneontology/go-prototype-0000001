@@ -30,6 +30,8 @@ from gocam.datamodel import (
     BiologicalProcessAssociation,
     BiologicalProcessTermObject,
     CausalAssociation,
+    CellTypeAssociation,
+    CellTypeTermObject,
     CellularAnatomicalEntityAssociation,
     CellularAnatomicalEntityTermObject,
     EnabledByGeneProductAssociation,
@@ -55,6 +57,7 @@ TermKind = Literal[
     "molecular_function",
     "biological_process",
     "cellular_component",
+    "cell_type",
     "molecule",
     "predicate",
     "publication",
@@ -67,6 +70,7 @@ _KIND_TO_CLS: dict[str, type] = {
     "molecular_function": MolecularFunctionTermObject,
     "biological_process": BiologicalProcessTermObject,
     "cellular_component": CellularAnatomicalEntityTermObject,
+    "cell_type": CellTypeTermObject,
     "molecule": MoleculeTermObject,
     "predicate": PredicateTermObject,
     "publication": PublicationObject,
@@ -224,13 +228,38 @@ class GoCamBuilder:
         source: SourceObject,
         eco: str | None = None,
         label: str | None = None,
-    ) -> None:
+        cell_type: str | None = None,
+        cell_type_label: str | None = None,
+        cell_type_source: SourceObject | None = None,
+        cell_type_eco: str | None = None,
+    ) -> str | None:
+        """Set the subcellular `occurs_in` (a GO cellular component).
+
+        Optionally EXTEND it with the cell TYPE the activity occurs in
+        (`cell_type`, a CL/WBbt CURIE) — modeled as the GO-CAM standard
+        `CellularAnatomicalEntityAssociation.part_of = CellTypeAssociation`
+        (#54). Returns the cell-type provenance key when an extension is added,
+        else None. The cell-type claim is separately attributed: it defaults to
+        the same `source`, or pass `cell_type_source` when its grounding differs
+        (e.g. the CC is from a GO annotation but the cell type is a figure read).
+        """
         act = self._require_activity(activity_id)
-        act.occurs_in = CellularAnatomicalEntityAssociation(
+        occ = CellularAnatomicalEntityAssociation(
             term=term, evidence=self._evidence(eco, source),
         )
-        self._ledger.attach(f"{activity_id}/occurs_in", source)
         self.remember(term, label or term, "cellular_component")
+        ct_key: str | None = None
+        if cell_type:
+            ct_source = cell_type_source or source
+            occ.part_of = CellTypeAssociation(
+                term=cell_type, evidence=self._evidence(cell_type_eco, ct_source),
+            )
+            self.remember(cell_type, cell_type_label or cell_type, "cell_type")
+            ct_key = f"{activity_id}/occurs_in/cell_type"
+            self._ledger.attach(ct_key, ct_source)
+        act.occurs_in = occ
+        self._ledger.attach(f"{activity_id}/occurs_in", source)
+        return ct_key
 
     def add_causal(
         self,

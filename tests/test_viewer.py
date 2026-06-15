@@ -158,3 +158,33 @@ def test_fixture_real_gocam_has_same_top_level_shape() -> None:
     assert set(real.keys()) >= {"id", "individuals", "facts", "annotations"}
     # `facts` use the same field names.
     assert {"subject", "property", "object"} <= set(real["facts"][0].keys())
+
+
+def test_occurs_in_cell_type_extension_renders_node_and_fact() -> None:
+    """The occurs_in cell-type extension (#54) becomes its own CL individual
+    (root-type 'cell') linked to the CC individual by a BFO:0000050 fact."""
+    from gocam_prototype.provenance import figure, go_annotation
+
+    b = GoCamBuilder(model_id="gomodel:ct-test-0001", title="ct", taxon="NCBITaxon:6239")
+    a = b.add_activity("tph1", enabled_by_gene="WB:WBGene00006600",
+                       enabled_by_source=literature(pmid="PMID:1"), gene_label="tph-1")
+    b.set_molecular_function(a, "GO:0004510", source=literature(pmid="PMID:1"),
+                             label="tryptophan 5-monooxygenase activity")
+    b.set_occurs_in(a, "GO:0043005",
+                    source=go_annotation(source_id="GO:0043005",
+                                         tool_name="go_api.gene_annotations"),
+                    label="neuron projection",
+                    cell_type="CL:0000540", cell_type_label="neuron",
+                    cell_type_source=figure(snippet="neuron box"))
+    model, _ = b.build()
+    out = linkml_to_viewer_json(model)
+    by_id = {ind["id"]: ind for ind in out["individuals"]}
+
+    cc_iri = f"{a}/occurs_in"
+    ct_iri = f"{a}/occurs_in/cell_type"
+    assert by_id[ct_iri]["type"][0]["id"] == "CL:0000540"
+    assert by_id[ct_iri]["type"][0]["label"] == "neuron"
+    assert by_id[ct_iri]["root-type"][0]["id"] == "CL:0000000"
+    # The CC -> cell-type "part of" fact ties them together.
+    assert any(f["subject"] == cc_iri and f["property"] == "BFO:0000050"
+               and f["object"] == ct_iri for f in out["facts"])

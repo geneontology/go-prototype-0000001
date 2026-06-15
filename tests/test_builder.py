@@ -290,6 +290,50 @@ def test_add_input_rejects_bad_kind_and_missing_activity() -> None:
         b.add_input("gomodel:test/none", "CHEBI:1", source=figure(snippet="x"))
 
 
+def test_set_occurs_in_without_cell_type_returns_none() -> None:
+    b, aid_a, _ = _build_two_activity_model()
+    key = b.set_occurs_in(aid_a, "GO:0005886",
+                          source=go_annotation(source_id="GO:0005886",
+                                               tool_name="go_api.gene_annotations"),
+                          label="plasma membrane")
+    assert key is None
+    model, _ = b.build()
+    act = next(a for a in model.activities if a.id == aid_a)
+    assert act.occurs_in.term == "GO:0005886"
+    assert act.occurs_in.part_of is None
+
+
+def test_set_occurs_in_cell_type_extension() -> None:
+    """occurs_in CC carries an optional cell-type extension (CC part_of CellType,
+    #54): the cell type is separately attributed and the model validates."""
+    b, aid_a, _ = _build_two_activity_model()
+    ct_key = b.set_occurs_in(
+        aid_a, "GO:0043005",
+        source=go_annotation(source_id="GO:0043005", tool_name="go_api.gene_annotations"),
+        label="neuron projection",
+        cell_type="CL:0000540", cell_type_label="neuron",
+        cell_type_source=figure(snippet="neuron compartment box"),
+    )
+    assert ct_key == f"{aid_a}/occurs_in/cell_type"
+
+    model, ledger = b.build()
+    Model.model_validate(model.model_dump(exclude_none=True, mode="json"))
+    act = next(a for a in model.activities if a.id == aid_a)
+    # GO CC stays in the term slot; the cell type hangs off it as part_of.
+    assert act.occurs_in.term == "GO:0043005"
+    assert act.occurs_in.part_of is not None
+    assert act.occurs_in.part_of.term == "CL:0000540"
+    assert type(act.occurs_in.part_of).__name__ == "CellTypeAssociation"
+    # Separately attributed in the sidecar; CL label + type cached for the viewer.
+    assert ct_key in ledger.assertions
+    by_id = {o.id: type(o).__name__ for o in model.objects}
+    assert by_id["CL:0000540"] == "CellTypeTermObject"
+    # The cell-type claim's source is the figure read, distinct from the CC source.
+    ct_srcs = ledger.assertions[ct_key]
+    ct_srcs = ct_srcs if isinstance(ct_srcs, list) else [ct_srcs]
+    assert ct_srcs[0].source_type == "figure"
+
+
 def test_write_model_and_ledger(tmp_path) -> None:
     b, _, _ = _build_two_activity_model()
     model, ledger = b.build()

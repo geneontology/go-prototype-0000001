@@ -30,6 +30,7 @@ from gocam.datamodel import Model
 
 from gocam_prototype import alliance, go_api
 from gocam_prototype.builder import GoCamBuilder
+from gocam_prototype.celltype import resolve_cell_type
 from gocam_prototype.llm import VertexConfig, create_message, make_client
 from gocam_prototype.provenance import ProvenanceLedger, SourceObject
 from gocam_prototype.vision import CuratorIntent
@@ -221,13 +222,16 @@ WORKFLOW
    by both a go_annotation and a pathway_resource), record the primary on the set_* call and layer the \
    other(s) with `add_source(activity_id, slot=..., source=...)` — but that is for multiple real \
    sources, not for tacking figure onto an already-resolved claim.
-   occurs_in (CC) PREFERENCE: when go_gene_annotations returns an annotation with \
-   aspect='cellular_component' (a real GO CC term, GO:0005575 descendant) for the gene, PREFER it for \
-   `set_occurs_in` over a cell-type (CL) term you inferred from the figure's compartment box — even \
-   if the CC annotation is IBA — and tag it source_type='go_annotation' with its evidence_code/ \
-   reference. A CL/WBbt cell-type term stays valid ONLY when the gene has no usable GO CC annotation; \
-   the figure's compartment still informs which CC/cell to pick. (e.g. tph-1 has GO:0043005 'neuron \
-   projection' — use that, not CL:0000540 'neuron'.)
+   occurs_in (CC) vs CELL TYPE: `set_occurs_in`'s `term` is ALWAYS a GO cellular component \
+   (GO:0005575 descendant) — the SUBCELLULAR location. Never put a CL/WBbt cell-type term in `term`. \
+   When go_gene_annotations returns an aspect='cellular_component' annotation for the gene, PREFER it \
+   (even if IBA) and tag it source_type='go_annotation' with its evidence_code/reference. The CELL \
+   TYPE the figure shows (e.g. a 'neuron'/'muscle' compartment box) is a SEPARATE, OPTIONAL extension: \
+   call resolve_cell_type('neuron') to ground it to a CURIE (e.g. CL:0000540), then pass that as \
+   set_occurs_in's `cell_type` (+ cell_type_label) ALONGSIDE the GO CC `term`. This builds the GO-CAM \
+   'occurs_in CC, part_of cell' shape. If resolve_cell_type returns null, OMIT the cell_type — do not \
+   invent one. (e.g. tph-1: term=GO:0043005 'neuron projection' AND cell_type=CL:0000540 'neuron'.) \
+   The cell type is usually a figure read, so its cell_type_source is typically source_type='figure'.
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -491,6 +495,21 @@ class Orchestrator:
             self._t_term_lookup,
         )
         self._register(
+            "resolve_cell_type",
+            "Resolve a cell-type label (e.g. 'neuron', 'sensory neuron', 'body wall muscle') to an "
+            "ontology CURIE — generic Cell Ontology (CL) or, for the model's taxon, its native "
+            "anatomy ontology (e.g. WBbt for C. elegans). Returns {curie,label} or {curie:null} when "
+            "it cannot be grounded. Use BEFORE passing `cell_type` to set_occurs_in; if this returns "
+            "null, OMIT the cell-type extension rather than inventing one.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {"label": {"type": "string"}},
+                "required": ["label"],
+            },
+            self._t_resolve_cell_type,
+        )
+        self._register(
             "alliance_gene_info",
             "Fetch summary info for a gene CURIE (symbol, name, species, synonyms).",
             {
@@ -599,10 +618,34 @@ class Orchestrator:
         )
         self._register(
             "set_occurs_in",
-            "Set the cellular component / anatomy (occurs_in) slot. PREFER an existing GO CC "
-            "(GO:0005575 descendant) annotation for the gene over a figure-inferred CL cell-type "
-            "term; use CL/WBbt only when no GO CC annotation exists.",
-            self._slot_schema("term"),
+            "Set the SUBCELLULAR location (occurs_in) slot: `term` MUST be a GO cellular "
+            "component (GO:0005575 descendant), e.g. plasma membrane, nucleus, synapse. "
+            "Optionally EXTEND it with the CELL TYPE the activity occurs in by also passing "
+            "`cell_type` (a CL or species-anatomy CURIE, e.g. CL:0000540 neuron) — this is the "
+            "GO-CAM 'occurs_in CC, part_of cell' shape, NOT a substitute for the GO CC. "
+            "Ground the cell type with resolve_cell_type first; omit it if you cannot.",
+            {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "activity_id": {"type": "string"},
+                    "term": {"type": "string", "description": "GO cellular-component CURIE (GO:0005575 descendant)."},
+                    "label": {"type": "string"},
+                    "source": SOURCE_OBJECT_SCHEMA,
+                    "cell_type": {
+                        "type": "string",
+                        "description": "Optional CL/WBbt cell-type CURIE the activity occurs in "
+                                       "(occurs_in CC part_of this cell). Ground it via resolve_cell_type.",
+                    },
+                    "cell_type_label": {"type": "string"},
+                    "cell_type_source": {
+                        **SOURCE_OBJECT_SCHEMA,
+                        "description": "Optional separate attribution for the cell-type claim "
+                                       "(defaults to `source` if omitted).",
+                    },
+                },
+                "required": ["activity_id", "term", "source"],
+            },
             self._t_set_cc,
         )
         self._register(
@@ -837,6 +880,16 @@ class Orchestrator:
             "definition": t.get("definition"),
         }
 
+    def _t_resolve_cell_type(self, inp: dict) -> dict:
+        try:
+            hit = resolve_cell_type(inp["label"], taxon=self.builder.taxon)
+        except Exception as e:  # never fail the loop on a resolver hiccup
+            return {"error": str(e), "curie": None}
+        if hit is None:
+            return {"curie": None, "label": None}
+        curie, label = hit
+        return {"curie": curie, "label": label}
+
     def _t_gene_info(self, inp: dict) -> dict:
         try:
             g = alliance.gene_info(inp["gene_curie"])
@@ -1011,7 +1064,18 @@ class Orchestrator:
         return self._slot_call(inp, self.builder.set_part_of)
 
     def _t_set_cc(self, inp: dict) -> dict:
-        return self._slot_call(inp, self.builder.set_occurs_in)
+        try:
+            src = self._make_source(inp["source"])
+            ct_src = inp.get("cell_type_source")
+            ct_key = self.builder.set_occurs_in(
+                inp["activity_id"], inp["term"], source=src, label=inp.get("label"),
+                cell_type=inp.get("cell_type"),
+                cell_type_label=inp.get("cell_type_label"),
+                cell_type_source=self._make_source(ct_src) if ct_src else None,
+            )
+        except Exception as e:
+            return {"error": str(e)}
+        return {"ok": True, "cell_type_assertion": ct_key} if ct_key else {"ok": True}
 
     def _slot_call(self, inp: dict, fn: Callable) -> dict:
         try:

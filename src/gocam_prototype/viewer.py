@@ -39,6 +39,9 @@ _ROOT_TYPE = {
     "cellular_component": [
         {"type": "class", "id": "GO:0005575", "label": "cellular_component"}
     ],
+    "cell_type": [
+        {"type": "class", "id": "CL:0000000", "label": "cell"}
+    ],
     "molecule": [
         {"type": "class", "id": "CHEBI:24431", "label": "chemical entity"}
     ],
@@ -130,6 +133,18 @@ def linkml_to_viewer_json(model: Model) -> dict:
                 mf_iri, "BFO:0000066", cc_iri,
                 materialize_evidence(cc_iri, act.occurs_in.evidence),
             )
+            # Cell-type extension: the CC happens in a cell TYPE (CL/WBbt),
+            # modeled as CC part_of CellType. Render it as its own individual +
+            # a BFO:0000050 (part of) fact so it is a real, clickable node whose
+            # IRI matches the provenance key `<activity>/occurs_in/cell_type` (#54).
+            ct = getattr(act.occurs_in, "part_of", None)
+            if ct is not None and getattr(ct, "term", None):
+                ct_iri = f"{act.id}/occurs_in/cell_type"
+                add_individual(ct_iri, ct.term, "cell_type")
+                add_fact(
+                    cc_iri, "BFO:0000050", ct_iri,
+                    materialize_evidence(ct_iri, ct.evidence),
+                )
 
         for ca in (act.causal_associations or []):
             edge_iri = f"{act.id}/causal/{ca.downstream_activity}"
