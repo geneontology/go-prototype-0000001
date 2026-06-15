@@ -1047,8 +1047,10 @@ function renderSource(slot, src, assertionId) {
     const a = document.createElement("a");
     a.className = "source-id";
     // #52 pt3: show the id AND its label (e.g. "GO:0004510 — tryptophan 5-…").
+    // #52 pt3 / kltm: render as "label (ID)" — label-forward, with the CURIE in
+    // parens and the whole thing linked out for a sanity check.
     const label = src.term_label || termLabel(src.source_id);
-    a.textContent = label && label !== src.source_id ? `${src.source_id} — ${label}` : src.source_id;
+    a.textContent = label && label !== src.source_id ? `${label} (${src.source_id})` : src.source_id;
     const url = sourceUrl(src.source_id);
     a.href = url;
     if (url !== "#") {

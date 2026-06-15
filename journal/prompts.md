@@ -457,3 +457,15 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-09 22:51:14Z
 
 > Please commit and push.
+
+### 2026-06-15 21:07:34Z
+
+> Can you take a look at the recent feedback from Kimberly in the tracker? This should be 53 and 54, which may also related to 51. Can you deeply analyze what is being communicated, how to test for it, and plan how to proceed?
+
+### 2026-06-15 21:17:08Z
+
+> 1) We do not want to display raw IDs if at all possible. Why is the label unsatisfactory? 2) Please be conservative unless you can otherwise reference it, until the next rounds of feedback. 3) If you can reasonably make a semi-generic and expandable lookup harness, as we go to different species, that's fine. Otherwise, generic CL is fine. 4) Again, please run conservative until next feedback, unless you can otherwise reference it.
+
+### 2026-06-15 21:41:15Z
+
+> Ah, I see. The correct thing here is to have both; the rendered artifact is 'label (ID)'.
