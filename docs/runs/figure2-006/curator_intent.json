@@ -1,0 +1,349 @@
+{
+  "species": "Caenorhabditis elegans",
+  "species_taxon": "NCBITaxon:6239",
+  "processes_hinted": [
+    "p38 MAPK signaling cascade",
+    "mitochondrial unfolded protein response (UPR^mt)",
+    "innate immune response",
+    "antimicrobial defence",
+    "cellular stress response",
+    "ROS signaling",
+    "iron homeostasis disruption",
+    "translation inhibition by ExoA",
+    "HIF-1 hypoxia signaling",
+    "FOXO transcription factor activation",
+    "Nrf2/SKN-1 oxidative stress response",
+    "heat shock response (HSF-1)",
+    "LRO stress / lysosome-related organelle pH change",
+    "p38/ATF-7 antimicrobial gene regulation"
+  ],
+  "compartments": [
+    {
+      "label": "Lumen",
+      "kind": "other",
+      "confidence": 0.95,
+      "snippet": "Labeled top-left; the extracellular space above the brush-border/microvilli of the intestinal cell."
+    },
+    {
+      "label": "Intestinal cell",
+      "kind": "cell_type",
+      "confidence": 0.98,
+      "snippet": "Large box labeled bottom-left, containing most intracellular nodes."
+    },
+    {
+      "label": "LRO",
+      "kind": "organelle",
+      "confidence": 0.9,
+      "snippet": "Small circle (left) inside intestinal cell, text inside: 'LRO stress / pH increase'."
+    },
+    {
+      "label": "Mitochondria",
+      "kind": "organelle",
+      "confidence": 0.97,
+      "snippet": "Organelle (center) labeled 'Mitochondria'; contains UPR^mt, mtROS, +Fe3+ text."
+    },
+    {
+      "label": "Nucleus",
+      "kind": "organelle",
+      "confidence": 0.98,
+      "snippet": "Large reddish oval (bottom center) labeled 'Nucleus'; contains ESRE, cellular stress response genes, antimicrobial defence genes."
+    }
+  ],
+  "genes": [
+    {
+      "symbol": "TIR-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Text node left, labeled 'TIR-1/SARM1' (SARM1 is ortholog label); inside Intestinal cell."
+    },
+    {
+      "symbol": "NSY-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow oval, sublabel 'MAPKKK'; kinase cascade left side inside Intestinal cell."
+    },
+    {
+      "symbol": "SEK-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow oval, sublabel 'MAPKK'; kinase cascade left side inside Intestinal cell."
+    },
+    {
+      "symbol": "PMK-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Yellow oval, sublabel 'p38 MAPK'; kinase cascade left side inside Intestinal cell."
+    },
+    {
+      "symbol": "HSP-60",
+      "in_compartment": "Mitochondria",
+      "confidence": 0.9,
+      "snippet": "Purple box associated with Mitochondria, left side inside Intestinal cell."
+    },
+    {
+      "symbol": "ATFS-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.88,
+      "snippet": "Purple box, sublabel 'ATF-4'; connected from HSP-60 and UPR^mt (faint/uncertain arrow)."
+    },
+    {
+      "symbol": "HIF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.87,
+      "snippet": "Purple box; receives input from mtROS/+Fe3+ and AMPK (uncertain routing)."
+    },
+    {
+      "symbol": "AMPK",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.85,
+      "snippet": "Purple box; arrow to HIF-1 marked uncertain."
+    },
+    {
+      "symbol": "DAF-16",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box, sublabel 'FOXO'; receives input from PMK-1, sends arrows to nucleus genes."
+    },
+    {
+      "symbol": "SKN-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box, sublabel 'Nrf2'; part of stress-factor convergence cluster."
+    },
+    {
+      "symbol": "HSF-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.97,
+      "snippet": "Purple box; part of stress-factor convergence cluster."
+    },
+    {
+      "symbol": "ATF-7",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Purple box; receives arrow from PMK-1, sends arrow to antimicrobial defence genes."
+    },
+    {
+      "symbol": "ZIP-4",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.93,
+      "snippet": "Purple box; arrow to ZIP-2."
+    },
+    {
+      "symbol": "CEBP-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.88,
+      "snippet": "Purple box labeled 'CEBP-1/2'; arrow to ZIP-2."
+    },
+    {
+      "symbol": "ZIP-2",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.95,
+      "snippet": "Purple box; receives from ZIP-4 and CEBP-1/2; arrows to ESRE and (uncertain T-bar) to antimicrobial defence genes."
+    },
+    {
+      "symbol": "NHR-86",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.9,
+      "snippet": "Purple box, sublabel 'HNF-4'; far right at membrane; arrow to antimicrobial defence genes."
+    },
+    {
+      "symbol": "FSHR-1",
+      "in_compartment": "Intestinal cell",
+      "confidence": 0.9,
+      "snippet": "Blue transmembrane receptor glyph at membrane between Lumen and Intestinal cell."
+    }
+  ],
+  "tentative_edges": [
+    {
+      "from_symbol": "Pyocyanin",
+      "to_symbol": "TIR-1",
+      "relation": "positively regulates",
+      "confidence": 0.9,
+      "snippet": "Pointed arrow from Pyocyanin (green hexagon, Lumen) to TIR-1/SARM1 (left arm)."
+    },
+    {
+      "from_symbol": "TIR-1",
+      "to_compartment": "LRO",
+      "relation": "positively regulates",
+      "confidence": 0.85,
+      "snippet": "Pointed arrow from TIR-1/SARM1 to LRO (stress/pH increase)."
+    },
+    {
+      "to_symbol": "NSY-1",
+      "from_compartment": "LRO",
+      "relation": "positively regulates",
+      "confidence": 0.85,
+      "snippet": "Pointed arrow from LRO stress/pH increase to NSY-1 (MAPKKK)."
+    },
+    {
+      "from_symbol": "NSY-1",
+      "to_symbol": "SEK-1",
+      "relation": "positively regulates",
+      "confidence": 0.97,
+      "snippet": "Pointed arrow NSY-1 → SEK-1 in kinase cascade."
+    },
+    {
+      "from_symbol": "SEK-1",
+      "to_symbol": "PMK-1",
+      "relation": "positively regulates",
+      "confidence": 0.97,
+      "snippet": "Pointed arrow SEK-1 → PMK-1 in kinase cascade."
+    },
+    {
+      "from_symbol": "PMK-1",
+      "to_symbol": "DAF-16",
+      "relation": "positively regulates",
+      "confidence": 0.95,
+      "snippet": "Pointed arrow PMK-1 → DAF-16/FOXO."
+    },
+    {
+      "from_symbol": "PMK-1",
+      "to_symbol": "ATF-7",
+      "relation": "positively regulates",
+      "confidence": 0.95,
+      "snippet": "Pointed arrow PMK-1 → ATF-7 (lower branch)."
+    },
+    {
+      "from_symbol": "ATF-7",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.9,
+      "snippet": "Pointed arrow ATF-7 → antimicrobial defence genes (inside Nucleus)."
+    },
+    {
+      "from_compartment": "Lumen",
+      "to_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "via": "Pyoverdine",
+      "confidence": 0.8,
+      "snippet": "Pyoverdine line descends from Lumen to Mitochondria region (+Fe3+); uncertain routing."
+    },
+    {
+      "to_symbol": "HSP-60",
+      "from_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "confidence": 0.85,
+      "snippet": "Pointed arrow leftward from Mitochondria to HSP-60."
+    },
+    {
+      "from_symbol": "HSP-60",
+      "to_symbol": "ATFS-1",
+      "relation": "positively regulates",
+      "confidence": 0.35,
+      "snippet": "Faint/uncertain pointed arrow HSP-60 → ATFS-1/ATF-4."
+    },
+    {
+      "to_symbol": "ATFS-1",
+      "from_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "via": "UPR^mt",
+      "confidence": 0.75,
+      "snippet": "UPR^mt (inside Mitochondria) associated with ATFS-1/ATF-4 by pointed arrow."
+    },
+    {
+      "from_symbol": "ATFS-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.85,
+      "snippet": "Pointed arrow ATFS-1/ATF-4 → cellular stress response genes in Nucleus."
+    },
+    {
+      "to_symbol": "HIF-1",
+      "from_compartment": "Mitochondria",
+      "relation": "positively regulates",
+      "via": "mtROS",
+      "confidence": 0.35,
+      "snippet": "mtROS / +Fe3+ → HIF-1; uncertain routing flagged in transcription."
+    },
+    {
+      "from_symbol": "AMPK",
+      "to_symbol": "HIF-1",
+      "relation": "positively regulates",
+      "confidence": 0.35,
+      "snippet": "Arrow AMPK → HIF-1 marked uncertain in transcription."
+    },
+    {
+      "from_symbol": "HIF-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.82,
+      "snippet": "Pointed arrow HIF-1 → nucleus genes (downward into oval)."
+    },
+    {
+      "from_compartment": "Lumen",
+      "to_compartment": "Intestinal cell",
+      "relation": "negatively regulates",
+      "via": "ExoA",
+      "confidence": 0.3,
+      "snippet": "ExoA --| Translation; T-bar inhibition of Translation node (best reading from transcription). [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "ZIP-4",
+      "to_symbol": "ZIP-2",
+      "relation": "positively regulates",
+      "confidence": 0.93,
+      "snippet": "Pointed arrow ZIP-4 → ZIP-2."
+    },
+    {
+      "from_symbol": "CEBP-1",
+      "to_symbol": "ZIP-2",
+      "relation": "positively regulates",
+      "confidence": 0.88,
+      "snippet": "Pointed arrow CEBP-1/2 → ZIP-2."
+    },
+    {
+      "relation": "positively regulates",
+      "via": "ESRE",
+      "confidence": 0.3,
+      "snippet": "Pointed arrow ZIP-2 → ESRE → cellular stress response genes inside Nucleus. [unconfirmed against figure in verification]"
+    },
+    {
+      "relation": "negatively regulates (ZIP-2 --| defence genes)",
+      "confidence": 0.3,
+      "snippet": "Uncertain T-bar from ZIP-2 to antimicrobial defence genes in Nucleus; end-type not fully resolvable. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "NHR-86",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.88,
+      "snippet": "Pointed arrow NHR-86/HNF-4 → antimicrobial defence genes inside Nucleus."
+    },
+    {
+      "from_symbol": "DAF-16",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.93,
+      "snippet": "Pointed arrow DAF-16/FOXO → cellular stress response genes (and antimicrobial defence genes) inside Nucleus."
+    },
+    {
+      "from_symbol": "SKN-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.93,
+      "snippet": "Pointed arrow SKN-1/Nrf2 → cellular stress response genes inside Nucleus."
+    },
+    {
+      "from_symbol": "HSF-1",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "confidence": 0.93,
+      "snippet": "Pointed arrow HSF-1 → cellular stress response genes inside Nucleus."
+    },
+    {
+      "from_compartment": "Intestinal cell",
+      "to_compartment": "Nucleus",
+      "relation": "positively regulates",
+      "via": "ROS",
+      "confidence": 0.35,
+      "snippet": "ROS node with uncertain downward arrow into defence/stress genes; end-type and exact routing not fully resolvable."
+    },
+    {
+      "from_symbol": "FSHR-1",
+      "to_compartment": "Intestinal cell",
+      "relation": "positively regulates",
+      "confidence": 0.3,
+      "snippet": "FSHR-1 transmembrane receptor implied to transduce Lumen signals into Intestinal cell; direct downstream target not explicitly drawn. [unconfirmed against figure in verification]"
+    }
+  ]
+}

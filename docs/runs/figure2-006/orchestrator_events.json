@@ -1,0 +1,92 @@
+[
+  {
+    "turn": 0,
+    "stop_reason": "tool_use",
+    "input_tokens": 5376,
+    "output_tokens": 2255
+  },
+  {
+    "turn": 1,
+    "stop_reason": "tool_use",
+    "input_tokens": 8699,
+    "output_tokens": 886
+  },
+  {
+    "turn": 2,
+    "stop_reason": "tool_use",
+    "input_tokens": 32598,
+    "output_tokens": 765
+  },
+  {
+    "turn": 3,
+    "stop_reason": "tool_use",
+    "input_tokens": 49113,
+    "output_tokens": 19905
+  },
+  {
+    "turn": 4,
+    "stop_reason": "tool_use",
+    "input_tokens": 72380,
+    "output_tokens": 1413
+  },
+  {
+    "turn": 5,
+    "stop_reason": "tool_use",
+    "input_tokens": 73883,
+    "output_tokens": 4410
+  },
+  {
+    "turn": 6,
+    "stop_reason": "tool_use",
+    "input_tokens": 79242,
+    "output_tokens": 10618
+  },
+  {
+    "turn": 7,
+    "stop_reason": "tool_use",
+    "input_tokens": 109858,
+    "output_tokens": 4978
+  },
+  {
+    "turn": 8,
+    "stop_reason": "tool_use",
+    "input_tokens": 115130,
+    "output_tokens": 2465
+  },
+  {
+    "turn": 9,
+    "stop_reason": "tool_use",
+    "input_tokens": 117925,
+    "output_tokens": 4023
+  },
+  {
+    "turn": 10,
+    "stop_reason": "tool_use",
+    "input_tokens": 122226,
+    "output_tokens": 2075
+  },
+  {
+    "turn": 11,
+    "stop_reason": "tool_use",
+    "input_tokens": 124579,
+    "output_tokens": 3411
+  },
+  {
+    "turn": 12,
+    "stop_reason": "tool_use",
+    "input_tokens": 128284,
+    "output_tokens": 2169
+  },
+  {
+    "turn": 13,
+    "stop_reason": "tool_use",
+    "input_tokens": 130783,
+    "output_tokens": 6650
+  },
+  {
+    "turn": 14,
+    "stop_reason": "tool_use",
+    "input_tokens": 137813,
+    "output_tokens": 2913
+  }
+]

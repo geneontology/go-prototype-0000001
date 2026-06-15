@@ -1,0 +1,3006 @@
+{
+  "id": "gomodel:run-figure2-006",
+  "individuals": [
+    {
+      "id": "gomodel:run-figure2-006/tir1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0035591",
+          "label": "signaling adaptor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00006575",
+          "label": "tir-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0042742",
+          "label": "defense response to bacterium"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:15048112"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005737",
+          "label": "cytoplasm"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/tir1/causal/gomodel:run-figure2-006/nsy1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:15048112"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004709",
+          "label": "MAP kinase kinase kinase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00003822",
+          "label": "nsy-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0038066",
+          "label": "p38MAPK cascade"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:12142542"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005737",
+          "label": "cytoplasm"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nsy1/causal/gomodel:run-figure2-006/sek1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:11751572"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004708",
+          "label": "MAP kinase kinase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00004758",
+          "label": "sek-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0038066",
+          "label": "p38MAPK cascade"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:12142542"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005737",
+          "label": "cytoplasm"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/sek1/causal/gomodel:run-figure2-006/pmk1/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:11751572"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004707",
+          "label": "MAP kinase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00004055",
+          "label": "pmk-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0000165",
+          "label": "MAPK cascade"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000316",
+          "label": "genetic interaction evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:11751572"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005737",
+          "label": "cytoplasm"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/pmk1/causal/gomodel:run-figure2-006/atf7/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20369020"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0140662",
+          "label": "ATP-dependent protein folding chaperone"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00002025",
+          "label": "hsp-60"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0034514",
+          "label": "mitochondrial unfolded protein response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:15280428"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005739",
+          "label": "mitochondrion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsp60/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:17189267"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0003700",
+          "label": "DNA-binding transcription factor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00013878",
+          "label": "atfs-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0034514",
+          "label": "mitochondrial unfolded protein response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20188671"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atfs1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:22700657"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0000981",
+          "label": "DNA-binding transcription factor activity, RNA polymerase II-specific"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00001851",
+          "label": "hif-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0006357",
+          "label": "regulation of transcription by RNA polymerase II"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:19632181"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:11427734"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hif1/has_small_molecule_activator/CHEBI:26523",
+      "type": [
+        {
+          "type": "class",
+          "id": "CHEBI:26523",
+          "label": "reactive oxygen species"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:24431",
+          "label": "chemical entity"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/aak2",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0004679",
+          "label": "AMP-activated protein kinase activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/aak2/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00020142",
+          "label": "aak-2 (AMPK)"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/aak2/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/aak2/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005737",
+          "label": "cytoplasm"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/aak2/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:18408008"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0001228",
+          "label": "DNA-binding transcription activator activity, RNA polymerase II-specific"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00000912",
+          "label": "daf-16"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0006355",
+          "label": "regulation of DNA-templated transcription"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:17096597"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/daf16/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0003700",
+          "label": "DNA-binding transcription factor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00004804",
+          "label": "skn-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045944",
+          "label": "positive regulation of transcription by RNA polymerase II"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:12869585"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/skn1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:12869585"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0003700",
+          "label": "DNA-binding transcription factor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00002004",
+          "label": "hsf-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045944",
+          "label": "positive regulation of transcription by RNA polymerase II"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:26759377"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/hsf1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:22265419"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0003700",
+          "label": "DNA-binding transcription factor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00000223",
+          "label": "atf-7"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045089",
+          "label": "positive regulation of innate immune response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20369020"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/atf7/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20369020"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0000981",
+          "label": "DNA-binding transcription factor activity, RNA polymerase II-specific"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00021552",
+          "label": "zip-4"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0050829",
+          "label": "defense response to Gram-negative bacterium"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:28662060"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip4/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000501",
+          "label": "evidence used in automatic assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "GO_REF:0000044"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0000981",
+          "label": "DNA-binding transcription factor activity, RNA polymerase II-specific"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00016997",
+          "label": "cebp-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0050829",
+          "label": "defense response to Gram-negative bacterium"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:27927200"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/cebp1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:19737525"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0000981",
+          "label": "DNA-binding transcription factor activity, RNA polymerase II-specific"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00019327",
+          "label": "zip-2"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0140367",
+          "label": "antibacterial innate immune response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20133860"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/zip2/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000501",
+          "label": "evidence used in automatic assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "GO_REF:0000044"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0003700",
+          "label": "DNA-binding transcription factor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00003676",
+          "label": "nhr-86"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0140367",
+          "label": "antibacterial innate immune response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20133860"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005634",
+          "label": "nucleus"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/nhr86/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000314",
+          "label": "direct assay evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:20461074"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0008528",
+          "label": "G protein-coupled peptide receptor activity"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0003674",
+          "label": "molecular_function"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/enabled_by",
+      "type": [
+        {
+          "type": "class",
+          "id": "WB:WBGene00008239",
+          "label": "fshr-1"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "CHEBI:33695",
+          "label": "information biomacromolecule"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/enabled_by/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/part_of",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0045087",
+          "label": "innate immune response"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0008150",
+          "label": "biological_process"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/part_of/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000315",
+          "label": "mutant phenotype evidence used in manual assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "PMID:26360906"
+        }
+      ]
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/occurs_in",
+      "type": [
+        {
+          "type": "class",
+          "id": "GO:0005886",
+          "label": "plasma membrane"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "GO:0005575",
+          "label": "cellular_component"
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "id": "gomodel:run-figure2-006/fshr1/occurs_in/ev-0",
+      "type": [
+        {
+          "type": "class",
+          "id": "ECO:0000501",
+          "label": "evidence used in automatic assertion"
+        }
+      ],
+      "root-type": [
+        {
+          "type": "class",
+          "id": "ECO:0000000",
+          "label": "evidence"
+        }
+      ],
+      "annotations": [
+        {
+          "key": "source",
+          "value": "GO_REF:0000044"
+        }
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "subject": "gomodel:run-figure2-006/tir1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/tir1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/tir1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/tir1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/tir1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/tir1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/tir1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/tir1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/tir1",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
+      "object": "gomodel:run-figure2-006/nsy1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/tir1/causal/gomodel:run-figure2-006/nsy1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nsy1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/nsy1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nsy1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nsy1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/nsy1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nsy1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nsy1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/nsy1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nsy1",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
+      "object": "gomodel:run-figure2-006/sek1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nsy1/causal/gomodel:run-figure2-006/sek1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/sek1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/sek1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/sek1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/sek1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/sek1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/sek1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/sek1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/sek1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/sek1",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
+      "object": "gomodel:run-figure2-006/pmk1",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/sek1/causal/gomodel:run-figure2-006/pmk1/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/pmk1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/pmk1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/pmk1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/pmk1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/pmk1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/pmk1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/pmk1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/pmk1/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/pmk1",
+      "property": "RO:0002629",
+      "property-label": "directly positively regulates",
+      "object": "gomodel:run-figure2-006/atf7",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/pmk1/causal/gomodel:run-figure2-006/atf7/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/pmk1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure2-006/daf16",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsp60",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/hsp60/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsp60/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsp60",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/hsp60/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsp60/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsp60",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/hsp60/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsp60/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsp60",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure2-006/atfs1",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atfs1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/atfs1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atfs1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atfs1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/atfs1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atfs1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atfs1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/atfs1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atfs1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hif1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/hif1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hif1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hif1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/hif1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hif1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hif1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/hif1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hif1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hif1",
+      "property": "RO:0012001",
+      "property-label": "has small molecule activator",
+      "object": "gomodel:run-figure2-006/hif1/has_small_molecule_activator/CHEBI:26523",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/aak2",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/aak2/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/aak2/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/aak2",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/aak2/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/aak2/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/aak2",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure2-006/hif1",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/daf16",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/daf16/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/daf16/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/daf16",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/daf16/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/daf16/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/daf16",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/daf16/occurs_in",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/skn1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/skn1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/skn1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/skn1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/skn1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/skn1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/skn1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/skn1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/skn1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsf1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/hsf1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsf1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsf1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/hsf1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsf1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/hsf1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/hsf1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/hsf1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atf7",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/atf7/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atf7/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atf7",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/atf7/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atf7/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/atf7",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/atf7/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/atf7/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip4",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/zip4/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip4/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip4",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/zip4/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip4/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip4",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/zip4/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip4/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip4",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure2-006/zip2",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/cebp1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/cebp1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/cebp1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/cebp1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/cebp1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/cebp1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/cebp1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/cebp1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/cebp1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/cebp1",
+      "property": "RO:0002304",
+      "property-label": "causally upstream of, positive effect",
+      "object": "gomodel:run-figure2-006/zip2",
+      "annotations": []
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip2",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/zip2/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip2/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip2",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/zip2/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip2/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/zip2",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/zip2/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/zip2/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nhr86",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/nhr86/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nhr86/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nhr86",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/nhr86/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nhr86/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/nhr86",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/nhr86/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/nhr86/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/fshr1",
+      "property": "RO:0002333",
+      "property-label": "RO:0002333",
+      "object": "gomodel:run-figure2-006/fshr1/enabled_by",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/fshr1/enabled_by/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/fshr1",
+      "property": "BFO:0000050",
+      "property-label": "BFO:0000050",
+      "object": "gomodel:run-figure2-006/fshr1/part_of",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/fshr1/part_of/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    },
+    {
+      "subject": "gomodel:run-figure2-006/fshr1",
+      "property": "BFO:0000066",
+      "property-label": "BFO:0000066",
+      "object": "gomodel:run-figure2-006/fshr1/occurs_in",
+      "annotations": [
+        {
+          "key": "evidence",
+          "value": "gomodel:run-figure2-006/fshr1/occurs_in/ev-0",
+          "value-type": "IRI"
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "key": "title",
+      "value": "Agent run figure2-006: Caenorhabditis elegans"
+    },
+    {
+      "key": "http://www.geneontology.org/formats/oboInOwl#id",
+      "value": "gomodel:run-figure2-006"
+    },
+    {
+      "key": "https://w3id.org/biolink/vocab/in_taxon",
+      "value": "NCBITaxon:6239",
+      "value-type": "IRI"
+    },
+    {
+      "key": "state",
+      "value": "development"
+    }
+  ]
+}
