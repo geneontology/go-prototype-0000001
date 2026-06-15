@@ -28,6 +28,7 @@ import yaml
 
 from gocam_prototype.builder import GoCamBuilder, write_model_and_ledger
 from gocam_prototype.orchestrator import orchestrate
+from gocam_prototype.planning import make_curation_plan, render_plan
 from gocam_prototype.validate import validate_model
 from gocam_prototype.viewer import linkml_to_viewer_json
 from gocam_prototype.vision import extract_curator_intent
@@ -112,6 +113,25 @@ def run_pipeline(
         intent.model_dump_json(indent=2, exclude_none=True)
     )
 
+    # Framing pass: pre-classify each gene's MF-class and each molecule's role
+    # (the directness call) so the build loop executes a plan instead of
+    # improvising on a dense figure. Best-effort — a failure must not break the
+    # run; we just proceed with no plan.
+    print("[1b/4] Curation-plan (framing) pass", flush=True)
+    plan_text: str | None = None
+    try:
+        transcription = None
+        transcript_path = out_dir / "transcription.md"
+        if transcript_path.is_file():
+            transcription = transcript_path.read_text(encoding="utf-8")
+        plan = make_curation_plan(intent, transcription)
+        (out_dir / "curation_plan.json").write_text(
+            plan.model_dump_json(indent=2, exclude_none=True)
+        )
+        plan_text = render_plan(plan)
+    except Exception as e:  # noqa: BLE001 — framing is an enhancement, never fatal
+        print(f"[WARN] curation-plan pass failed ({e}); proceeding without a plan.", flush=True)
+
     print("[2/4] Orchestrator (Claude tool-use loop)", flush=True)
     builder = GoCamBuilder(
         model_id=f"gomodel:run-{_slugify(run_id)}",
@@ -122,6 +142,7 @@ def run_pipeline(
     model, ledger = orchestrate(
         intent, builder, max_turns=max_turns,
         events_out=out_dir / "orchestrator_events.json",
+        curation_plan_text=plan_text,
     )
     n_act = len(model.activities or [])
     n_gene = len(getattr(intent, "genes", None) or [])

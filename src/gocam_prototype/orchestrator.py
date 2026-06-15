@@ -448,6 +448,11 @@ class Orchestrator:
     # headroom.
     max_tokens: int = 32000
     max_empty_nudges: int = 3        # consecutive no-tool turns tolerated before giving up
+    # Optional pre-computed framing injected into the agent's first message: a
+    # rendered curation plan (Tier 2 — planning.py) that pre-classifies each gene's
+    # MF-class and each molecule's participant role (the directness call), so the
+    # build loop executes a checklist instead of improvising on a dense figure.
+    curation_plan_text: str | None = None
 
     _tools: list[dict] = field(default_factory=list, init=False)
     _handlers: dict[str, Callable[[dict], dict]] = field(default_factory=dict, init=False)
@@ -1371,15 +1376,56 @@ class Orchestrator:
 
         return self.builder.build()
 
-    @staticmethod
-    def _initial_user_message(intent: CuratorIntent) -> str:
-        return (
+    def _initial_user_message(self, intent: CuratorIntent) -> str:
+        msg = (
             "Build a GO-CAM model from the following curator-intent JSON. "
             "Plan briefly, then start calling tools.\n\n"
             "```json\n"
             + intent.model_dump_json(indent=2, exclude_none=True)
             + "\n```"
         )
+        ctx = self._cellular_context_block(intent)
+        if ctx:
+            msg += "\n\n" + ctx
+        plan = getattr(self, "curation_plan_text", None)
+        if plan:
+            msg += "\n\n" + plan
+        return msg
+
+    def _cellular_context_block(self, intent: CuratorIntent) -> str:
+        """Pre-resolve the figure's cell/tissue compartments to grounded CL/WBbt
+        CURIEs and hand them to the agent ready to use (#54 Tier 1). The agent
+        keeps skipping resolve_cell_type under load, so we ground the cell types
+        deterministically here and tell it to apply them — application stays the
+        agent's call, grounding is no-guess (omit anything that doesn't resolve)."""
+        resolved: list[tuple[str, str, str, list[str]]] = []
+        for comp in (intent.compartments or []):
+            if comp.kind not in ("cell_type", "tissue"):
+                continue
+            hit = resolve_cell_type(comp.label, taxon=self.builder.taxon)
+            if not hit:
+                continue
+            curie, canonical = hit
+            genes = [g.symbol for g in (intent.genes or []) if g.in_compartment == comp.label]
+            resolved.append((comp.label, curie, canonical, genes))
+        if not resolved:
+            return ""
+        lines = [
+            "CELLULAR CONTEXT (pre-resolved from the figure's compartments — use these "
+            "grounded cell types DIRECTLY; you do NOT need to call resolve_cell_type for them):",
+        ]
+        for label, curie, canonical, genes in resolved:
+            where = f" Genes here: {', '.join(genes)}." if genes else ""
+            lines.append(
+                f'- "{label}" -> {curie} ({canonical}).{where} On each such activity, pass '
+                f"cell_type={curie} (+ cell_type_label='{canonical}') to set_occurs_in, "
+                "ALONGSIDE its GO cellular-component term."
+            )
+        lines.append(
+            "Apply the cell type to EVERY activity whose gene sits in one of these cells. A "
+            "compartment NOT listed here did not ground — omit its cell type, do not invent one."
+        )
+        return "\n".join(lines)
 
 
 def orchestrate(
@@ -1390,12 +1436,15 @@ def orchestrate(
     model_name: str | None = None,
     max_turns: int = 60,
     events_out: str | Path | None = None,
+    curation_plan_text: str | None = None,
 ) -> tuple[Model, ProvenanceLedger]:
     """Convenience entry point. Pulls Vertex config from env if no client given.
 
     If `events_out` is given, the per-turn event log (turn, stop_reason, token
     usage) is written there — persisted even if the run raises, so a failed /
-    empty run is diagnosable after the fact.
+    empty run is diagnosable after the fact. `curation_plan_text` is an optional
+    pre-computed framing block (planning.py) injected into the agent's first
+    message.
     """
     cfg = VertexConfig.from_env()
     # Opus 4.8 is only provisioned on the Vertex *global* endpoint for this
@@ -1407,7 +1456,8 @@ def orchestrate(
         or os.environ.get("ANTHROPIC_DEFAULT_OPUS_MODEL")
         or "claude-opus-4-8"
     )
-    orch = Orchestrator(builder=builder, client=cli, model_name=mdl, max_turns=max_turns)
+    orch = Orchestrator(builder=builder, client=cli, model_name=mdl, max_turns=max_turns,
+                        curation_plan_text=curation_plan_text)
     try:
         return orch.run(intent)
     finally:
