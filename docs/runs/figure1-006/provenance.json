@@ -1,0 +1,401 @@
+{
+  "model_id": "gomodel:run-figure1-006",
+  "version": 2,
+  "assertions": {
+    "gomodel:run-figure1-006/tph1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00006600",
+        "snippet": "tph-1 resolved to WB:WBGene00006600 (C. elegans tryptophan hydroxylase), enabling the serotonin-biosynthetic activity in the ADF neuron.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148758Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00021897",
+        "snippet": "ser-6 resolved to WB:WBGene00021897 (C. elegans octopamine receptor), enabling the octopamine receptor activity in the AWB neuron.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148860Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00003386",
+        "snippet": "mod-1 resolved to WB:WBGene00003386 (C. elegans serotonin-gated chloride channel), enabling the serotonin receptor activity in the URX neuron.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148900Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00006541",
+        "snippet": "tbh-1 resolved to WB:WBGene00006541 (C. elegans tyramine beta-hydroxylase), enabling the octopamine-biosynthetic activity in the RIC neuron.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148927Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00015497",
+        "snippet": "nhr-76 resolved to WB:WBGene00015497 (C. elegans nuclear hormone receptor), enabling the transcription-factor activity in the intestine.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148949Z"
+      }
+    ],
+    "gomodel:run-figure1-006/atgl1/enabled_by": [
+      {
+        "source_type": "alliance",
+        "source_id": "WB:WBGene00015484",
+        "snippet": "ATGL resolved to atgl-1 / WB:WBGene00015484 (C. elegans adipose triglyceride lipase), enabling the triacylglycerol lipase activity in the intestine.",
+        "tool_name": "alliance.resolve_symbol_to_curie",
+        "retrieved_at": "2026-06-15T22:33:56.148980Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004510",
+        "snippet": "tph-1 is annotated to tryptophan 5-monooxygenase activity (rate-limiting enzyme of serotonin biosynthesis).",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "tryptophan 5-monooxygenase activity",
+        "retrieved_at": "2026-06-15T22:34:31.733869Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004989",
+        "snippet": "ser-6 is annotated (IDA) to octopamine receptor activity, a G protein-coupled octopamine receptor.",
+        "evidence_code": "IDA",
+        "reference": "PMID:22124329",
+        "term_label": "octopamine receptor activity",
+        "retrieved_at": "2026-06-15T22:34:31.733990Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0160039",
+        "snippet": "mod-1 is annotated (IDA) to serotonin-gated chloride channel activity, a serotonin-activated ligand-gated anion channel.",
+        "evidence_code": "IDA",
+        "reference": "PMID:11100728",
+        "term_label": "serotonin-gated chloride channel activity",
+        "retrieved_at": "2026-06-15T22:34:31.734090Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004836",
+        "snippet": "tbh-1 is annotated (IMP) to tyramine-beta hydroxylase activity, the enzyme converting tyramine to octopamine.",
+        "evidence_code": "IMP",
+        "reference": "PMID:15848803",
+        "term_label": "tyramine-beta hydroxylase activity",
+        "retrieved_at": "2026-06-15T22:34:31.734117Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004879",
+        "snippet": "nhr-76 is annotated to nuclear receptor activity (ligand-dependent DNA-binding transcription factor).",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "nuclear receptor activity",
+        "retrieved_at": "2026-06-15T22:34:31.734140Z"
+      }
+    ],
+    "gomodel:run-figure1-006/atgl1/molecular_function": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004806",
+        "snippet": "atgl-1 is annotated to triacylglycerol lipase activity, the lipase that mobilizes stored triglyceride.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "triacylglycerol lipase activity",
+        "retrieved_at": "2026-06-15T22:34:31.734161Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0042427",
+        "snippet": "tph-1 is annotated to serotonin biosynthetic process; produces the 5-HT signal in the ADF neuron.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "serotonin biosynthetic process",
+        "retrieved_at": "2026-06-15T22:34:46.275299Z"
+      },
+      {
+        "source_type": "pathway_resource",
+        "source_id": "R-CEL-209931",
+        "snippet": "Reactome C. elegans pathway 'Serotonin and melatonin biosynthesis' corroborates tph-1's role in serotonin biosynthetic process.",
+        "term_label": "Serotonin and melatonin biosynthesis",
+        "extra": {
+          "resource": "Reactome",
+          "pathway_url": "https://reactome.org/content/detail/R-CEL-209931"
+        },
+        "retrieved_at": "2026-06-15T22:36:24.211196Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0071927",
+        "snippet": "ser-6 is annotated (IDA) to octopamine signaling pathway; receives the octopamine signal in AWB.",
+        "evidence_code": "IDA",
+        "reference": "PMID:22124329",
+        "term_label": "octopamine signaling pathway",
+        "retrieved_at": "2026-06-15T22:34:46.275378Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0007210",
+        "snippet": "mod-1 is annotated (IDA) to serotonin receptor signaling pathway; transduces the 5-HT signal in URX.",
+        "evidence_code": "IDA",
+        "reference": "PMID:11100728",
+        "term_label": "serotonin receptor signaling pathway",
+        "retrieved_at": "2026-06-15T22:34:46.275410Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0006589",
+        "snippet": "tbh-1 is annotated (IMP) to octopamine biosynthetic process; produces the octopamine signal in the RIC neuron.",
+        "evidence_code": "IMP",
+        "reference": "PMID:15848803",
+        "term_label": "octopamine biosynthetic process",
+        "retrieved_at": "2026-06-15T22:34:46.275434Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0006357",
+        "snippet": "nhr-76 is annotated to regulation of transcription by RNA polymerase II; the TF endpoint regulating the intestinal lipolysis program (atgl-1).",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "regulation of transcription by RNA polymerase II",
+        "retrieved_at": "2026-06-15T22:34:46.275455Z"
+      }
+    ],
+    "gomodel:run-figure1-006/atgl1/part_of": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0019433",
+        "snippet": "atgl-1 is annotated to triglyceride catabolic process; this is the figure's 'β-oxidation / Fat loss' endpoint downstream of ATGL.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "triglyceride catabolic process",
+        "retrieved_at": "2026-06-15T22:34:46.275474Z"
+      },
+      {
+        "source_type": "pathway_resource",
+        "source_id": "R-CEL-163560",
+        "snippet": "Reactome C. elegans pathway 'Triglyceride catabolism' corroborates atgl-1's role in triglyceride catabolic process (the figure's β-oxidation/Fat loss endpoint).",
+        "term_label": "Triglyceride catabolism",
+        "extra": {
+          "resource": "Reactome",
+          "pathway_url": "https://reactome.org/content/detail/R-CEL-163560"
+        },
+        "retrieved_at": "2026-06-15T22:36:24.211304Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/occurs_in/cell_type": [
+      {
+        "source_type": "figure",
+        "snippet": "tph-1 written above the ADF blue triangle inside the NEURONS region in Panel E; ADF is a serotonergic neuron (specific cell type ADF, grounded to generic neuron CL:0000540).",
+        "retrieved_at": "2026-06-15T22:35:10.026126Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0043005",
+        "snippet": "tph-1 is annotated to neuron projection.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "neuron projection",
+        "retrieved_at": "2026-06-15T22:35:10.026108Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/occurs_in/cell_type": [
+      {
+        "source_type": "figure",
+        "snippet": "ser-6 written beside/above the AWB green triangle inside the NEURONS region in Panel E (specific cell type AWB, grounded to generic neuron CL:0000540).",
+        "retrieved_at": "2026-06-15T22:35:10.026264Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005886",
+        "snippet": "ser-6 (octopamine GPCR) is annotated to plasma membrane.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "plasma membrane",
+        "retrieved_at": "2026-06-15T22:35:10.026256Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/occurs_in/cell_type": [
+      {
+        "source_type": "figure",
+        "snippet": "mod-1 written above the URX yellow hexagon inside the NEURONS region in Panel E (specific cell type URX, grounded to generic neuron CL:0000540).",
+        "retrieved_at": "2026-06-15T22:35:10.026332Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005886",
+        "snippet": "mod-1 (serotonin-gated chloride channel) is annotated (IDA) to plasma membrane.",
+        "evidence_code": "IDA",
+        "reference": "PMID:15878844",
+        "term_label": "plasma membrane",
+        "retrieved_at": "2026-06-15T22:35:10.026326Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/occurs_in/cell_type": [
+      {
+        "source_type": "figure",
+        "snippet": "tbh-1 written below the RIC red pentagon inside the NEURONS region in Panel E (specific cell type RIC, grounded to generic neuron CL:0000540).",
+        "retrieved_at": "2026-06-15T22:35:10.026382Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0045202",
+        "snippet": "tbh-1 is annotated (IDA) to synapse.",
+        "evidence_code": "IDA",
+        "reference": "PMID:15848803",
+        "term_label": "synapse",
+        "retrieved_at": "2026-06-15T22:35:10.026377Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005634",
+        "snippet": "nhr-76 is annotated to nucleus, consistent with its nuclear-receptor/TF role in the intestine.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "nucleus",
+        "retrieved_at": "2026-06-15T22:35:10.026424Z"
+      }
+    ],
+    "gomodel:run-figure1-006/atgl1/occurs_in": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0005811",
+        "snippet": "atgl-1 is annotated (IDA) to lipid droplet, the site of triglyceride mobilization in the intestine.",
+        "evidence_code": "IDA",
+        "reference": "PMID:20176933",
+        "term_label": "lipid droplet",
+        "retrieved_at": "2026-06-15T22:35:10.026453Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/has_output/CHEBI:28790": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0042427",
+        "snippet": "tph-1's serotonin biosynthetic activity produces serotonin (5-HT), the signal labeled on the ADF→URX arrow in Panel E.",
+        "evidence_code": "IBA",
+        "reference": "GO_REF:0000033",
+        "term_label": "serotonin biosynthetic process",
+        "retrieved_at": "2026-06-15T22:35:38.298441Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/has_output/CHEBI:17134": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0006589",
+        "snippet": "tbh-1's octopamine biosynthetic activity produces octopamine (Oct), the signal labeled on the RIC→AWB arrow in Panel E.",
+        "evidence_code": "IMP",
+        "reference": "PMID:15848803",
+        "term_label": "octopamine biosynthetic process",
+        "retrieved_at": "2026-06-15T22:35:38.298527Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/has_small_molecule_activator/CHEBI:28790": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0160039",
+        "snippet": "mod-1 is a serotonin-gated chloride channel; serotonin (5-HT) is the activating ligand that gates the channel in URX.",
+        "evidence_code": "IDA",
+        "reference": "PMID:11100728",
+        "term_label": "serotonin-gated chloride channel activity",
+        "retrieved_at": "2026-06-15T22:35:38.298560Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/has_small_molecule_activator/CHEBI:17134": [
+      {
+        "source_type": "go_annotation",
+        "source_id": "GO:0004989",
+        "snippet": "ser-6 is an octopamine receptor; octopamine (Oct) is the activating ligand received in AWB.",
+        "evidence_code": "IDA",
+        "reference": "PMID:22124329",
+        "term_label": "octopamine receptor activity",
+        "retrieved_at": "2026-06-15T22:35:38.298588Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/has_input/WB:WBGene00015484": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E shows a solid pointed arrow from nhr-76 to ATGL in the intestine; nhr-76 (nuclear receptor/TF) regulates transcription of its target gene atgl-1.",
+        "retrieved_at": "2026-06-15T22:35:38.298610Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tph1/causal/gomodel:run-figure1-006/mod1": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: solid pointed arrow from ADF (tph-1) to URX (mod-1) labeled '5-HT'. tph-1's serotonin biosynthesis is causally upstream of, positive effect, on mod-1's serotonin-gated channel activity, mediated by the serotonin (5-HT) it produces (captured by tph-1 has_output serotonin / mod-1 serotonin activator). Cross-cell (ADF→URX) with diffusion intervening.",
+        "retrieved_at": "2026-06-15T22:36:10.150670Z"
+      }
+    ],
+    "gomodel:run-figure1-006/tbh1/causal/gomodel:run-figure1-006/ser6": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: solid pointed arrow from RIC (tbh-1) to AWB (ser-6) labeled 'Oct' (octopamine). tbh-1's octopamine biosynthesis is causally upstream of, positive effect, on ser-6's octopamine receptor activity, mediated by the octopamine it produces (captured by tbh-1 has_output octopamine / ser-6 octopamine activator). Cross-cell (RIC→AWB).",
+        "retrieved_at": "2026-06-15T22:36:10.150797Z"
+      }
+    ],
+    "gomodel:run-figure1-006/ser6/causal/gomodel:run-figure1-006/tph1": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: solid pointed arrow connecting AWB (ser-6) to the ADF (tph-1) region; no intermediate molecule labeled. Interpreted as ser-6's octopamine-receptor signaling being causally upstream of, positive effect, on tph-1's serotonin biosynthesis. LOW CONFIDENCE (intent confidence 0.3; flagged unconfirmed against figure) — curator should verify direction and existence of this arrow.",
+        "retrieved_at": "2026-06-15T22:36:10.150871Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/causal/gomodel:run-figure1-006/tbh1": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: dashed line with a T-bar/bar end between URX (mod-1) and RIC (tbh-1). Interpreted as mod-1's URX activity being causally upstream of, negative effect, on tbh-1's octopamine biosynthesis in RIC. LOW CONFIDENCE (intent confidence 0.3; direction and end-type ambiguous, flagged unconfirmed) — curator should verify glyph and sign.",
+        "retrieved_at": "2026-06-15T22:36:10.150939Z"
+      }
+    ],
+    "gomodel:run-figure1-006/mod1/causal/gomodel:run-figure1-006/nhr76": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: dashed arrow labeled 'endocrine signal' crossing from URX/NEURONS to INTESTINE, with secreted-molecule symbols near the URX hexagon. Modeled as the compartment-level NEURONS→INTESTINE endocrine edge between the most plausible endpoints: mod-1 (URX, upstream-most neuronal node feeding the intestine) causally upstream of, positive effect, on nhr-76 (intestinal nuclear receptor/TF). Inter-tissue transport intervenes.",
+        "retrieved_at": "2026-06-15T22:36:10.150977Z"
+      }
+    ],
+    "gomodel:run-figure1-006/nhr76/causal/gomodel:run-figure1-006/atgl1": [
+      {
+        "source_type": "figure",
+        "snippet": "Panel E: solid pointed arrow from nhr-76 to ATGL in the intestine. nhr-76 (nuclear receptor/TF) indirectly positively regulates atgl-1's triacylglycerol lipase activity — 'indirect' because transcription + translation of atgl-1 (already captured by nhr-76 part_of regulation of transcription + has_input atgl-1) are the intervening module.",
+        "retrieved_at": "2026-06-15T22:36:10.151045Z"
+      }
+    ]
+  }
+}
