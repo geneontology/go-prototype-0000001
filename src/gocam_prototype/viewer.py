@@ -104,6 +104,30 @@ def linkml_to_viewer_json(model: Model) -> dict:
             out.append(ev_iri)
         return out
 
+    # Pre-scan for ChEBI "relays" (#51): a small molecule that one activity
+    # PRODUCES (has_output) and another CONSUMES/regulates (has_input /
+    # activator / inhibitor) is the same physical molecule pool — render it as
+    # ONE shared node both activities wire to, not two disconnected copies. Only
+    # ChEBI merges (a gene-product has_input is a distinct per-activity target and
+    # is never merged). The provenance keys stay per-activity (<act>/<slot>/<mol>),
+    # so each activity's claim keeps its own source; viewer.js re-aggregates them
+    # for the shared node on click.
+    producers: dict[str, set[str]] = {}
+    consumers: dict[str, set[str]] = {}
+    for act in (model.activities or []):
+        for ma in (act.molecular_associations or []):
+            mol = ma.molecule
+            if not mol or not mol.startswith("CHEBI:"):
+                continue
+            slot = _MOLECULE_PREDICATE_SLOT.get(ma.predicate, "has_input")
+            bucket = producers if slot == "has_output" else consumers
+            bucket.setdefault(mol, set()).add(act.id)
+    relays = {mol for mol in producers if mol in consumers}
+    shared_emitted: set[str] = set()
+
+    def shared_molecule_iri(mol: str) -> str:
+        return f"{model.id}/molecule/{mol}"
+
     for act in (model.activities or []):
         # The activity IS the molecular function instance.
         mf_iri = act.id
@@ -163,12 +187,21 @@ def linkml_to_viewer_json(model: Model) -> dict:
             if not mol:
                 continue
             slot = _MOLECULE_PREDICATE_SLOT.get(ma.predicate, "has_input")
-            mol_iri = f"{act.id}/{slot}/{mol}"
-            kind = "molecule" if mol.startswith("CHEBI:") else "gene_product"
-            add_individual(mol_iri, mol, kind)
+            # The provenance key is always per-activity; the rendered node is
+            # shared when this ChEBI is a producer↔consumer relay (#51).
+            key = f"{act.id}/{slot}/{mol}"
+            if mol in relays:
+                node_iri = shared_molecule_iri(mol)
+                if node_iri not in shared_emitted:
+                    add_individual(node_iri, mol, "molecule")
+                    shared_emitted.add(node_iri)
+            else:
+                node_iri = key
+                kind = "molecule" if mol.startswith("CHEBI:") else "gene_product"
+                add_individual(node_iri, mol, kind)
             add_fact(
-                mf_iri, ma.predicate, mol_iri,
-                materialize_evidence(mol_iri, ma.evidence),
+                mf_iri, ma.predicate, node_iri,
+                materialize_evidence(key, ma.evidence),
             )
 
     annotations: list[dict] = [

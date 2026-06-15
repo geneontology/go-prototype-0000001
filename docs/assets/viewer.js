@@ -41,6 +41,24 @@ const MOLECULE_SLOTS = [
   "has_small_molecule_activator", "has_small_molecule_inhibitor",
 ];
 
+// RO predicate -> molecule slot, mirroring viewer.py `_MOLECULE_PREDICATE_SLOT`.
+// Used to reconstruct the per-activity provenance key for an edge that points at
+// a SHARED relay molecule node (#51), whose own IRI is not a provenance key.
+const MOLECULE_PREDICATE_SLOT = {
+  "RO:0002233": "has_input",
+  "RO:0002234": "has_output",
+  "RO:0012001": "has_small_molecule_activator",
+  "RO:0012002": "has_small_molecule_inhibitor",
+};
+
+// A shared relay-molecule node IRI is `<model>/molecule/<CHEBI:…>` (#51). Return
+// the molecule CURIE if `iri` is one, else null. `/molecule/` is unique to these
+// nodes (no slot is named "molecule").
+function sharedMoleculeCurie(iri) {
+  if (!iri || !iri.includes("/molecule/")) return null;
+  return iri.split("/molecule/")[1] || null;
+}
+
 // Local-only "curator actions" store. Keyed per model so a curator's
 // confirm / dispute / comment actions persist across page reloads in the
 // same browser. v1 will swap this for a real curator-review backend.
@@ -545,6 +563,20 @@ function edgeChipEmoji(prov, edge) {
       }
     }
   }
+  if (!sources.length) {
+    // Shared relay molecule (#51): one endpoint is `<model>/molecule/<CHEBI>`,
+    // whose IRI is NOT a key. Reconstruct the per-activity key from the OTHER
+    // endpoint (the activity) + the edge's predicate-derived slot + the CURIE.
+    const property = data.property || data.predicate || data.label || "";
+    const slot = MOLECULE_PREDICATE_SLOT[property];
+    for (const [molEnd, actEnd] of [[tgt, src], [src, tgt]]) {
+      const curie = sharedMoleculeCurie(molEnd);
+      if (curie && slot) {
+        const s = srcList(prov.assertions?.[`${actEnd}/${slot}/${curie}`]);
+        if (s.length) { sources = s; break; }
+      }
+    }
+  }
   // A causal edge may carry several sources; show the highest-priority type's
   // emoji (CHIP_SOURCE_ORDER is the canonical legend order).
   const types = new Set(sources.map((a) => a?.source_type).filter(Boolean));
@@ -820,6 +852,30 @@ function handleNodeClick(detail, prov, labelIndex) {
   if (!id) {
     renderEmpty("Unrecognized node payload.");
     return;
+  }
+
+  // Case 0: a SHARED molecule relay node (#51). Its IRI is `<model>/molecule/
+  // <CHEBI>` — not itself a provenance key — so aggregate every per-activity
+  // claim about that molecule (the producer's has_output + each consumer's
+  // has_input/activator/inhibitor) into one panel.
+  const sharedCurie = sharedMoleculeCurie(id);
+  if (sharedCurie) {
+    const entries = [];
+    for (const k of Object.keys(prov.assertions || {})) {
+      if (k.endsWith(`/${sharedCurie}`) && MOLECULE_SLOTS.some((s) => k.includes(`/${s}/`))) {
+        entries.push({ slot: slotOf(k), srcs: srcList(prov.assertions[k]), assertionId: k });
+      }
+    }
+    if (entries.length > 0) {
+      const lbl = labelOf(id, labelIndex);
+      renderPanel({
+        kind: "molecule",
+        header: lbl && lbl !== id ? `Shared molecule — ${lbl}` : "Shared molecule",
+        assertionId: id,
+        entries,
+      });
+      return;
+    }
   }
 
   // Case 1: clicked id is itself an assertion key (a slot sub-individual,

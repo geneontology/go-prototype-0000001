@@ -188,3 +188,43 @@ def test_occurs_in_cell_type_extension_renders_node_and_fact() -> None:
     # The CC -> cell-type "part of" fact ties them together.
     assert any(f["subject"] == cc_iri and f["property"] == "BFO:0000050"
                and f["object"] == ct_iri for f in out["facts"])
+
+
+def test_chebi_relay_merges_into_one_shared_node() -> None:
+    """A ChEBI produced by one activity and consumed/regulated by another is one
+    shared node both wire to (#51); a non-relay ChEBI and gene products are not
+    merged, and the per-activity provenance keys are unchanged."""
+    from gocam_prototype.provenance import figure
+
+    b = GoCamBuilder(model_id="gomodel:relay-0001", title="relay", taxon="NCBITaxon:6239")
+    a = b.add_activity("tbh1", enabled_by_gene="WB:WBGene1",
+                       enabled_by_source=figure(snippet="x"), gene_label="tbh-1")
+    b.set_molecular_function(a, "GO:0004511", source=literature(pmid="PMID:1"),
+                             label="tyramine beta-hydroxylase activity")
+    b.add_output(a, "CHEBI:16243", source=literature(pmid="PMID:1"), label="octopamine")
+    b.add_input(a, "CHEBI:28790", source=literature(pmid="PMID:1"), label="serotonin")
+
+    c = b.add_activity("ser6", enabled_by_gene="WB:WBGene2",
+                       enabled_by_source=figure(snippet="x"), gene_label="ser-6")
+    b.set_molecular_function(c, "GO:0004990", source=literature(pmid="PMID:2"),
+                             label="octopamine receptor activity")
+    b.add_activator(c, "CHEBI:16243", source=figure(snippet="octopamine activates ser-6"),
+                    label="octopamine")
+    model, ledger = b.build()
+    out = linkml_to_viewer_json(model)
+
+    # Octopamine (produced AND consumed) collapses to ONE shared node ...
+    shared = "gomodel:relay-0001/molecule/CHEBI:16243"
+    oct_nodes = [i["id"] for i in out["individuals"] if i["type"][0]["id"] == "CHEBI:16243"]
+    assert oct_nodes == [shared]
+    # ... that both activities wire to (producer has_output, consumer activator).
+    preds = {(f["subject"], f["property"]) for f in out["facts"] if f["object"] == shared}
+    assert preds == {(a, "RO:0002234"), (c, "RO:0012001")}
+
+    # Serotonin (consumed by one activity only) stays a per-activity node.
+    ser_nodes = [i["id"] for i in out["individuals"] if i["type"][0]["id"] == "CHEBI:28790"]
+    assert ser_nodes == [f"{a}/has_input/CHEBI:28790"]
+
+    # Per-activity provenance keys are untouched (each claim keeps its source).
+    assert f"{a}/has_output/CHEBI:16243" in ledger.assertions
+    assert f"{c}/has_small_molecule_activator/CHEBI:16243" in ledger.assertions
