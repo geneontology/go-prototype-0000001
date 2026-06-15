@@ -225,13 +225,17 @@ WORKFLOW
    occurs_in (CC) vs CELL TYPE: `set_occurs_in`'s `term` is ALWAYS a GO cellular component \
    (GO:0005575 descendant) — the SUBCELLULAR location. Never put a CL/WBbt cell-type term in `term`. \
    When go_gene_annotations returns an aspect='cellular_component' annotation for the gene, PREFER it \
-   (even if IBA) and tag it source_type='go_annotation' with its evidence_code/reference. The CELL \
-   TYPE the figure shows (e.g. a 'neuron'/'muscle' compartment box) is a SEPARATE, OPTIONAL extension: \
-   call resolve_cell_type('neuron') to ground it to a CURIE (e.g. CL:0000540), then pass that as \
-   set_occurs_in's `cell_type` (+ cell_type_label) ALONGSIDE the GO CC `term`. This builds the GO-CAM \
-   'occurs_in CC, part_of cell' shape. If resolve_cell_type returns null, OMIT the cell_type — do not \
-   invent one. (e.g. tph-1: term=GO:0043005 'neuron projection' AND cell_type=CL:0000540 'neuron'.) \
-   The cell type is usually a figure read, so its cell_type_source is typically source_type='figure'.
+   (even if IBA) and tag it source_type='go_annotation' with its evidence_code/reference. \
+   CELL-TYPE EXTENSION — DO NOT SKIP THIS: whenever the figure places the gene in a NAMED cell or \
+   tissue compartment (a 'neuron'/'muscle'/'intestinal cell'/'ADF' box — see the curator intent's \
+   `compartments` with kind cell_type/tissue), you MUST call resolve_cell_type(<that label>) and, if \
+   it grounds to a CURIE, pass it as set_occurs_in's `cell_type` (+ cell_type_label) ALONGSIDE the GO \
+   CC `term`. This builds the GO-CAM 'occurs_in CC, part_of cell' shape and is required on every such \
+   activity, dense figures included — it is the FIRST thing dropped under load, so treat it as part of \
+   set_occurs_in, not an afterthought. ONLY omit the cell_type if resolve_cell_type returns null (then \
+   do not invent one). (e.g. tph-1: term=GO:0043005 'neuron projection' AND cell_type=CL:0000540 \
+   'neuron'; an intestinal gene: cell_type=resolve_cell_type('intestinal cell').) The cell type is \
+   usually a figure read, so its cell_type_source is typically source_type='figure'.
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -254,14 +258,19 @@ WORKFLOW
    -> add_input; a compartment like Nucleus -> occurs_in; a process or a transcriptional-output GENE \
    SET -> the TF's part_of regulation-of-transcription + add_input the named target gene). NEVER \
    create a causal edge whose target is a compartment, a process, or a gene set.
-6. Add the figure's INPUTS / REGULATORS / OUTPUTS (see that section): a receptor/channel's ligand as \
-   add_activator (or add_inhibitor) (ChEBI), an enzyme's substrate as add_input (ChEBI), TF target \
-   genes as add_input (gene_product), biosynthetic \
+6. Add the figure's INPUTS / REGULATORS / OUTPUTS (see that section): a small molecule that DIRECTLY \
+   activates/inhibits an activity (a receptor/channel ligand OR an allosteric regulator of an enzyme) \
+   as add_activator / add_inhibitor (ChEBI) — applying the directness test below; an enzyme's \
+   substrate as add_input (ChEBI), TF target genes as add_input (gene_product), biosynthetic \
    products as add_output. This is how molecules and target genes enter the model.
 7. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
    causal edge OR correctly routed (input/output/occurs_in/part_of) OR recorded as figure-unmappable. \
-   Do NOT finalize a partial model just because the well-evidenced core is done — fidelity to the \
-   figure comes first; uncertain elements stay in, marked as instinct/low-confidence.
+   Before finalizing, RE-CHECK: did every activity whose gene sits in a named cell/tissue compartment \
+   get a cell_type extension (or a confirmed null from resolve_cell_type)? Did every directly-binding \
+   regulatory small molecule use add_activator/add_inhibitor (not add_input), and did you avoid \
+   pinning an upstream/indirect molecule as a direct activator? Do NOT finalize a partial model just \
+   because the well-evidenced core is done — fidelity to the figure comes first; uncertain elements \
+   stay in, marked as instinct/low-confidence.
 
 INPUTS / OUTPUTS & THE PATHWAY BOUNDARY (participant-role grid — from the GO-CAM guidelines)
 
@@ -270,16 +279,22 @@ downstream RESPONSE itself — transcription and the SETS of genes it produces (
 genes", "cellular stress response genes", "ESRE", "Translation") — is OUTSIDE the pathway. Do NOT \
 create activity nodes for those gene sets and do NOT wire causal edges to them. Route each figure \
 participant by role:
-* small molecule that ACTIVATES/INHIBITS the activity — a ligand of a signaling receptor \
-  (GO:0038023/descendant), a nuclear receptor (GO:0004879), or the transmitter that gates a \
-  ligand-gated ion channel: use `add_activator` (RO:0012001) / `add_inhibitor` (RO:0012002), NOT \
-  `add_input`. molecule = a ChEBI CURIE (resolve the chemical; tag the resolution \
-  source_type='alliance'/'amigo' or, if only the figure shows it, 'figure'). E.g. octopamine \
-  add_activator an octopamine RECEPTOR activity; serotonin add_activator a serotonin-GATED channel. \
-  Reserve `add_input` for a SUBSTRATE the activity consumes/transforms (an enzyme's substrate), not a \
-  regulatory ligand. (If unsure whether the chemical is a substrate vs an activator, default to the \
-  relation the MF implies: receptor/channel/nuclear-receptor MFs take an activator; enzyme MFs take \
-  a substrate.)
+* small molecule that DIRECTLY ACTIVATES/INHIBITS the activity — a ChEBI chemical that binds and \
+  regulates THIS activity non-covalently (allosteric or competitive): use `add_activator` \
+  (RO:0012001) / `add_inhibitor` (RO:0012002), NOT `add_input`. Per go-cam-shapes these attach to ANY \
+  molecular function the molecule directly acts on, NOT only receptors: a receptor's ligand \
+  (octopamine -> octopamine RECEPTOR activity), a ligand-gated channel's transmitter (serotonin -> \
+  serotonin-GATED channel), a nuclear receptor's hormone, AND an allosterically regulated \
+  enzyme/kinase. molecule = a ChEBI CURIE (resolve it; tag source_type='alliance'/'amigo' or, if only \
+  the figure shows it, 'figure'). DIRECTNESS TEST — attach the activator/inhibitor ONLY to the \
+  activity the molecule physically binds. Do NOT use it for: (a) an UPSTREAM stimulus sensed by a \
+  cascade (a pathogen toxin that triggers a kinase cascade does NOT directly bind the adaptor/MAP3K — \
+  route it as an input to the SENSING activity, or leave it as causal flow), or (b) an \
+  INDIRECT/opposite effect (a metabolite that drives a target's DEGRADATION via an intermediary enzyme \
+  is NOT that target's activator — model the intermediary; check the SIGN before calling something an \
+  activator vs inhibitor). When the regulating molecule is itself produced/consumed by another modeled \
+  activity, prefer the producer `add_output` + consumer `add_activator` chain (the shared-ChEBI relay). \
+  Reserve `add_input` for a SUBSTRATE the activity consumes/transforms (an enzyme's substrate).
 * a generic stimulus/input molecule an enzyme transforms: `add_input` it (ChEBI) on the activity.
 * transcription factor: `set_molecular_function` to its DNA-binding TF MF AND `set_part_of` \
   regulation of transcription, DNA-templated (GO:0006355); then for each NAMED target gene the figure \
@@ -712,11 +727,13 @@ class Orchestrator:
         )
         self._register(
             "add_activator",
-            "Add has small molecule activator (RO:0012001): a ChEBI small molecule that ACTIVATES "
-            "this activity. Use this — NOT add_input — when the activity is a signaling receptor "
-            "(GO:0038023 / descendant), a nuclear receptor (GO:0004879), or a ligand/transmitter-gated "
-            "ion channel, and the molecule is its activating ligand/transmitter (e.g. octopamine for "
-            "an octopamine receptor; serotonin for a serotonin-gated channel). ChEBI molecule only.",
+            "Add has small molecule activator (RO:0012001): a ChEBI small molecule that DIRECTLY "
+            "(non-covalently) ACTIVATES this activity. Use this — NOT add_input — for the chemical that "
+            "binds and activates the MF: a receptor/channel/nuclear-receptor ligand (octopamine -> "
+            "octopamine receptor; serotonin -> serotonin-gated channel) AND an allosteric activator of "
+            "any enzyme/kinase. Per go-cam-shapes it attaches to ANY molecular function, not only "
+            "receptors. DIRECTNESS: do NOT use it for an upstream stimulus a cascade merely senses, or "
+            "for an indirect/opposite effect — those go through causal flow. ChEBI molecule only.",
             {
                 "type": "object",
                 "additionalProperties": False,
@@ -732,8 +749,10 @@ class Orchestrator:
         )
         self._register(
             "add_inhibitor",
-            "Add has small molecule inhibitor (RO:0012002): a ChEBI small molecule that INHIBITS "
-            "this activity (the inhibitory counterpart of add_activator). ChEBI molecule only.",
+            "Add has small molecule inhibitor (RO:0012002): a ChEBI small molecule that DIRECTLY "
+            "(non-covalently) INHIBITS this activity — the inhibitory counterpart of add_activator, "
+            "and likewise valid on ANY molecular function (not only receptors). Same DIRECTNESS rule: "
+            "not for an upstream/indirect effect. ChEBI molecule only.",
             {
                 "type": "object",
                 "additionalProperties": False,

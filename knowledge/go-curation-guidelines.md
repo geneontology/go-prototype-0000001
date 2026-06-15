@@ -194,10 +194,10 @@ The activity unit's slots:
 | location | `occurs_in` (BFO:0000066) | **GO cellular component** (GO:0005575 descendant) | `{0,1}`. The *subcellular* location. The cell TYPE is a part_of extension of this CC, not a direct occurs_in target — see the cell-type note below. For a BP only when **all** its MFs share the location. |
 | cell type (extension) | CC `part_of` (BFO:0000050) **CellType** | CL / species anatomy (WBbt) | `{0,1}` on the occurs_in CC. The cell the activity happens in (e.g. neuron `CL:0000540`). Ground the label before use; omit if it cannot be grounded. |
 | program | `part_of` (BFO:0000050) | BP (GO:0008150 descendant) | The MF is an integral first/last/intervening step. Nest BP→BP further. |
-| input | `has_input` (RO:0002233) | ChEBI / complex / gene product | The **substrate** an enzyme consumes / the TF-target gene, when more specific than the term. **Not** a receptor's ligand — use the activator/inhibitor slots below. |
+| input | `has_input` (RO:0002233) | ChEBI / complex / gene product | The **substrate** an enzyme consumes / the TF-target gene, when more specific than the term. **Not** a regulatory ligand — use the activator/inhibitor slots below. |
 | output | `has_output` (RO:0002234) | ChEBI / complex / gene product | Product incl. modified protein forms. |
-| sm activator | `has small molecule activator` (RO:0012001) | ChEBI | A small molecule that **activates** this MF — a ligand of a signaling/nuclear receptor or a ligand-gated channel. Shape-grounded (MF→ChEBI). Prefer over has_input for such ligands. |
-| sm inhibitor | `has small molecule inhibitor` (RO:0012002) | ChEBI | A small molecule that **inhibits** this MF. |
+| sm activator | `has small molecule activator` (RO:0012001) | ChEBI | A small molecule that **directly (non-covalently) activates** this MF. Per go-cam-shapes it sits on **any** `MolecularFunction`, not only receptors: a receptor/channel/nuclear-receptor ligand AND an allosteric activator of an enzyme/kinase. Prefer over has_input for a regulatory ligand. **Directness:** only the activity the molecule physically binds — not an upstream stimulus or an indirect effect (see §4b). |
+| sm inhibitor | `has small molecule inhibitor` (RO:0012002) | ChEBI | A small molecule that **directly (non-covalently) inhibits** this MF (any MF; same directness rule). |
 
 **enabled_by** is THE relation for every MF→gene-product association; do not use
 it to attach processes, locations, complexes, or chemicals. Note: "exactly one
@@ -352,14 +352,26 @@ relation to its target. Match each gene's role to one of these (full table in
   **receptor `has_input` its downstream effector — NOT its ligand**; directly
   positively regulates its target. For a **small-molecule** ligand of the
   receptor, see the next bullet.
-- **Small-molecule ligand** → has no MF of its own. Attach it to the
-  **receptor's / channel's MF** via **`has small molecule activator`** or
-  **`has small molecule inhibitor`** (RO:0012001 / RO:0012002) — the
-  shape-grounded MF→ChEBI direction. Use this **NOT `has_input`** for a ligand
-  of a signaling receptor (`GO:0038023`↓), a nuclear receptor (`GO:0004879`), or
-  a ligand-/transmitter-gated channel. (Do not use the WIP `is small molecule
-  activator/inhibitor of` stubs RO:0012005/0012006 — see the relations
-  appendix.)
+- **Small-molecule regulator** → has no MF of its own. Attach it to the **MF it
+  directly regulates** via **`has small molecule activator`** / **`has small
+  molecule inhibitor`** (RO:0012001 / RO:0012002) — the shape-grounded MF→ChEBI
+  direction, **NOT `has_input`**. Per `go-cam-shapes` these sit on **any**
+  `MolecularFunction`, not only receptors: a signaling-receptor (`GO:0038023`↓) /
+  nuclear-receptor (`GO:0004879`) / ligand-gated-channel ligand, AND an
+  **allosteric activator/inhibitor of an enzyme or kinase**. The GO MF-regulator
+  family this mirrors (`GO:0098772` / `GO:0140677` / `GO:0140678`) is defined as
+  regulation "via **non-covalent binding** that does not result in covalent
+  modification" — so the test is *direct binding of this activity*, not "is it a
+  receptor". **Directness — do NOT use the activator/inhibitor relation for:**
+  (a) an **upstream stimulus** a cascade merely senses (a pathogen toxin that
+  triggers a kinase cascade does not bind the adaptor/MAP3K — route it as an
+  input to the sensing activity or as causal flow); (b) an **indirect / opposite**
+  effect (a metabolite that drives a target's degradation via an intermediary
+  enzyme is not that target's activator — model the intermediary, and check the
+  **sign**). When the molecule is produced/consumed by another modeled activity,
+  prefer the producer `has_output` + consumer activator **shared-ChEBI relay**.
+  (Do not use the WIP `is small molecule activator/inhibitor of` stubs
+  RO:0012005/0012006 — see the relations appendix.)
 - **Molecular adaptor** (`GO:0060090`) → `has_input` the molecules it joins;
   directly-positively-regulates / constitutively-upstream-of / provides-input-for.
 - **Sequestering** (`GO:0140311` protein sequestering) → `has_input` the

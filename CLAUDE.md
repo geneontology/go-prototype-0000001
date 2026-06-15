@@ -213,11 +213,24 @@ Adding a relation means editing all four **plus** the orchestrator tool +
 handler + prompt, and the §4b / slot-table prose in `guidelines.md` (the agent
 reads the markdown, not rules.yaml). A predicate present in the builder but
 missing from `viewer.py`'s map silently renders as `has_input`; missing from the
-JS maps and its node loses panel/chip provenance. The receptor-ligand choice
-(#53) is RO:0012001/0012002 (MF→ChEBI, shape-grounded), **not** the WIP
-RO:0012005/0012006 "is small molecule …of" stubs — `validate.py`'s
+JS maps and its node loses panel/chip provenance. The small-molecule
+activator/inhibitor choice (#53) is RO:0012001/0012002 (MF→ChEBI, shape-grounded),
+**not** the WIP RO:0012005/0012006 "is small molecule …of" stubs — `validate.py`'s
 `receptor-ligand-not-has-input` lint (label-heuristic, warn-only) guards against
 regressing a receptor/channel ligand back to `has_input`.
+
+**Scope: RO:0012001/0012002 are NOT receptor-only.** `go-cam-shapes.shex` puts
+`has_small_molecule_activator/inhibitor/regulator` on the `<MolecularFunction>`
+shape (any activity, ChEBI object), and the RO defs say "the process is
+activated/inhibited by the small molecule" — so they attach to *any* MF the
+molecule **directly (non-covalently) binds** (receptor ligand OR allosteric
+enzyme/kinase regulator). The real constraint is **directness**, not "is it a
+receptor": don't pin an *upstream* stimulus (a toxin a cascade senses) or an
+*indirect/opposite* effect (a metabolite driving degradation via an intermediary)
+as a direct activator — those go through causal flow / the shared-ChEBI relay.
+This is a label-heuristic the validator can't enforce, so it lives in the prompt
++ guidelines §4b. Do **not** re-narrow the tool to receptors (figure2-005 over-
+applied it to kinases/TFs, which surfaced the directness rule — not a scope cap).
 
 ## occurs_in is a GO CC; the cell type is a part_of EXTENSION (not the term)
 
