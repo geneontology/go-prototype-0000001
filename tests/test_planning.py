@@ -49,10 +49,10 @@ def test_curation_plan_text_injected_into_initial_message() -> None:
     assert "CURATION PLAN: do the thing" in msg
 
 
-def test_set_occurs_in_nudges_when_cell_type_omitted() -> None:
-    """Just-in-time #54 nudge: a set_occurs_in for a gene in a grounded cell that
-    omits cell_type gets a reminder to redo with the grounded CURIE; supplying it
-    returns the cell-type assertion and no reminder."""
+def test_set_occurs_in_autocompletes_cell_type_when_omitted() -> None:
+    """Auto-complete #54: a set_occurs_in for a gene in a grounded cell that omits
+    cell_type gets the grounded cell filled in deterministically (figure-sourced),
+    so the extension lands even when the agent never supplies it."""
     from gocam_prototype.provenance import figure, go_annotation
 
     b = GoCamBuilder(model_id="gomodel:x", title="x", taxon="NCBITaxon:6239")
@@ -63,14 +63,34 @@ def test_set_occurs_in_nudges_when_cell_type_omitted() -> None:
 
     cc_src = go_annotation(source_id="GO:0005634", tool_name="t").model_dump()
     r = o._t_set_cc({"activity_id": aid, "term": "GO:0005634", "source": cc_src})
-    assert "reminder" in r and "WBbt:0005792" in r["reminder"]
+    # Auto-filled: returns the cell-type assertion + a note, NOT a bare ok.
+    assert r.get("cell_type_assertion") == f"{aid}/occurs_in/cell_type"
+    assert "auto-added" in r.get("note", "")
+    # The model carries the extension with a figure source.
+    model, ledger = b.build()
+    act = next(a for a in model.activities if a.id == aid)
+    assert act.occurs_in.part_of.term == "WBbt:0005792"
+    srcs = ledger.assertions[f"{aid}/occurs_in/cell_type"]
+    srcs = srcs if isinstance(srcs, list) else [srcs]
+    assert srcs[0].source_type == "figure"
 
-    r2 = o._t_set_cc({
+
+def test_set_occurs_in_respects_explicit_cell_type() -> None:
+    from gocam_prototype.provenance import figure, go_annotation
+
+    b = GoCamBuilder(model_id="gomodel:x", title="x", taxon="NCBITaxon:6239")
+    aid = b.add_activity("nhr86", enabled_by_gene="WB:WBGene1",
+                         enabled_by_source=figure(snippet="x"), gene_label="nhr-86")
+    o = Orchestrator(builder=b, client=None, model_name="claude-opus-4-8")
+    o._gene_cell_map["nhr-86"] = ("WBbt:0005792", "intestinal cell")
+    cc_src = go_annotation(source_id="GO:0005634", tool_name="t").model_dump()
+    # An explicit cell_type is used as-is (no auto note).
+    r = o._t_set_cc({
         "activity_id": aid, "term": "GO:0005634", "source": cc_src,
-        "cell_type": "WBbt:0005792", "cell_type_label": "intestinal cell",
-        "cell_type_source": figure(snippet="intestinal cell box").model_dump(),
+        "cell_type": "CL:0000540", "cell_type_label": "neuron",
+        "cell_type_source": figure(snippet="neuron box").model_dump(),
     })
-    assert "cell_type_assertion" in r2 and "reminder" not in r2
+    assert r.get("cell_type_assertion") and "note" not in r
 
 
 def test_set_occurs_in_no_nudge_without_grounded_cell() -> None:

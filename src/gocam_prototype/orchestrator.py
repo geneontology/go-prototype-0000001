@@ -32,7 +32,7 @@ from gocam_prototype import alliance, go_api
 from gocam_prototype.builder import GoCamBuilder
 from gocam_prototype.celltype import resolve_cell_type
 from gocam_prototype.llm import VertexConfig, create_message, make_client
-from gocam_prototype.provenance import ProvenanceLedger, SourceObject
+from gocam_prototype.provenance import ProvenanceLedger, SourceObject, figure
 from gocam_prototype.vision import CuratorIntent
 
 # The GO/GO-CAM curation guidelines (knowledge/go-curation-guidelines.md) are
@@ -1087,36 +1087,43 @@ class Orchestrator:
     def _t_set_cc(self, inp: dict) -> dict:
         try:
             src = self._make_source(inp["source"])
-            ct_src = inp.get("cell_type_source")
+            cell_type = inp.get("cell_type")
+            cell_type_label = inp.get("cell_type_label")
+            ct_src_raw = inp.get("cell_type_source")
+            ct_src = self._make_source(ct_src_raw) if ct_src_raw else None
+            # Auto-complete (#54): the agent will not add the cell-type extension
+            # on a dense figure — not for upfront framing, not for a point-of-action
+            # nudge. So when it omits cell_type for a gene that sits in a grounded
+            # cell, fill it deterministically from the SAME no-guess cell map.
+            # occurs_in stays the agent's call; we only complete the extension it
+            # drops. Provenance is honest: source_type='figure' (the cell came from
+            # the figure's compartment box, grounded to a CURIE via OLS).
+            autofilled = False
+            if not cell_type:
+                cell = self._cell_for_activity(inp["activity_id"])
+                if cell:
+                    cell_type, cell_type_label = cell
+                    ct_src = figure(
+                        snippet=f"Activity's gene is placed in the '{cell_type_label}' "
+                                f"compartment in the figure; grounded to {cell_type} via OLS."
+                    )
+                    autofilled = True
             ct_key = self.builder.set_occurs_in(
                 inp["activity_id"], inp["term"], source=src, label=inp.get("label"),
-                cell_type=inp.get("cell_type"),
-                cell_type_label=inp.get("cell_type_label"),
-                cell_type_source=self._make_source(ct_src) if ct_src else None,
+                cell_type=cell_type, cell_type_label=cell_type_label,
+                cell_type_source=ct_src,
             )
         except Exception as e:
             return {"error": str(e)}
+        result: dict = {"ok": True}
         if ct_key:
-            return {"ok": True, "cell_type_assertion": ct_key}
-        # Just-in-time nudge (#54): the agent drops the cell-type extension at the
-        # point of action even with the grounded CURIE in its first message. If
-        # this activity's gene is in a grounded cell and cell_type was omitted,
-        # remind it AT THE CALL to redo with the cell type — far more reliable than
-        # upfront framing on a dense run.
-        if not inp.get("cell_type"):
-            cell = self._cell_for_activity(inp["activity_id"])
-            if cell:
-                curie, label = cell
-                return {
-                    "ok": True,
-                    "reminder": (
-                        f"occurs_in set, but you OMITTED the cell type. This activity's gene is "
-                        f"in '{label}' ({curie}). Call set_occurs_in AGAIN for activity "
-                        f"{inp['activity_id']} with the SAME term PLUS cell_type={curie} "
-                        f"(cell_type_label='{label}') to add the required GO-CAM cell extension."
-                    ),
-                }
-        return {"ok": True}
+            result["cell_type_assertion"] = ct_key
+            if autofilled:
+                result["note"] = (
+                    f"cell_type {cell_type} auto-added from the figure's cell compartment "
+                    "(source_type=figure)."
+                )
+        return result
 
     def _slot_call(self, inp: dict, fn: Callable) -> dict:
         try:
