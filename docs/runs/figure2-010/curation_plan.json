@@ -1,0 +1,5 @@
+{
+  "pathway_summary": "This figure models how the intestinal epithelium of C. elegans senses and responds to Pseudomonas aeruginosa infection. Bacterial effectors (pyocyanin, pyoverdine, ExoA, PCN) entering the intestinal cell trigger several parallel stress/immune branches — the TIR-1→NSY-1→SEK-1→PMK-1(p38)→ATF-7 cascade, mitochondrial UPR^mt/mtROS arm (HSP-60, ATFS-1, HIF-1, AMPK), and multiple stress transcription factors (DAF-16, SKN-1, HSF-1) plus the ESRE module (ZIP-2/ZIP-4/CEBP-1/NHR-86) — converging on antimicrobial defence and cellular stress response gene expression. Boundaries: ends at transcriptional output (defence/stress genes); the LRO-stress node and the ESRE/gene-set nodes are processes, not single gene products.</pathway_summary>\n</invoke>\n",
+  "genes": [],
+  "molecules": []
+}
