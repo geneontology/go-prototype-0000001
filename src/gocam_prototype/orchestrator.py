@@ -225,17 +225,11 @@ WORKFLOW
    occurs_in (CC) vs CELL TYPE: `set_occurs_in`'s `term` is ALWAYS a GO cellular component \
    (GO:0005575 descendant) — the SUBCELLULAR location. Never put a CL/WBbt cell-type term in `term`. \
    When go_gene_annotations returns an aspect='cellular_component' annotation for the gene, PREFER it \
-   (even if IBA) and tag it source_type='go_annotation' with its evidence_code/reference. \
-   CELL-TYPE EXTENSION — DO NOT SKIP THIS: whenever the figure places the gene in a NAMED cell or \
-   tissue compartment (a 'neuron'/'muscle'/'intestinal cell'/'ADF' box — see the curator intent's \
-   `compartments` with kind cell_type/tissue), you MUST call resolve_cell_type(<that label>) and, if \
-   it grounds to a CURIE, pass it as set_occurs_in's `cell_type` (+ cell_type_label) ALONGSIDE the GO \
-   CC `term`. This builds the GO-CAM 'occurs_in CC, part_of cell' shape and is required on every such \
-   activity, dense figures included — it is the FIRST thing dropped under load, so treat it as part of \
-   set_occurs_in, not an afterthought. ONLY omit the cell_type if resolve_cell_type returns null (then \
-   do not invent one). (e.g. tph-1: term=GO:0043005 'neuron projection' AND cell_type=CL:0000540 \
-   'neuron'; an intestinal gene: cell_type=resolve_cell_type('intestinal cell').) The cell type is \
-   usually a figure read, so its cell_type_source is typically source_type='figure'.
+   (even if IBA) and tag it source_type='go_annotation' with its evidence_code/reference. When the \
+   figure places the gene in a named cell/tissue, ALSO pass set_occurs_in's `cell_type` (a CL/WBbt \
+   CURIE, source_type='figure') alongside the CC `term` — the CELLULAR CONTEXT block below hands you \
+   the grounded CURIEs ready to use. (e.g. tph-1: term=GO:0043005 'neuron projection' AND \
+   cell_type=CL:0000540 'neuron'.)
 5. For each tentative_edge in the curator intent, map the natural-language relation to a Relation \
    Ontology (RO) predicate. Common picks:
      - RO:0002629  directly positively regulates
@@ -265,12 +259,11 @@ WORKFLOW
    products as add_output. This is how molecules and target genes enter the model.
 7. Call `finalize_model` ONLY after every gene mention is an activity and every tentative_edge is a \
    causal edge OR correctly routed (input/output/occurs_in/part_of) OR recorded as figure-unmappable. \
-   Before finalizing, RE-CHECK: did every activity whose gene sits in a named cell/tissue compartment \
-   get a cell_type extension (or a confirmed null from resolve_cell_type)? Did every directly-binding \
-   regulatory small molecule use add_activator/add_inhibitor (not add_input), and did you avoid \
-   pinning an upstream/indirect molecule as a direct activator? Do NOT finalize a partial model just \
-   because the well-evidenced core is done — fidelity to the figure comes first; uncertain elements \
-   stay in, marked as instinct/low-confidence.
+   Before finalizing, RE-CHECK the directness call: did every directly-binding regulatory small \
+   molecule use add_activator/add_inhibitor (not add_input), and did you avoid pinning an upstream/ \
+   indirect molecule as a direct activator? Do NOT finalize a partial model just because the \
+   well-evidenced core is done — fidelity to the figure comes first; uncertain elements stay in, \
+   marked as instinct/low-confidence.
 
 INPUTS / OUTPUTS & THE PATHWAY BOUNDARY (participant-role grid — from the GO-CAM guidelines)
 
@@ -459,6 +452,10 @@ class Orchestrator:
     _finalized: bool = field(default=False, init=False)
     _empty_streak: int = field(default=0, init=False)
     events: list[dict] = field(default_factory=list, init=False)
+    # normalized gene symbol -> (grounded cell CURIE, label), from the figure's
+    # cell/tissue compartments (Tier 1). Drives both the pre-grounded context
+    # block and the just-in-time set_occurs_in cell-type nudge (#54).
+    _gene_cell_map: dict[str, tuple[str, str]] = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
         self._register_tools()
@@ -1099,7 +1096,27 @@ class Orchestrator:
             )
         except Exception as e:
             return {"error": str(e)}
-        return {"ok": True, "cell_type_assertion": ct_key} if ct_key else {"ok": True}
+        if ct_key:
+            return {"ok": True, "cell_type_assertion": ct_key}
+        # Just-in-time nudge (#54): the agent drops the cell-type extension at the
+        # point of action even with the grounded CURIE in its first message. If
+        # this activity's gene is in a grounded cell and cell_type was omitted,
+        # remind it AT THE CALL to redo with the cell type — far more reliable than
+        # upfront framing on a dense run.
+        if not inp.get("cell_type"):
+            cell = self._cell_for_activity(inp["activity_id"])
+            if cell:
+                curie, label = cell
+                return {
+                    "ok": True,
+                    "reminder": (
+                        f"occurs_in set, but you OMITTED the cell type. This activity's gene is "
+                        f"in '{label}' ({curie}). Call set_occurs_in AGAIN for activity "
+                        f"{inp['activity_id']} with the SAME term PLUS cell_type={curie} "
+                        f"(cell_type_label='{label}') to add the required GO-CAM cell extension."
+                    ),
+                }
+        return {"ok": True}
 
     def _slot_call(self, inp: dict, fn: Callable) -> dict:
         try:
@@ -1392,12 +1409,16 @@ class Orchestrator:
             msg += "\n\n" + plan
         return msg
 
+    @staticmethod
+    def _norm_symbol(symbol: str | None) -> str:
+        return (symbol or "").strip().lower()
+
     def _cellular_context_block(self, intent: CuratorIntent) -> str:
         """Pre-resolve the figure's cell/tissue compartments to grounded CL/WBbt
-        CURIEs and hand them to the agent ready to use (#54 Tier 1). The agent
-        keeps skipping resolve_cell_type under load, so we ground the cell types
-        deterministically here and tell it to apply them — application stays the
-        agent's call, grounding is no-guess (omit anything that doesn't resolve)."""
+        CURIEs and hand them to the agent ready to use (#54 Tier 1). Also populate
+        `self._gene_cell_map` (gene symbol -> grounded cell) so the set_occurs_in
+        handler can nudge the agent when it omits the cell type. Grounding is
+        no-guess (omit anything that doesn't resolve)."""
         resolved: list[tuple[str, str, str, list[str]]] = []
         for comp in (intent.compartments or []):
             if comp.kind not in ("cell_type", "tissue"):
@@ -1407,6 +1428,8 @@ class Orchestrator:
                 continue
             curie, canonical = hit
             genes = [g.symbol for g in (intent.genes or []) if g.in_compartment == comp.label]
+            for g in genes:
+                self._gene_cell_map[self._norm_symbol(g)] = (curie, canonical)
             resolved.append((comp.label, curie, canonical, genes))
         if not resolved:
             return ""
@@ -1426,6 +1449,21 @@ class Orchestrator:
             "compartment NOT listed here did not ground — omit its cell type, do not invent one."
         )
         return "\n".join(lines)
+
+    def _cell_for_activity(self, activity_id: str) -> tuple[str, str] | None:
+        """The grounded cell for an activity (by its gene), for the set_occurs_in
+        nudge (#54). Falls back to the sole grounded cell when the whole figure is
+        in one cell (the common case) and the gene symbol didn't match."""
+        if not self._gene_cell_map:
+            return None
+        act = self.builder._activities.get(activity_id)
+        gene_curie = getattr(getattr(act, "enabled_by", None), "term", None) if act else None
+        symbol = self.builder._labels.get(gene_curie) if gene_curie else None
+        hit = self._gene_cell_map.get(self._norm_symbol(symbol)) if symbol else None
+        if hit:
+            return hit
+        cells = set(self._gene_cell_map.values())
+        return next(iter(cells)) if len(cells) == 1 else None
 
 
 def orchestrate(
