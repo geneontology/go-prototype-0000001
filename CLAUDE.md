@@ -283,3 +283,41 @@ them on click/hover (`handleNodeClick` Case 0 aggregates every key ending in the
 CURIE; `edgeChipEmoji` rebuilds `<activity>/<slot>/<curie>` from the edge's
 predicate). If you change the shared-IRI shape, update `sharedMoleculeCurie` and
 both reconstruction sites together.
+
+## Locations and cell types are PER-ACTIVITY individuals — never merge them (unlike #51)
+
+It is tempting to extend the #51 ChEBI-relay merge to the repeated location/cell
+nodes a fan-out figure produces (figure2: 17 activities all `occurs_in` an
+intestinal cell → 17 identical cell nodes). **Don't** — per-activity is the
+GO-CAM standard, not clutter to dedupe. `Activity.occurs_in` is a
+`CellularAnatomicalEntityAssociation` embedded *on each activity* (its `part_of`
+cell type hangs off that); the LinkML model has no shared-location slot. A real
+published GO-CAM confirms it — `gomodel:568b0f9600000284`
+(`api.geneontology.org/api/go-cam/568b0f9600000284`) renders cytoplasm
+`GO:0005737` as **five separate individuals**, one per activity. So `viewer.py`
+correctly mints `<activity>/occurs_in` and `<activity>/occurs_in/cell_type` per
+activity. The #51 merge is justified ONLY because a produced→consumed molecule is
+one physical pool *flowing between* activities (a real connectivity edge); a
+shared location asserts no such flow, so merging it would invent structure the
+model does not state. If clutter is the worry, the standard-safe fix is
+cosmetic/viewer-only (CSS/layout), never a model-graph change. (Verified
+2026-06-16; the "one shared cell node" idea was rejected on these grounds — see
+[[feedback-conform-to-gocam-standards]] in memory.)
+
+## A sparse / disconnected model can be FAITHFUL — don't "fix" a fan-out figure
+
+An overview figure of parallel pathways legitimately yields many disconnected
+activity-units; that is correct, not a dropped-edge bug. GO-CAM connectivity
+comes from gene→gene causal edges + shared molecules — a figure whose connective
+tissue runs through NON-gene entities (a compartment like the nucleus, a
+mitochondrial mtROS hub, a pathogen) cannot become causal edges, because those
+are not gene-product activities. Concretely (figure2-010): 17 activities, 6
+causal edges, 9 singletons — and every singleton's only drawn relationship was an
+arrow into a compartment (`TF → Nucleus`), which the pathway-boundary rule turns
+into `occurs_in`, not a causal edge. So **before treating disconnection as a bug,
+read the curator-intent `tentative_edges`**: if the singletons' only edges point
+at compartments/gene-sets, the sparse model is faithful and inventing gene→gene
+edges to tidy it would violate the standard. The standard-compliant way to add
+real connectivity is each sensor's upstream molecular input where the interaction
+is genuinely direct (e.g. nhr-86 `has_small_molecule_activator` phenazine/PCN, a
+verified ligand — Peterson et al., Immunity 2023, doi:10.1016/j.immuni.2023.01.027).

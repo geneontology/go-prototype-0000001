@@ -469,3 +469,35 @@ _→ This file + the `UserPromptSubmit` hook (#42)._
 ### 2026-06-15 21:41:15Z
 
 > Ah, I see. The correct thing here is to have both; the rendered artifact is 'label (ID)'.
+
+### 2026-06-15 22:02:11Z
+
+> Sounds good. Please proceed in order.
+
+### 2026-06-15 22:46:34Z
+
+> Can we re-run on figure 2 as well?
+
+### 2026-06-15 23:17:43Z
+
+> Please proceed with your fixes, and let's just push ahead with the new updated good one.
+
+### 2026-06-15 23:45:30Z
+
+> Question: could this be injected somewhere along the way, so the agent has access to this framing. Maybe using two passes? Might having this framing improve the model overall?
+
+### 2026-06-16 20:26:39Z
+
+> Please re-run. Please consider if "b" is in line with our standards and practices. Can you find something citable?
+
+### 2026-06-16 21:19:15Z
+
+> Okay, thank you. Let's stick with the standard (always). If we change, we can change the standard and then you update.
+
+### 2026-06-16 21:24:43Z
+
+> Question on figure2-010: Why is this so disconnected? There is nothing to relate the nine singletons to anything else?
+
+### 2026-06-16 22:49:54Z
+
+> 1: faithful is key, for now. Thank you!
