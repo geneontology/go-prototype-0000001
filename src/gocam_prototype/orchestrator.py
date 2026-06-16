@@ -903,7 +903,13 @@ class Orchestrator:
 
     def _t_resolve_cell_type(self, inp: dict) -> dict:
         try:
-            hit = resolve_cell_type(inp["label"], taxon=self.builder.taxon)
+            # Opt into OLS for a live run. resolve_cell_type gates the network OFF
+            # by default, so a non-seeded cell label (e.g. 'intestinal cell')
+            # silently returns None unless production opts in — the #54 bug that
+            # made figure2 cell types impossible. _cells_online() is True in
+            # production and False under pytest (so the suite never hits OLS).
+            hit = resolve_cell_type(inp["label"], taxon=self.builder.taxon,
+                                    allow_network=self._cells_online())
         except Exception as e:  # never fail the loop on a resolver hiccup
             return {"error": str(e), "curie": None}
         if hit is None:
@@ -1420,6 +1426,16 @@ class Orchestrator:
     def _norm_symbol(symbol: str | None) -> str:
         return (symbol or "").strip().lower()
 
+    @staticmethod
+    def _cells_online() -> bool:
+        """Whether cell-type resolution may hit OLS. True in production; False
+        under pytest (so the suite never makes live calls) unless a live test
+        opts in via GOCAM_RUN_LIVE_TESTS."""
+        return (
+            "PYTEST_CURRENT_TEST" not in os.environ
+            or os.environ.get("GOCAM_RUN_LIVE_TESTS") == "1"
+        )
+
     def _cellular_context_block(self, intent: CuratorIntent) -> str:
         """Pre-resolve the figure's cell/tissue compartments to grounded CL/WBbt
         CURIEs and hand them to the agent ready to use (#54 Tier 1). Also populate
@@ -1430,7 +1446,9 @@ class Orchestrator:
         for comp in (intent.compartments or []):
             if comp.kind not in ("cell_type", "tissue"):
                 continue
-            hit = resolve_cell_type(comp.label, taxon=self.builder.taxon)
+            # Opt into OLS for a live run (see _t_resolve_cell_type); offline under pytest.
+            hit = resolve_cell_type(comp.label, taxon=self.builder.taxon,
+                                    allow_network=self._cells_online())
             if not hit:
                 continue
             curie, canonical = hit

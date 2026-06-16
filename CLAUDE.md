@@ -245,8 +245,30 @@ fact off the CC individual, so the go-gocam-viewer draws it as a connected node.
 The cell type is grounded by `celltype.resolve_cell_type` (verified-CL seed →
 OLS4 exact-label lookup in the taxon's ontologies — WBbt then CL for worm),
 which is deliberately conservative: it returns `None` (→ omit the extension)
-rather than guess, and never hits the network in unit tests unless
-`GOCAM_RUN_LIVE_TESTS=1`.
+rather than guess.
+
+**The resolver's network is OFF by default — production MUST opt in.**
+`resolve_cell_type` only hits OLS when `allow_network=True` (or a client is
+passed, or `GOCAM_RUN_LIVE_TESTS=1`); otherwise it answers from the **seed map
+only** and returns `None` for anything unseeded. This keeps the unit suite
+offline, but it silently broke #54 in production: a real `gocam-prototype run`
+sets none of those, so `resolve_cell_type('intestinal cell')` returned `None`
+and figure2 could never get a cell type — while figure1 worked purely because
+`neuron`/`sensory neuron` are *seeded*. The orchestrator now passes
+`allow_network=self._cells_online()` at both call sites (`_t_resolve_cell_type`
+and `_cellular_context_block`); `_cells_online()` is True in production and
+False under pytest (via `PYTEST_CURRENT_TEST`), so live runs reach OLS and the
+suite stays offline. Lesson: a default-off network gate keyed on a *test* env
+var also disables the feature in production — gate on "am I a test", not "is the
+live flag set". Three rounds of #54 work (framing, nudge, auto-complete) chased
+a phantom "agent ignores the cell type" when the real cause was this gate
+returning `None` before any agent decision.
+
+The cell type the agent omits is also **auto-completed** in `_t_set_cc`: when an
+activity's gene sits in a pre-grounded cell (the shared `_gene_cell_map`, by gene
+symbol with a sole-cell fallback) and `cell_type` was not supplied, the handler
+fills the grounded CURIE with a `figure` source. occurs_in stays the agent's
+call; only the dropped extension is completed.
 
 ## A ChEBI relay renders as ONE shared node, but provenance stays per-activity
 
