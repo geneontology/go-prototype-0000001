@@ -1,0 +1,153 @@
+{
+  "species": "Caenorhabditis elegans",
+  "species_taxon": "NCBITaxon:6239",
+  "processes_hinted": [
+    "serotonin (5-HT) biosynthesis and signaling",
+    "octopamine signaling",
+    "fat/lipid metabolism",
+    "beta-oxidation",
+    "fat loss",
+    "neuron-to-intestine endocrine signaling",
+    "transcriptional regulation of lipase",
+    "inter-organ communication"
+  ],
+  "compartments": [
+    {
+      "label": "ADF",
+      "kind": "cell_type",
+      "confidence": 0.95,
+      "snippet": "Blue triangle labeled 'ADF' inside the NEURONS oval; contains tph-1."
+    },
+    {
+      "label": "AWB",
+      "kind": "cell_type",
+      "confidence": 0.95,
+      "snippet": "Green triangle labeled 'AWB' inside the NEURONS oval; contains ser-6."
+    },
+    {
+      "label": "URX",
+      "kind": "cell_type",
+      "confidence": 0.95,
+      "snippet": "Yellow hexagon labeled 'URX' inside the NEURONS oval; contains mod-1; small black dot clusters drawn at its corners represent secreted molecules."
+    },
+    {
+      "label": "RIC",
+      "kind": "cell_type",
+      "confidence": 0.95,
+      "snippet": "Red pentagon labeled 'RIC' inside the NEURONS oval; contains tbh-1."
+    },
+    {
+      "label": "NEURONS",
+      "kind": "tissue",
+      "confidence": 0.95,
+      "snippet": "Gray shaded oval labeled 'NEURONS' containing ADF, AWB, URX, and RIC cell-type nodes."
+    },
+    {
+      "label": "INTESTINE",
+      "kind": "tissue",
+      "confidence": 0.95,
+      "snippet": "Green rounded box labeled 'INTESTINE' in Panel E; contains nhr-76 -> ATGL -> beta-oxidation / Fat loss pathway."
+    }
+  ],
+  "genes": [
+    {
+      "symbol": "tph-1",
+      "in_compartment": "ADF",
+      "confidence": 0.98,
+      "snippet": "Blue triangle node labeled 'ADF' in the NEURONS oval; also appears in Panel A/B as reporter-line genotype and quantified bar."
+    },
+    {
+      "symbol": "ser-6",
+      "in_compartment": "AWB",
+      "confidence": 0.95,
+      "snippet": "Green triangle node labeled 'AWB' inside the NEURONS oval in Panel E."
+    },
+    {
+      "symbol": "mod-1",
+      "in_compartment": "URX",
+      "confidence": 0.97,
+      "snippet": "Yellow hexagon labeled 'URX' in the NEURONS oval; also referenced in Panel C/D as Pflp-8::mod-1SAS transgene."
+    },
+    {
+      "symbol": "tbh-1",
+      "in_compartment": "RIC",
+      "confidence": 0.95,
+      "snippet": "Red pentagon node labeled 'RIC' inside the NEURONS oval in Panel E."
+    },
+    {
+      "symbol": "nhr-76",
+      "in_compartment": "INTESTINE",
+      "confidence": 0.95,
+      "snippet": "First node in the intestinal sub-pathway; nhr-76 -> ATGL -> beta-oxidation / Fat loss."
+    },
+    {
+      "symbol": "ATGL",
+      "in_compartment": "INTESTINE",
+      "confidence": 0.95,
+      "snippet": "Second node in the intestinal sub-pathway; receives activation from nhr-76 and drives beta-oxidation / Fat loss."
+    }
+  ],
+  "tentative_edges": [
+    {
+      "from_symbol": "tph-1",
+      "to_symbol": "mod-1",
+      "from_compartment": "ADF",
+      "to_compartment": "URX",
+      "relation": "positively regulates",
+      "via": "5-HT",
+      "confidence": 0.95,
+      "snippet": "Solid pointed arrow from ADF (tph-1) to URX (mod-1) labeled '5-HT' in Panel E."
+    },
+    {
+      "from_symbol": "ser-6",
+      "to_symbol": "tph-1",
+      "from_compartment": "AWB",
+      "to_compartment": "ADF",
+      "relation": "positively regulates",
+      "confidence": 0.3,
+      "snippet": "Solid pointed arrow from AWB (ser-6) to ADF (tph-1) on the left side of the NEURONS oval in Panel E. [unconfirmed against figure in verification]"
+    },
+    {
+      "from_symbol": "tbh-1",
+      "to_symbol": "ser-6",
+      "from_compartment": "RIC",
+      "to_compartment": "AWB",
+      "relation": "positively regulates",
+      "via": "Oct",
+      "confidence": 0.9,
+      "snippet": "Solid pointed arrow from RIC (tbh-1) upward to AWB (ser-6) labeled 'Oct' (octopamine) in Panel E."
+    },
+    {
+      "from_symbol": "mod-1",
+      "to_symbol": "tbh-1",
+      "from_compartment": "URX",
+      "to_compartment": "RIC",
+      "relation": "positively regulates",
+      "confidence": 0.8,
+      "snippet": "Dashed arrow from URX (mod-1) pointing down/left toward RIC (tbh-1) in Panel E; dashed line suggests indirect or modulatory regulation."
+    },
+    {
+      "from_compartment": "URX",
+      "to_compartment": "INTESTINE",
+      "relation": "endocrine signal",
+      "confidence": 0.9,
+      "snippet": "Dashed arrow from URX (mod-1) crossing to the INTESTINE box, labeled 'endocrine signal' in Panel E; secreted molecules depicted as black dot clusters near URX."
+    },
+    {
+      "from_symbol": "nhr-76",
+      "to_symbol": "ATGL",
+      "from_compartment": "INTESTINE",
+      "to_compartment": "INTESTINE",
+      "relation": "positively regulates",
+      "confidence": 0.95,
+      "snippet": "Solid pointed arrow from nhr-76 to ATGL within the INTESTINE box in Panel E."
+    },
+    {
+      "from_symbol": "ATGL",
+      "to_compartment": "INTESTINE",
+      "relation": "ATGL --[positively regulates]--> beta-oxidation/Fat loss",
+      "confidence": 0.3,
+      "snippet": "Solid pointed arrow from ATGL to 'beta-oxidation / Fat loss' outcome within the INTESTINE box in Panel E. [unconfirmed against figure in verification]"
+    }
+  ]
+}

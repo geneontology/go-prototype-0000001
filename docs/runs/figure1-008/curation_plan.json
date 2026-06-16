@@ -1,0 +1,66 @@
+{
+  "pathway_summary": "A C. elegans inter-organ signaling pathway in which a serotonergic/octopaminergic neuronal relay (ADF, AWB, URX, RIC) senses and transmits signals that culminate in an endocrine signal from URX to the intestine, where nhr-76 activates the lipase ATGL to drive beta-oxidation and fat loss. The model spans neuronal neurotransmitter signaling (5-HT, octopamine) and intestinal transcriptional regulation of lipolysis; it excludes the reporter/quantification panels (A–D), which are experimental evidence rather than pathway components.",
+  "genes": [
+    {
+      "symbol": "tph-1",
+      "mf_class": "enzyme",
+      "note": "Tryptophan hydroxylase in ADF neurons; rate-limiting enzyme for serotonin (5-HT) biosynthesis."
+    },
+    {
+      "symbol": "ser-6",
+      "mf_class": "signaling_receptor",
+      "note": "Octopamine GPCR in AWB neurons; receives octopamine from RIC and acts upstream of ADF/tph-1."
+    },
+    {
+      "symbol": "mod-1",
+      "mf_class": "ligand_gated_channel",
+      "note": "Serotonin-gated chloride channel in URX neurons; receives 5-HT and feeds the endocrine signal to the intestine."
+    },
+    {
+      "symbol": "tbh-1",
+      "mf_class": "enzyme",
+      "note": "Tyramine beta-hydroxylase in RIC neurons; enzyme for octopamine biosynthesis."
+    },
+    {
+      "symbol": "nhr-76",
+      "mf_class": "nuclear_receptor",
+      "note": "Intestinal nuclear hormone receptor / transcription factor that activates ATGL expression."
+    },
+    {
+      "symbol": "ATGL",
+      "mf_class": "enzyme",
+      "note": "Adipose triglyceride lipase in intestine; hydrolyzes triglycerides, driving beta-oxidation and fat loss."
+    }
+  ],
+  "molecules": [
+    {
+      "label": "5-HT",
+      "role": "direct_activator",
+      "acts_on": "mod-1",
+      "directness_note": "Serotonin is produced by tph-1 (ADF) and directly binds/gates the MOD-1 serotonin-gated channel in URX — a direct receptor ligand (RO:0012001). Also a producer->consumer relay: output of tph-1, input/activator of mod-1."
+    },
+    {
+      "label": "5-HT",
+      "role": "pathway_output",
+      "acts_on": "tph-1",
+      "directness_note": "Serotonin is the enzymatic product of tph-1 (has_output); the same molecule then directly activates mod-1 (relay)."
+    },
+    {
+      "label": "Oct (octopamine)",
+      "role": "direct_activator",
+      "acts_on": "ser-6",
+      "directness_note": "Octopamine is produced by tbh-1 (RIC) and is the direct ligand of the SER-6 octopamine receptor in AWB — direct receptor agonist (RO:0012001)."
+    },
+    {
+      "label": "Oct (octopamine)",
+      "role": "pathway_output",
+      "acts_on": "tbh-1",
+      "directness_note": "Octopamine is the enzymatic product of tbh-1 (has_output); same molecule then directly activates ser-6 (relay)."
+    },
+    {
+      "label": "endocrine signal (secreted molecule near URX)",
+      "role": "upstream_stimulus",
+      "directness_note": "Unidentified secreted endocrine signal from URX to intestine (dashed arrow; black-dot vesicle clusters). Identity unknown — model as causal flow from URX to the intestinal nhr-76 step, not as a named direct activator. Flag as uncertain."
+    }
+  ]
+}
