@@ -1,0 +1,150 @@
+{
+  "pathway_summary": "This figure models the C. elegans intestinal cell response to Pseudomonas aeruginosa infection. Pathogen-derived molecules (pyocyanin, pyoverdine, ExoA, PCN) and downstream cell-intrinsic stress signals (LRO/pH stress, mtROS, ROS, UPRmt) converge on a TIR-1→NSY-1→SEK-1→PMK-1 p38 MAPK cascade and a panel of stress/immune transcription factors (ATF-7, DAF-16, SKN-1, HSF-1, ATFS-1, HIF-1, ZIP-2, NHR-86) that drive cellular stress response and antimicrobial defence genes via ESRE elements in the nucleus. Boundaries: extracellular toxins are upstream stimuli sensed by the cell; many mitochondrial/translation-module edge signs are uncertain and flagged for verification.",
+  "genes": [
+    {
+      "symbol": "TIR-1",
+      "mf_class": "signaling_adaptor",
+      "note": "TIR-1/SARM1 adaptor; upstream activator of the p38 MAPK cascade, links pathogen/LRO stress to NSY-1."
+    },
+    {
+      "symbol": "NSY-1",
+      "mf_class": "kinase",
+      "note": "MAPKKK; phosphorylates/activates SEK-1 in the p38 cascade."
+    },
+    {
+      "symbol": "SEK-1",
+      "mf_class": "kinase",
+      "note": "MAPKK; phosphorylates/activates PMK-1."
+    },
+    {
+      "symbol": "PMK-1",
+      "mf_class": "kinase",
+      "note": "p38 MAPK; phosphorylates ATF-7 (and possibly DAF-16) to drive immune/stress transcription."
+    },
+    {
+      "symbol": "HSP-60",
+      "mf_class": "other",
+      "note": "Mitochondrial chaperone; UPRmt output marker induced downstream of mitochondrial stress."
+    },
+    {
+      "symbol": "ATFS-1",
+      "mf_class": "transcription_factor",
+      "note": "ATFS-1/ATF-4 UPRmt transcription factor; activates stress and antimicrobial defence genes."
+    },
+    {
+      "symbol": "HIF-1",
+      "mf_class": "transcription_factor",
+      "note": "Hypoxia-inducible TF; activates ESRE-driven genes; regulated by iron/Fe3+ and AMPK (signs uncertain)."
+    },
+    {
+      "symbol": "AMPK",
+      "mf_class": "kinase",
+      "note": "Energy-sensing kinase; activated by mtROS/translation signals; modulates HIF-1 (uncertain)."
+    },
+    {
+      "symbol": "DAF-16",
+      "mf_class": "transcription_factor",
+      "note": "DAF-16/FOXO; activates cellular stress response genes; possibly downstream of PMK-1 (uncertain)."
+    },
+    {
+      "symbol": "SKN-1",
+      "mf_class": "transcription_factor",
+      "note": "SKN-1/Nrf2 oxidative stress TF; activates stress response (and possibly antimicrobial) genes."
+    },
+    {
+      "symbol": "HSF-1",
+      "mf_class": "transcription_factor",
+      "note": "Heat shock factor; activates cellular stress response genes; link to ROS box uncertain."
+    },
+    {
+      "symbol": "ATF-7",
+      "mf_class": "transcription_factor",
+      "note": "bZIP TF downstream of PMK-1; activates antimicrobial defence genes."
+    },
+    {
+      "symbol": "ZIP-4",
+      "mf_class": "transcription_factor",
+      "note": "bZIP TF; regulates ZIP-2 activity (figure shows negative arrow to ZIP-2)."
+    },
+    {
+      "symbol": "CEBP-1",
+      "mf_class": "transcription_factor",
+      "note": "CEBP-1/2 bZIP TF; regulates ZIP-2 (figure shows negative arrow to ZIP-2)."
+    },
+    {
+      "symbol": "ZIP-2",
+      "mf_class": "transcription_factor",
+      "note": "bZIP TF; activates ESRE-driven genes; regulation by translation/ZIP-4/CEBP-1 and effect on defence genes have uncertain signs."
+    },
+    {
+      "symbol": "NHR-86",
+      "mf_class": "nuclear_receptor",
+      "note": "NHR-86/HNF-4 nuclear receptor; activates antimicrobial defence genes; possibly ligand-activated by PCN (uncertain)."
+    },
+    {
+      "symbol": "FSHR-1",
+      "mf_class": "signaling_receptor",
+      "note": "GPCR-type transmembrane receptor; downstream target marked '?' in figure (authorial uncertainty)."
+    }
+  ],
+  "molecules": [
+    {
+      "label": "Pyocyanin",
+      "role": "upstream_stimulus",
+      "acts_on": "TIR-1",
+      "directness_note": "P. aeruginosa redox toxin sensed by the intestinal cell; figure shows it driving TIR-1 activation, but it likely acts indirectly via LRO/redox stress rather than binding TIR-1 directly — model as upstream stimulus/input to the sensing step."
+    },
+    {
+      "label": "LRO stress / pH increase",
+      "role": "upstream_stimulus",
+      "acts_on": "NSY-1",
+      "directness_note": "Cell-intrinsic lysosome-related organelle stress state produced downstream of TIR-1; feeds the MAPK cascade at NSY-1. Not a discrete diffusible ligand — represents a stress condition, model as causal intermediate, not a direct molecular activator."
+    },
+    {
+      "label": "Pyoverdine",
+      "role": "upstream_stimulus",
+      "directness_note": "P. aeruginosa siderophore; sequesters/delivers iron. Acts indirectly via Fe3+ levels, not by binding HIF-1 directly. Sign uncertain in figure."
+    },
+    {
+      "label": "+Fe3+",
+      "role": "upstream_stimulus",
+      "acts_on": "HIF-1",
+      "directness_note": "Iron produced/mobilized via pyoverdine; figure end-type is ambiguous (T-bar vs arrow). Iron typically promotes HIF-1 degradation (would be inhibitory of HIF-1 accumulation) — flag sign; do NOT assert as direct activator without verification."
+    },
+    {
+      "label": "ExoA",
+      "role": "upstream_stimulus",
+      "directness_note": "P. aeruginosa Exotoxin A; inhibits host translation (T-bar to Translation). It is the cause of translation block, modeled as upstream stimulus reducing the Translation activity, not a direct enzyme inhibitor in this diagram."
+    },
+    {
+      "label": "ExoA-inhibited Translation",
+      "role": "upstream_stimulus",
+      "acts_on": "AMPK",
+      "directness_note": "Translation is a cellular process node, not a small molecule; its inhibition by ExoA relays to AMPK activation and ZIP-2 regulation (signs uncertain). Treat as a causal process node, not a direct molecular activator."
+    },
+    {
+      "label": "mtROS",
+      "role": "upstream_stimulus",
+      "acts_on": "AMPK",
+      "directness_note": "Mitochondrial reactive oxygen species; signal sensed upstream of AMPK. ROS is a diffusible signal but acts via redox-sensitive intermediates, not as a classic direct ligand — model as stimulus; sign/edge flagged uncertain."
+    },
+    {
+      "label": "ROS",
+      "role": "pathway_output",
+      "acts_on": "HSF-1",
+      "directness_note": "ROS white box linked to HSF-1; end type and direction uncertain in figure. Ambiguous whether output of or input to HSF-1 — flag for verification rather than asserting a direct regulatory role."
+    },
+    {
+      "label": "UPRmt",
+      "role": "upstream_stimulus",
+      "acts_on": "HSP-60",
+      "directness_note": "Mitochondrial unfolded protein response is a process/program, not a molecule; drives HSP-60 induction. Model as causal program leading to HSP-60 expression."
+    },
+    {
+      "label": "PCN",
+      "role": "direct_activator",
+      "acts_on": "NHR-86",
+      "directness_note": "Phenazine (PCN) is a candidate direct ligand of the NHR-86/HNF-4 nuclear receptor (nuclear receptors bind small-molecule ligands), consistent with figure arrow. Plausible has_small_molecule_activator, but confidence is low (0.35) — flag for verification."
+    }
+  ]
+}

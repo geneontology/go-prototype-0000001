@@ -1,0 +1,879 @@
+id: gomodel:run-figure2-007
+title: 'Agent run figure2-007: Caenorhabditis elegans'
+taxon: NCBITaxon:6239
+status: development
+activities:
+- id: gomodel:run-figure2-007/tir1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00006575
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:15625192
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0035591
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:15048112
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0042742
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:28157
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:39299238
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure2-007/nsy1
+- id: gomodel:run-figure2-007/nsy1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00003822
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11751572
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004709
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:12142542
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0038066
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:11751572
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure2-007/sek1
+- id: gomodel:run-figure2-007/sek1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00004758
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11751572
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004708
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000316
+      reference: PMID:11751572
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0000165
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:12142542
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure2-007/pmk1
+- id: gomodel:run-figure2-007/pmk1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00004055
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11703092
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004707
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000316
+      reference: PMID:11751572
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0000165
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:20369020
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure2-007/atf7
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure2-007/daf16
+- id: gomodel:run-figure2-007/hsp60
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00002025
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0140662
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:17189267
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005739
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:15280428
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0034514
+- id: gomodel:run-figure2-007/atfs1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00013878
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:25773600
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0000981
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:25274306
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:25274306
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0034514
+- id: gomodel:run-figure2-007/hif1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00001851
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:19632181
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000044
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:19632181
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0006357
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:29034
+- id: gomodel:run-figure2-007/aak2
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00020142
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:15574588
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004679
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:18408008
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005737
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:26523
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure2-007/hif1
+- id: gomodel:run-figure2-007/daf16
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00000912
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11124266
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0001228
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence: []
+    term: GO:0006357
+- id: gomodel:run-figure2-007/skn1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00004804
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000270
+      reference: PMID:12869585
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0006979
+- id: gomodel:run-figure2-007/hsf1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00002004
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:26759377
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:26759377
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0009408
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence: []
+    predicate: RO:0002233
+    molecule: CHEBI:26523
+- id: gomodel:run-figure2-007/atf7
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00000223
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000250
+      reference: PMID:20369020
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:20369020
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:20369020
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0140367
+- id: gomodel:run-figure2-007/zip4
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00021552
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000044
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:28662060
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0050829
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002305
+    downstream_activity: gomodel:run-figure2-007/zip2
+- id: gomodel:run-figure2-007/cebp1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00016997
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:26484536
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0000981
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence: []
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:27927209
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0006357
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002305
+    downstream_activity: gomodel:run-figure2-007/zip2
+- id: gomodel:run-figure2-007/zip2
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00019327
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000044
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:20133860
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0140367
+- id: gomodel:run-figure2-007/nhr86
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00003676
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0003700
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:20461074
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:36804958
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0140367
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:36804958
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0012001
+    molecule: CHEBI:27101
+- id: gomodel:run-figure2-007/fshr1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00008239
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000002
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004930
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000501
+      reference: GO_REF:0000044
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005886
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:19196974
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0050829
+objects:
+- id: ECO:0000000
+  label: evidence
+  type: gocam:EvidenceTermObject
+- id: WB:WBGene00006575
+  label: tir-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00003822
+  label: nsy-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00004758
+  label: sek-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00004055
+  label: pmk-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00002025
+  label: hsp-60
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00013878
+  label: atfs-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00001851
+  label: hif-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00020142
+  label: aak-2 (AMPK)
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00000912
+  label: daf-16
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00004804
+  label: skn-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00002004
+  label: hsf-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00000223
+  label: atf-7
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00021552
+  label: zip-4
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00016997
+  label: cebp-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00019327
+  label: zip-2
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00003676
+  label: nhr-86
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00008239
+  label: fshr-1
+  type: gocam:GeneProductTermObject
+- id: ECO:0000314
+  label: direct assay evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:15625192
+  label: tir-1 acts as a signaling adaptor linking upstream stimuli to the NSY-1/SEK-1/PMK-1
+    p38 cascade.
+  type: gocam:PublicationObject
+- id: GO:0035591
+  label: signaling adaptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:11751572
+  label: 'nsy-1 (MAPKKK) directly positively regulates sek-1 (MAPKK): NSY-1 binds
+    and phosphorylates SEK-1 in the C. elegans p38 cascade (Tanaka-Hino et al. 2002);
+    SEK-1 carries MAPKKK-binding (GO:0031435) to NSY-1.'
+  type: gocam:PublicationObject
+- id: GO:0004709
+  label: MAP kinase kinase kinase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004708
+  label: MAP kinase kinase activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:11703092
+  label: pmk-1 is the p38 MAP kinase of the intestinal immune cascade.
+  type: gocam:PublicationObject
+- id: GO:0004707
+  label: MAP kinase activity
+  type: gocam:MolecularFunctionTermObject
+- id: ECO:0000501
+  label: evidence used in automatic assertion
+  type: gocam:EvidenceTermObject
+- id: GO_REF:0000002
+  label: fshr-1 GPCR-type transmembrane receptor at the intestinal plasma membrane.
+  type: gocam:PublicationObject
+- id: GO:0140662
+  label: ATP-dependent protein folding chaperone
+  type: gocam:MolecularFunctionTermObject
+- id: ECO:0000315
+  label: mutant phenotype evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:25773600
+  label: atfs-1 is the bZIP transcription factor driving the UPRmt transcriptional
+    program.
+  type: gocam:PublicationObject
+- id: GO:0000981
+  label: DNA-binding transcription factor activity, RNA polymerase II-specific
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:19632181
+  label: hif-1 regulates RNA Pol II transcription (ESRE-driven genes in the figure).
+  type: gocam:PublicationObject
+- id: GO:0003700
+  label: DNA-binding transcription factor activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:15574588
+  label: aak-2 is the catalytic subunit of the C. elegans AMPK energy sensor.
+  type: gocam:PublicationObject
+- id: GO:0004679
+  label: AMP-activated protein kinase activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:11124266
+  label: daf-16/FOXO transcriptional activator of stress-response genes.
+  type: gocam:PublicationObject
+- id: GO:0001228
+  label: DNA-binding transcription activator activity, RNA polymerase II-specific
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:26759377
+  label: hsf-1 drives the heat-shock/cellular stress response gene program.
+  type: gocam:PublicationObject
+- id: ECO:0000250
+  label: sequence similarity evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:20369020
+  label: 'pmk-1 (p38 MAPK) directly positively regulates atf-7: PMK-1 phosphorylates
+    the transcription factor ATF-7, converting it from repressor to activator of antimicrobial
+    genes (Shivers et al. 2010); ATF-7 has MAP kinase binding (GO:0051019) to PMK-1.'
+  type: gocam:PublicationObject
+- id: PMID:26484536
+  label: cebp-1 bZIP transcription factor (CEBP-1/2).
+  type: gocam:PublicationObject
+- id: GO:0004930
+  label: G protein-coupled receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:15048112
+  label: tir-1 is required for antibacterial defense; upstream of the intestinal p38
+    cascade.
+  type: gocam:PublicationObject
+- id: GO:0042742
+  label: defense response to bacterium
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:12142542
+  label: 'sek-1 (MAPKK) directly positively regulates pmk-1 (p38 MAPK): SEK-1 phosphorylates/activates
+    PMK-1 in the conserved p38 pathway of C. elegans innate immunity (Kim et al. 2002,
+    Science).'
+  type: gocam:PublicationObject
+- id: GO:0038066
+  label: p38MAPK cascade
+  type: gocam:BiologicalProcessTermObject
+- id: ECO:0000316
+  label: genetic interaction evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: GO:0000165
+  label: MAPK cascade
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:15280428
+  label: hsp-60 induction is a hallmark output of the UPRmt.
+  type: gocam:PublicationObject
+- id: GO:0034514
+  label: mitochondrial unfolded protein response
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:25274306
+  label: atfs-1 accumulates in the nucleus to drive UPRmt transcription.
+  type: gocam:PublicationObject
+- id: GO:0006357
+  label: regulation of transcription by RNA polymerase II
+  type: gocam:BiologicalProcessTermObject
+- id: ECO:0000270
+  label: expression pattern evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:12869585
+  label: skn-1/Nrf2 mediates the oxidative stress response, driving cellular stress
+    response genes.
+  type: gocam:PublicationObject
+- id: GO:0006979
+  label: response to oxidative stress
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0009408
+  label: response to heat
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0140367
+  label: antibacterial innate immune response
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:28662060
+  label: zip-4 functions in defense against Gram-negative bacteria; modulates ZIP-2.
+  type: gocam:PublicationObject
+- id: GO:0050829
+  label: defense response to Gram-negative bacterium
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:27927209
+  label: cebp-1 (CEBP-1/2) regulates RNA Pol II transcription; modulates ZIP-2 in
+    the figure.
+  type: gocam:PublicationObject
+- id: PMID:20133860
+  label: zip-2 drives the antibacterial/ESRE transcriptional response to P. aeruginosa.
+  type: gocam:PublicationObject
+- id: PMID:36804958
+  label: PCN (phenazine pathogen metabolite, green hexagon in lumen) downward arrow
+    to NHR-86/HNF-4. Peterson et al. 2023 (Immunity) show NHR-86 is a non-canonical
+    pattern-recognition nuclear receptor that DIRECTLY binds a P. aeruginosa phenazine
+    metabolite as a ligand to activate antimicrobial transcription -> modeled as has
+    small molecule activator (RO:0012001). ChEBI:27101 phenazine represents the figure's
+    'PCN'; exact phenazine species not tool-verified (curator flag, confidence 0.35).
+  type: gocam:PublicationObject
+- id: PMID:19196974
+  label: fshr-1 GPCR is required for intestinal defense against Gram-negative bacteria.
+  type: gocam:PublicationObject
+- id: PMID:17189267
+  label: hsp-60 localizes to mitochondria (figure draws it in the mitochondrion).
+  type: gocam:PublicationObject
+- id: GO:0005739
+  label: mitochondrion
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO:0005634
+  label: nucleus
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: GO_REF:0000044
+  label: 'fshr-1 is a plasma-membrane GPCR (figure: transmembrane coil spanning the
+    lumen/cell boundary).'
+  type: gocam:PublicationObject
+- id: PMID:18408008
+  label: aak-2/AMPK is cytoplasmic.
+  type: gocam:PublicationObject
+- id: GO:0005737
+  label: cytoplasm
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: PMID:20461074
+  label: nhr-86 nuclear receptor localizes to the nucleus.
+  type: gocam:PublicationObject
+- id: GO:0005886
+  label: plasma membrane
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: PMID:39299238
+  label: 'tir-1 product is causally upstream, positive effect, of nsy-1: pathogen
+    effector-triggered aggregation of TIR-1 on lysosome-related organelles (the figure''s
+    ''LRO stress / pH increase'' intermediate) activates the NSY-1 MAPKKK of the p38
+    cascade (Tse-Kang et al. 2024, Immunity). Combines the figure''s TIR-1->LRO stress
+    and LRO stress->NSY-1 arrows into one upstream-positive edge via the LRO-stress
+    intermediate.'
+  type: gocam:PublicationObject
+- id: RO:0002304
+  label: causally upstream of, positive effect
+  type: gocam:PredicateTermObject
+- id: RO:0002629
+  label: directly positively regulates
+  type: gocam:PredicateTermObject
+- id: RO:0002305
+  label: causally upstream of, negative effect
+  type: gocam:PredicateTermObject
+- id: CHEBI:28157
+  label: pyocyanin
+  type: gocam:MoleculeTermObject
+- id: RO:0002233
+  label: has input
+  type: gocam:PredicateTermObject
+- id: CHEBI:29034
+  label: iron(3+)
+  type: gocam:MoleculeTermObject
+- id: CHEBI:26523
+  label: reactive oxygen species
+  type: gocam:MoleculeTermObject
+- id: CHEBI:27101
+  label: phenazine (PCN)
+  type: gocam:MoleculeTermObject
+- id: RO:0012001
+  label: has small molecule activator
+  type: gocam:PredicateTermObject
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject

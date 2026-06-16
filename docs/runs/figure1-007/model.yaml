@@ -1,0 +1,462 @@
+id: gomodel:run-figure1-007
+title: 'Agent run figure1-007: Caenorhabditis elegans'
+taxon: NCBITaxon:6239
+status: development
+activities:
+- id: gomodel:run-figure1-007/tph1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00006600
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004510
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0043005
+    part_of:
+      type: CellTypeAssociation
+      evidence: []
+      term: CL:0000101
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0042427
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002234
+    molecule: CHEBI:28790
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure1-007/mod1
+- id: gomodel:run-figure1-007/ser6
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00021897
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:22124329
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004989
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005886
+    part_of:
+      type: CellTypeAssociation
+      evidence: []
+      term: CL:0000101
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:22124329
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0071927
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:22124329
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0012001
+    molecule: CHEBI:17134
+  causal_associations:
+  - type: CausalAssociation
+    evidence: []
+    predicate: RO:0002304
+    downstream_activity: gomodel:run-figure1-007/tph1
+- id: gomodel:run-figure1-007/mod1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00003386
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11100728
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0160039
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:15878844
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005886
+    part_of:
+      type: CellTypeAssociation
+      evidence: []
+      term: CL:0000101
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:11100728
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0007210
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:11100728
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0012001
+    molecule: CHEBI:28790
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-007/tbh1
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-007/nhr76
+- id: gomodel:run-figure1-007/tbh1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00006541
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:15848803
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004836
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:15848803
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0045202
+    part_of:
+      type: CellTypeAssociation
+      evidence: []
+      term: CL:0000540
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:15848803
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0006589
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:15848803
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002234
+    molecule: CHEBI:17134
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002629
+    downstream_activity: gomodel:run-figure1-007/ser6
+- id: gomodel:run-figure1-007/nhr76
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00015497
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004879
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005634
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000315
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0045944
+  molecular_associations:
+  - type: MoleculeAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002233
+    molecule: WB:WBGene00015484
+  causal_associations:
+  - type: CausalAssociation
+    evidence:
+    - term: ECO:0000000
+      reference: PMID:24120942
+      provenances:
+      - date: '2026-06-16'
+    predicate: RO:0002407
+    downstream_activity: gomodel:run-figure1-007/atgl1
+- id: gomodel:run-figure1-007/atgl1
+  enabled_by:
+    type: EnabledByGeneProductAssociation
+    evidence:
+    - term: ECO:0000000
+      provenances:
+      - date: '2026-06-16'
+        provided_by:
+        - alliance.resolve_symbol_to_curie
+    term: WB:WBGene00015484
+  molecular_function:
+    type: MolecularFunctionAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0004806
+  occurs_in:
+    type: CellularAnatomicalEntityAssociation
+    evidence:
+    - term: ECO:0000314
+      reference: PMID:20176933
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0005811
+  part_of:
+    type: BiologicalProcessAssociation
+    evidence:
+    - term: ECO:0000318
+      reference: GO_REF:0000033
+      provenances:
+      - date: '2026-06-16'
+    term: GO:0019433
+objects:
+- id: ECO:0000000
+  label: evidence
+  type: gocam:EvidenceTermObject
+- id: WB:WBGene00006600
+  label: tph-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00021897
+  label: ser-6
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00003386
+  label: mod-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00006541
+  label: tbh-1
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015497
+  label: nhr-76
+  type: gocam:GeneProductTermObject
+- id: WB:WBGene00015484
+  label: atgl-1
+  type: gocam:GeneProductTermObject
+- id: ECO:0000318
+  label: biological aspect of ancestor evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: GO_REF:0000033
+  label: nhr-76 (nuclear receptor / DNA-binding TF) localizes to the nucleus.
+  type: gocam:PublicationObject
+- id: GO:0004510
+  label: tryptophan 5-monooxygenase activity
+  type: gocam:MolecularFunctionTermObject
+- id: ECO:0000314
+  label: direct assay evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:22124329
+  label: Octopamine directly binds/activates the ser-6 octopamine receptor (RO:0012001);
+    Oct from RIC activates ser-6 in AWB in Panel E.
+  type: gocam:PublicationObject
+- id: GO:0004989
+  label: octopamine receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: PMID:11100728
+  label: Serotonin directly gates the mod-1 serotonin-gated chloride channel (RO:0012001);
+    5-HT from ADF activates mod-1 in URX in Panel E.
+  type: gocam:PublicationObject
+- id: GO:0160039
+  label: serotonin-gated chloride channel activity
+  type: gocam:MolecularFunctionTermObject
+- id: ECO:0000315
+  label: mutant phenotype evidence used in manual assertion
+  type: gocam:EvidenceTermObject
+- id: PMID:15848803
+  label: tbh-1 (tyramine beta-hydroxylase) in RIC produces octopamine, the signal
+    labelled 'Oct' on the RIC->AWB arrow in Panel E. Producing end of the octopamine
+    relay to ser-6.
+  type: gocam:PublicationObject
+- id: GO:0004836
+  label: tyramine-beta hydroxylase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004879
+  label: nuclear receptor activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0004806
+  label: triacylglycerol lipase activity
+  type: gocam:MolecularFunctionTermObject
+- id: GO:0042427
+  label: serotonin biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0071927
+  label: octopamine signaling pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0007210
+  label: serotonin receptor signaling pathway
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0006589
+  label: octopamine biosynthetic process
+  type: gocam:BiologicalProcessTermObject
+- id: PMID:24120942
+  label: 'Panel E solid arrow nhr-76->ATGL: nhr-76 (intestinal nuclear receptor) indirectly
+    positively regulates atgl-1/ATGL by inducing its transcription (gene expression
+    is the intervening module); TF->target indirect relation.'
+  type: gocam:PublicationObject
+- id: GO:0045944
+  label: positive regulation of transcription by RNA polymerase II
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0019433
+  label: triglyceride catabolic process
+  type: gocam:BiologicalProcessTermObject
+- id: GO:0043005
+  label: neuron projection
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: CL:0000101
+  label: sensory neuron
+  type: gocam:CellTypeTermObject
+- id: GO:0005886
+  label: plasma membrane
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: PMID:15878844
+  label: mod-1 serotonin-gated chloride channel localizes to the plasma membrane (IDA).
+  type: gocam:PublicationObject
+- id: GO:0045202
+  label: synapse
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: CL:0000540
+  label: neuron
+  type: gocam:CellTypeTermObject
+- id: GO:0005634
+  label: nucleus
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: PMID:20176933
+  label: atgl-1 localizes to the lipid droplet (IDA), where it hydrolyzes stored triglyceride
+    in the intestine.
+  type: gocam:PublicationObject
+- id: GO:0005811
+  label: lipid droplet
+  type: gocam:CellularAnatomicalEntityTermObject
+- id: CHEBI:28790
+  label: serotonin
+  type: gocam:MoleculeTermObject
+- id: RO:0002234
+  label: has output
+  type: gocam:PredicateTermObject
+- id: RO:0012001
+  label: has small molecule activator
+  type: gocam:PredicateTermObject
+- id: CHEBI:17134
+  label: octopamine
+  type: gocam:MoleculeTermObject
+- id: RO:0002233
+  label: has input
+  type: gocam:PredicateTermObject
+- id: RO:0002629
+  label: directly positively regulates
+  type: gocam:PredicateTermObject
+- id: RO:0002407
+  label: indirectly positively regulates
+  type: gocam:PredicateTermObject
+- id: RO:0002304
+  label: causally upstream of, positive effect
+  type: gocam:PredicateTermObject
+- id: NCBITaxon:6239
+  label: NCBITaxon:6239
+  type: gocam:TaxonTermObject
