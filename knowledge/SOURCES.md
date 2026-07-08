@@ -73,7 +73,7 @@ meeting-note pages, but those are not used as curation sources.)
 ## Known relevant sources NOT yet ingested
 
 - **Noctua User Guide** (Google Doc `1a5YZBJrnJ9LKJxPVpXk62dJJGpHB2b9zH8-xr_Rm1Vs`,
-  owner pgaudet1@gmail.com; reviewed 2025–2026 by Thomas / Gaudet / Masson /
+  a GO Consortium doc; reviewed 2025–2026 by Thomas / Gaudet / Masson /
   Aleksander) — the GO Consortium's umbrella curation guide and the *parent* doc
   that links out to the MF-guidelines Google Doc we already ingested
   (`186PR8Ml...`). Actively maintained; it is the current canonical statement of
