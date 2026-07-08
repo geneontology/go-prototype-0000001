@@ -150,6 +150,19 @@ YAML `evidence_codes:` block):
 - **Electronic** (`IEA`) — automatic, non-manually-reviewed; always populate
   with/from.
 
+**Default references for non-experimental codes** (Noctua quick-add): a
+by-similarity annotation with no PMID uses `GO_REF:0000024` (ISS/ISO,
+`ECO:0000250` / `ECO:0000266`); a curator inference uses `GO_REF:0000036` (IC,
+`ECO:0000305`); an aspect-root ND uses `GO_REF:0000015` (`ECO:0000307`). Use a
+real PMID when one exists; fall back to the GO_REF otherwise. `[noctua-guide]`
+
+**Reusing an existing GO annotation.** A model may pull in an existing
+annotation from the GO knowledgebase (any group, any evidence). Prefer one with
+**experimental** evidence; if none exists, prefer an **IBA** annotation. Verify
+the reused function is correct and current — some annotations are stale or
+weakly supported — and note that annotation *extensions* on a reused annotation
+are not carried into the model. `[noctua-guide]`
+
 **Strength ordering is a soft preference, not doctrine.** The sources support
 "experimental preferred, author-statement discouraged, IEA unreviewed" — but
 **not** a strict full six-tier ranking. Prefer the strongest evidence the cited
@@ -192,7 +205,7 @@ The activity unit's slots:
 |---|---|---|---|
 | enabler (required) | `enabled_by` (RO:0002333) | gene product / complex | THE relation for all MF→gene-product links. An activity with no enabler is incomplete. |
 | location | `occurs_in` (BFO:0000066) | **GO cellular component** (GO:0005575 descendant) | `{0,1}`. The *subcellular* location. The cell TYPE is a part_of extension of this CC, not a direct occurs_in target — see the cell-type note below. For a BP only when **all** its MFs share the location. |
-| cell type (extension) | CC `part_of` (BFO:0000050) **CellType** | CL / species anatomy (WBbt) | `{0,1}` on the occurs_in CC. The cell the activity happens in (e.g. neuron `CL:0000540`). Ground the label before use; omit if it cannot be grounded. |
+| cell type (extension) | CC `part_of` (BFO:0000050) **CellType** | CL / species anatomy (WBbt) | `{0,1}` on the occurs_in CC. The cell the activity happens in (e.g. neuron `CL:0000540`). Add the cell/tissue context **only when the activity unit is specific to that cell type/tissue** `[noctua-guide]`. Ground the label before use; omit if it cannot be grounded. |
 | program | `part_of` (BFO:0000050) | BP (GO:0008150 descendant) | The MF is an integral first/last/intervening step. Nest BP→BP further. |
 | input | `has_input` (RO:0002233) | ChEBI / complex / gene product | The **substrate** an enzyme consumes / the TF-target gene, when more specific than the term. **Not** a regulatory ligand — use the activator/inhibitor slots below. |
 | output | `has_output` (RO:0002234) | ChEBI / complex / gene product | Product incl. modified protein forms. |
@@ -209,7 +222,10 @@ does not force enabled_by to be present or singular.
 label/definition, currency molecules (ATP/ADP for a kinase),
 cofactors/coenzymes/metal ions, x-dependent modifiers (e.g. calcium for a
 calcium-dependent kinase), analogs/assay conditions, and SO terms.
-`[relations-flow-input-output-exclusions]`
+`[relations-flow-input-output-exclusions]` Model only the **primary** inputs and
+outputs that link sequential steps of the pathway; a currency chemical (ATP,
+water, …) is annotated *only* when it is itself the primary input/output of the
+reaction. GO-CAM captures **no stoichiometry**. `[noctua-guide]`
 
 **Causal linking, not "regulation of X" terms.** Link activity units to each
 other with RO causal relations (§4). Model a regulator as **its own activity
@@ -257,6 +273,68 @@ ontology equivalence axioms to infer extra annotations (e.g. an activity that
 `directly_positively_regulates` a kinase → a kinase activator activity), never
 contradicting the edge sign. `[gocam-structure-decompose-mf-cc-bp,
 gocam-structure-decompose-reasoning-inference]`
+
+---
+
+## 3b. Activity-unit scope, complexes & model naming (Noctua User Guide)
+
+The GO Consortium's **Noctua User Guide** (the current canonical GO-CAM
+annotation-guidelines doc; see §9) adds the following model-shaping rules.
+`[noctua-guide]`
+
+**One activity unit per gene product.** Whenever possible, model each gene
+product as a **single** activity unit, and let the *mechanistic* detail live in
+the **definition of the MF term** rather than as extra nodes. A receptor
+tyrosine kinase is one activity unit (`GO:0004714`), not separate
+ligand-binding → autophosphorylation → adaptor-recruitment steps.
+*Exception — multifunctional proteins:* when genuinely independent catalytic
+activities are carried out by distinct domains (successive steps of a pathway,
+or histone reader + writer), create a distinct activity unit per domain and link
+them causally. This applies only to independent activities, not to steps that
+together perform one molecular function.
+
+**One direction only.** GO-CAM captures an activity *flow*; even if a reaction
+is chemically reversible, model only the single direction relevant to the
+pathway.
+
+**Binding is (almost) never the GO-CAM MF.** `GO:0005515` protein binding and
+children do not describe an activity — replace them with a non-catalytic MF
+(see the [non-catalytic MF guidance](https://wiki.geneontology.org/Non-catalytic_Molecular_Functions));
+capture the partner as `has_input`.
+
+**Unknown enabler or unknown MF.**
+
+- Activity known, **enabler unknown** → enable it by `CHEBI:33695`
+  (information biomacromolecule).
+- Enabler known, **MF unknown** → use the MF root `GO:0003674` as a placeholder.
+- **Neither** known → do **not** create an activity unit; instead connect the
+  two flanking activities directly with an *indirect* causal relation
+  (`causally_upstream_of, positive/negative effect`, or
+  `indirectly_positively/negatively_regulates`).
+
+**Protein complexes as enablers.** Prefer assigning the MF to an **individual
+gene product**. Use a complex as the enabler only when (a) the function is
+**emergent** — no single subunit can perform it alone (e.g. the membrane attack
+complex) — or (b) the subunit responsible is unknown. The enabler must be
+`GO:0032991` protein-containing complex or a child (as specific as possible;
+request a new complex term if none fits); add members with `has_part`. When
+distinct subunits have their **own** causal activities, model each subunit as a
+**separate activity unit**, each `part_of` the complex, with the appropriate
+causal relations between them. (On GPAD export, subunit MFs of an enabling
+complex come out with `contributes_to`; a complex with no listed parts exports
+no MF annotation.)
+
+**Naming a model.** Title = the GO **biological process** that best represents
+the pathway + relevant distinguishing context (cell/tissue/genes not already in
+the BP term) + **species** (host–symbiont separated by a hyphen). E.g.
+*"Antifungal innate immune response in the hypodermis via transforming growth
+factor beta receptor signaling pathway (C. elegans)"*.
+
+**Connecting pathways across models.** Causal edges cannot span two models. To
+connect them, include the shared boundary activity in **both** models (as the
+terminal activity of the upstream one and the initial activity of the downstream
+one) and draw the causal relation within each. (Not needed for a single-figure
+model, but relevant when a figure spans modules.)
 
 ---
 
@@ -675,6 +753,11 @@ and interpret perturbation data as an inference about the normal role.
   Quality Annotations, and others).
 - `go-shapes` `go-cam-shapes.shex` / `.shapeMap` (the ShEx shape constraints).
 - GO QC rules (`GORULE:0000002/0000004/0000005/0000008/0000017/0000018/0000036/0000046`).
+- GO Consortium **Noctua User Guide** (Google Doc, Pascale Gaudet et al.,
+  reviewed 2025–2026) — the *current canonical* GO-CAM annotation-guidelines
+  doc. Source of §3b (activity-unit scope, complexes, model naming) and the
+  §2/§3 notes tagged `[noctua-guide]`; its child MF-guidelines doc backs §4b.
+  Ingested per #58.
 - Primary literature: PMC3706743 (evidence codes), PMID:31548717 / PMC7012280
   (the GO-CAM paper).
 - ChEBI / NCBITaxon / WormBase canonical IDs (verified).

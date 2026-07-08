@@ -24,6 +24,7 @@ meta:
     - "GO QC rules (GORULE:0000002/0000004/0000005/0000008/0000017/0000018/0000036/0000046)"
     - "Primary literature: PMC3706743 (evidence codes), PMID:31548717 / PMC7012280 (GO-CAM paper)"
     - "GO 'Guide for MF annotation in GO-CAM' (Gaudet/Van Auken et al., Google Doc 186PR8Ml...; ingested 2026-06-05 per issue #39) -> mf_activity_unit_patterns"
+    - "GO Consortium 'Noctua User Guide' (current canonical GO-CAM annotation guidelines; Google Doc 1a5YZBJr..., Gaudet et al., reviewed 2025-2026; ingested 2026-07-08 per issue #58) -> activity_unit scope/complex/naming rules, evidence GO_REF defaults, cell-type-context qualifier"
     - "ChEBI / NCBITaxon / WormBase canonical IDs (verified)"
   counts:
     rules: 191
@@ -294,6 +295,61 @@ activity_unit:
     - "An AnatomicalEntity/Cell/CellularComponent node MAY have at most one part_of to a containing anatomical entity (WBbt context terms are the exception — multiple allowed; see species_celegans)."
     - "Each typed node must be rdf:type a class whose subClassOf chain reaches the correct ontology root (MF<-GO:0003674, BP<-GO:0008150, CC<-GO:0005575, complex<-GO:0032991, ChemicalEntity<-CHEBI:24431, InformationBiomacromolecule<-CHEBI:33695, Protein<-CHEBI:36080, AnatomicalEntity<-UBERON:0001062, Cell<-CL:0000000, Organism<-NCBITaxon:1, Evidence<-ECO:0000000)."
     - "Model metadata (<GoCamModel>): >=1 contributor, exactly 1 modification_date, >=1 provided_by, exactly 1 title, exactly 1 modelstate; in_taxon is optional but should be set to the species (NCBITaxon:6239 for C. elegans)."
+  # --- Noctua User Guide (current canonical GO-CAM annotation guidelines; #58) ---
+  # Mirrored into knowledge/go-curation-guidelines.md sections 2, 3 and 3b (tag [noctua-guide]).
+  one_activity_unit_per_gene_product: >-
+    Whenever possible model each gene product as a SINGLE activity unit; the
+    mechanistic detail belongs in the MF term DEFINITION, not as extra nodes
+    (e.g. a receptor tyrosine kinase GO:0004714 is one unit, not
+    ligand-binding -> autophosphorylation -> adaptor-recruitment). Exception:
+    multifunctional proteins whose distinct DOMAINS carry genuinely independent
+    catalytic activities (successive pathway steps; histone reader + writer) ->
+    one activity unit per domain, linked causally. Not for steps that jointly
+    perform one molecular function.
+  single_direction: >-
+    GO-CAM captures an activity FLOW; even a chemically reversible reaction is
+    modeled in only the single direction relevant to the pathway.
+  binding_not_gocam_mf: >-
+    GO:0005515 protein binding and children do not describe an activity and are
+    not normally the GO-CAM MF; replace with a non-catalytic MF and capture the
+    partner as has_input.
+  no_stoichiometry: >-
+    Model only the PRIMARY inputs/outputs linking sequential steps; a currency
+    chemical (ATP, water) only when it is itself the primary input/output of the
+    reaction. GO-CAM captures no stoichiometry.
+  unknown_enabler_or_mf:
+    enabler_unknown: "Activity known but enabler unknown -> enabled_by CHEBI:33695 (information biomacromolecule)."
+    mf_unknown: "Enabler known but MF unknown -> MF root GO:0003674 as placeholder."
+    both_unknown: "Neither known -> do NOT create an activity unit; connect the flanking activities with an INDIRECT causal relation (causally_upstream_of positive/negative effect, or indirectly_positively/negatively_regulates)."
+  protein_complex_enablers: >-
+    Prefer assigning the MF to an individual gene product. Use a complex as the
+    enabler ONLY when the function is emergent (no single subunit performs it
+    alone, e.g. the membrane attack complex) or the responsible subunit is
+    unknown. Enabler must be GO:0032991 protein-containing complex or a child (as
+    specific as possible; request a term if none fits); add members with
+    has_part. When distinct subunits have their OWN causal activities, model each
+    subunit as a separate activity unit, each part_of the complex, with the
+    causal relations between them. GPAD export: subunit MFs of an enabling
+    complex export with contributes_to; a complex with no listed parts exports no
+    MF annotation.
+  model_naming: >-
+    Title = the GO biological process that best represents the pathway +
+    distinguishing context (cell/tissue/genes not already in the BP term) +
+    species (host-symbiont separated by a hyphen). E.g. 'Antifungal innate immune
+    response in the hypodermis via transforming growth factor beta receptor
+    signaling pathway (C. elegans)'.
+  connecting_across_models: >-
+    Causal edges cannot span two models. To connect pathways, include the shared
+    boundary activity in BOTH models (terminal of the upstream, initial of the
+    downstream) and draw the causal relation within each.
+  cell_type_context_only_if_specific: >-
+    Add cell/tissue/organism context on a CC (via part_of) ONLY when the activity
+    unit is specific to that cell type/tissue.
+  evidence_default_references:
+    iss_iso: "GO_REF:0000024 when no PMID (ISS ECO:0000250 / ISO ECO:0000266)."
+    ic: "GO_REF:0000036 (IC ECO:0000305)."
+    nd: "GO_REF:0000015 (ND ECO:0000307) on the aspect root."
+    reuse_existing_annotation: "A model may reuse an existing GO annotation (any group/evidence); prefer experimental, else IBA; verify it is not stale; reused annotation extensions are NOT carried into the model."
 
 # ---------------------------------------------------------------------------
 # RELATIONS — the canonical causal/structural relation matrix (deduped)
